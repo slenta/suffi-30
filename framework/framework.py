@@ -1,7 +1,7 @@
 # coding=utf-8
 
 # Minimales PyGame-Grundgerüst
-# Als Template für alle Python-Projekte verwenden
+# Als Template für alle Python/PyGame-Projekte verwenden
 
 import pygame as pg
 from pygame.locals import *  # Wenn dies nicht importiert wird,
@@ -16,10 +16,10 @@ background = background.convert()
 background.fill((0, 80, 125))
 
 clock = pg.time.Clock()
-keepGoing = True
+clock.tick(30)  # Framerate
 
+keepGoing = True
 while keepGoing:
-    clock.tick(30)  # Framerate
     for event in pg.event.get():
         if event.type == pg.QUIT:
             keepGoing = False
