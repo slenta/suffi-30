@@ -1,7 +1,4 @@
-# coding=utf-8
-
-# Minimales PyGame-Grundgerüst
-# Als Template für alle Python/PyGame-Projekte verwenden
+# Hello Kitty
 
 import pygame as pg
 from pygame.locals import *  # Wenn dies nicht importiert wird,
@@ -10,7 +7,7 @@ import os
 pg.init()
 
 win = pg.display.set_mode((640, 480))
-pg.display.set_caption("Hallo Wörld!")
+pg.display.set_caption("Hallo Hörnchen")
 
 background = pg.Surface(win.get_size())
 background = background.convert()
@@ -23,6 +20,12 @@ background.fill((0, 80, 125))
 file_path = os.path.dirname(os.path.abspath(__file__))
 os.chdir(file_path)
 
+horngirl = pg.image.load("images/horngirl.png").convert_alpha()
+
+# Text
+textfont = pg.font.SysFont("", 64)
+myMessage  = "Hallo Kitty!"
+
 clock = pg.time.Clock()
 clock.tick(30)  # Framerate
 
@@ -33,5 +36,9 @@ while keep_going:
             keep_going = False
 
     win.blit(background, (0, 0))
+    win.blit(horngirl, (275, 100))
+    myText = textfont.render(myMessage, True, (255, 255, 255))
+    win.blit(myText, (200, 280))
+    
     pg.display.flip()
             
