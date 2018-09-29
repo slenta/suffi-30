@@ -14,7 +14,7 @@ class Spaceship(pg.sprite.Sprite):
         self.pic = pic
         self.posx = posx
         self.posy = posy
-        self.image = pg.image.load(pic).convert_alpha()
+        self.image = pg.image.load(self.pic).convert_alpha()
         self.rect = self.image.get_rect()
         self.rect.centerx = posx
         self.rect.centery = posy
