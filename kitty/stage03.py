@@ -34,13 +34,13 @@ class Spaceship(pg.sprite.Sprite):
 win = pg.display.set_mode((800, 600))
 pg.display.set_caption("Space Cute")
 
-# Assets laden
 # Hier wird der Pfad zum Verzeichnis des ».py«-Files gesetzt
 # Erspart einem das Herumgehample in TextMate mit dem os.getcwd()
 # und os.path.join()
 file_path = os.path.dirname(os.path.abspath(__file__))
 os.chdir(file_path)
 
+# Assets laden
 background = pg.image.load("images/background.png").convert()
 win.blit(background, (0, 0))
 
