@@ -18,11 +18,11 @@ background.fill((0, 80, 125))
 clock = pg.time.Clock()
 clock.tick(30)  # Framerate
 
-keepGoing = True
-while keepGoing:
+keep_going = True
+while keep_going:
     for event in pg.event.get():
         if event.type == pg.QUIT:
-            keepGoing = False
+            keep_going = False
 
     win.blit(background, (0, 0))
     pg.display.flip()
