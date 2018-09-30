@@ -2,7 +2,8 @@ import pygame as pg
 from pygame.locals import *  # Wenn dies nicht importiert wird,
                              # kann man UTF-8 (Umlaute) knicken
 import os
-pg.init()
+
+### Klassendefinitionen --------------------------------------------------
 
 class Octopussy(pg.sprite.Sprite):
     
@@ -30,6 +31,28 @@ class Octopussy(pg.sprite.Sprite):
         elif self.rect.bottom >= win.get_height():
             self.rect.bottom = win.get_height()
 
+class Space(pg.sprite.Sprite):
+    
+    def __init__(self):
+        pg.sprite.Sprite.__init__(self)
+        self.image = pg.image.load("images/background.png").convert_alpha()
+        self.rect = self.image.get_rect()
+        self.dx = 2
+        self.rect.right = win.get_width()
+    
+    def update(self):
+        self.rect.left -= self.dx
+        if self.rect.right <= 0:
+            self.reset()
+    
+    def reset(self):
+        self.rect.right = win.get_width() # + self.image.get_width() - win.get_width()
+
+## Ende Klassendefinitionen ----------------------------------------------
+
+pg.init()
+
+
 win = pg.display.set_mode((1024, 640))
 pg.display.set_caption("Octopussy – On the Way Home")
 
@@ -50,7 +73,8 @@ win.blit(background, (0, 0))
 
 # Klassen laden
 octopussy = Octopussy()
-allSprites = pg.sprite.Group(octopussy)
+space = Space()
+allSprites = pg.sprite.Group(space, octopussy)
 
 clock = pg.time.Clock()
 clock.tick(30)  # Framerate
@@ -69,7 +93,7 @@ while keep_going:
             if event.key == pg.K_SPACE:
                 octopussy.velocity = 0
 
-    allSprites.clear(win, background)
+    # allSprites.clear(win, background)
     allSprites.update()
     allSprites.draw(win)
     
