@@ -2,8 +2,48 @@ import pygame as pg
 from pygame.locals import *  # Wenn dies nicht importiert wird,
                              # kann man UTF-8 (Umlaute) knicken
 import os
+import random as r
 
 ### Klassendefinitionen --------------------------------------------------
+
+
+class SpaceShip(pg.sprite.Sprite):
+    
+    def __init__(self):
+        pg.sprite.Sprite.__init__(self)
+        self.posx = r.randint(1024, 2048)
+        self.posy = r.randint(20, 460)
+    
+    def update(self):
+        self.rect.centerx += self.dx
+        if self.rect.left > win.get_width():
+            self.rect.right = 0
+            self.rect.centery = r.randrange(50, win.get_height()-85)
+        elif self.rect.right < 0:
+            self.rect.left = win.get_width()
+            self.rect.centery = r.randrange(50, win.get_height()-85)
+
+class RocketBoy(SpaceShip):
+    
+    def __init__(self):
+        SpaceShip.__init__(self)
+        self.image = pg.image.load("images/rocketboy.png").convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect.centerx = self.posx
+        self.rect.centery = self.posy
+        self.dx = r.randint(-6, -3)
+   
+
+class Planet(SpaceShip):
+    
+    def __init__(self):
+        SpaceShip.__init__(self)
+        self.image = pg.image.load("images/planet.png").convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect.centerx = self.posx
+        self.rect.centery = self.posy
+        self.dx = r.randint(-2, -1)
+   
 
 class Octopussy(pg.sprite.Sprite):
     
@@ -15,39 +55,16 @@ class Octopussy(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.centerx = self.posx
         self.rect.centery = self.posy
-        self.gravity = 0.6
-        self.lift = -24
-        self.velocity = 0
+        self.dy = 0
                 
-    def up(self):
-        self.velocity += self.lift
-            
+
     def update(self):
-        self.velocity += self.gravity
-        self.velocity *= 0.9
-        self.rect.centery += self.velocity
+        self.rect.centery += self.dy
         if self.rect.top <= 0:
             self.rect.top = 0
         elif self.rect.bottom >= win.get_height():
             self.rect.bottom = win.get_height()
 
-class Space(pg.sprite.Sprite):
-    
-    def __init__(self):
-        pg.sprite.Sprite.__init__(self)
-        self.images = []
-        self.image = pg.image.load("images/background.png").convert_alpha()
-        self.rect = self.image.get_rect()
-        self.dx = 20
-        self.rect.left = 0
-    
-    def update(self):
-        self.rect.left -= self.dx
-        if self.rect.left >= 0:
-            self.reset()
-    
-    def reset(self):
-        self.rect.left = 0
 
 ## Ende Klassendefinitionen ----------------------------------------------
 
@@ -74,8 +91,15 @@ win.blit(background, (0, 0))
 
 # Klassen laden
 octopussy = Octopussy()
-# space = Space()
-allSprites = pg.sprite.Group(octopussy)
+rocketboys = []
+for i in range(3):
+    rocketboy = RocketBoy()
+    rocketboys.append(rocketboy)
+planets = []
+for i in range(2):
+    planet = Planet()
+    planets.append(planet)
+allSprites = pg.sprite.Group(planets, rocketboys, octopussy)
 
 clock = pg.time.Clock()
 clock.tick(30)  # Framerate
@@ -88,11 +112,13 @@ while keep_going:
         elif event.type == pg.KEYDOWN:
             if event.key == pg.K_ESCAPE:
                 keep_going = False
-            elif event.key == pg.K_SPACE:
-                octopussy.velocity += octopussy.lift
+            elif event.key == pg.K_UP:
+                octopussy.dy = -4
+            elif event.key == pg.K_DOWN:
+                octopussy.dy = 4
         elif event.type == pg.KEYUP:
-            if event.key == pg.K_SPACE:
-                octopussy.velocity = 0
+            if event.key == pg.K_UP or event.key == pg.K_DOWN:
+                octopussy.dy = 0
 
     allSprites.clear(win, background)
     allSprites.update()
