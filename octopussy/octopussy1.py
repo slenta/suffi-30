@@ -35,18 +35,19 @@ class Space(pg.sprite.Sprite):
     
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
+        self.images = []
         self.image = pg.image.load("images/background.png").convert_alpha()
         self.rect = self.image.get_rect()
-        self.dx = 2
-        self.rect.right = win.get_width()
+        self.dx = 20
+        self.rect.left = 0
     
     def update(self):
         self.rect.left -= self.dx
-        if self.rect.right <= 0:
+        if self.rect.left >= 0:
             self.reset()
     
     def reset(self):
-        self.rect.right = win.get_width() # + self.image.get_width() - win.get_width()
+        self.rect.left = 0
 
 ## Ende Klassendefinitionen ----------------------------------------------
 
@@ -73,8 +74,8 @@ win.blit(background, (0, 0))
 
 # Klassen laden
 octopussy = Octopussy()
-space = Space()
-allSprites = pg.sprite.Group(space, octopussy)
+# space = Space()
+allSprites = pg.sprite.Group(octopussy)
 
 clock = pg.time.Clock()
 clock.tick(30)  # Framerate
@@ -93,7 +94,7 @@ while keep_going:
             if event.key == pg.K_SPACE:
                 octopussy.velocity = 0
 
-    # allSprites.clear(win, background)
+    allSprites.clear(win, background)
     allSprites.update()
     allSprites.draw(win)
     
