@@ -18,10 +18,15 @@ class SpaceShip(pg.sprite.Sprite):
         self.rect.centerx += self.dx
         if self.rect.left > win.get_width():
             self.rect.right = 0
-            self.rect.centery = r.randrange(50, win.get_height()-85)
+            self.reset()
         elif self.rect.right < 0:
             self.rect.left = win.get_width()
-            self.rect.centery = r.randrange(50, win.get_height()-85)
+            self.reset()
+    
+    def reset(self):
+        self.rect.centerx = r.randint(1040, 2080)
+        self.rect.centery = r.randint(20, 460)
+        self.dx = r.randint(self.max_speed, self.min_speed)
 
 class RocketBoy(SpaceShip):
     
@@ -29,9 +34,12 @@ class RocketBoy(SpaceShip):
         SpaceShip.__init__(self)
         self.image = pg.image.load("images/rocketboy.png").convert_alpha()
         self.rect = self.image.get_rect()
+        # self.rect.inflate(0, -10)
         self.rect.centerx = self.posx
         self.rect.centery = self.posy
-        self.dx = r.randint(-6, -3)
+        self.max_speed = -6
+        self.min_speed = -3
+        self.dx = r.randint(self.max_speed, self.min_speed)
    
 
 class Planet(SpaceShip):
@@ -40,9 +48,12 @@ class Planet(SpaceShip):
         SpaceShip.__init__(self)
         self.image = pg.image.load("images/planet.png").convert_alpha()
         self.rect = self.image.get_rect()
+        # self.rect.inflate_ip(-60, -60)
         self.rect.centerx = self.posx
         self.rect.centery = self.posy
-        self.dx = r.randint(-2, -1)
+        self.max_speed = -2
+        self.min_speed = -1
+        self.dx = r.randint(self.max_speed, self.min_speed)
    
 
 class Octopussy(pg.sprite.Sprite):
@@ -53,6 +64,7 @@ class Octopussy(pg.sprite.Sprite):
         self.posy = 240
         self.image = pg.image.load("images/octopussy.png").convert_alpha()
         self.rect = self.image.get_rect()
+        # self.rect.inflate(-15, -25)
         self.rect.centerx = self.posx
         self.rect.centery = self.posy
         self.dy = 0
@@ -104,6 +116,7 @@ allSprites = pg.sprite.Group(planets, rocketboys, octopussy)
 clock = pg.time.Clock()
 clock.tick(30)  # Framerate
 
+hearts = 10
 keep_going = True
 while keep_going:
     for event in pg.event.get():
@@ -119,6 +132,22 @@ while keep_going:
         elif event.type == pg.KEYUP:
             if event.key == pg.K_UP or event.key == pg.K_DOWN:
                 octopussy.dy = 0
+    
+    # Kollisionserkennung
+    for rocketboy in rocketboys:
+        if rocketboy.rect.colliderect(octopussy.rect):
+            hearts -= 1
+            print("Kollision! Hearts = ", hearts)
+            if hearts <= 0:
+                keep_going = False
+            rocketboy.reset()
+
+    for planet in planets:
+        if planet.rect.colliderect(octopussy.rect):
+            if hearts < 10:
+                hearts += 1
+            print("Auftanken! Hearts = ", hearts)
+            planet.reset()
 
     allSprites.clear(win, background)
     allSprites.update()
