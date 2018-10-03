@@ -27,6 +27,9 @@ class SpaceShip(pg.sprite.Sprite):
         self.rect.centerx = r.randint(1040, 2080)
         self.rect.centery = r.randint(20, 460)
         self.dx = r.randint(self.max_speed, self.min_speed)
+        
+
+## Die Gegner
 
 class RocketBoy(SpaceShip):
     
@@ -41,6 +44,7 @@ class RocketBoy(SpaceShip):
         self.min_speed = -3
         self.dx = r.randint(self.max_speed, self.min_speed)
    
+# Die Planeten zum Auftanken
 
 class Planet(SpaceShip):
     
@@ -55,6 +59,7 @@ class Planet(SpaceShip):
         self.min_speed = -1
         self.dx = r.randint(self.max_speed, self.min_speed)
    
+# Die Heldin
 
 class Octopussy(pg.sprite.Sprite):
     
@@ -77,6 +82,22 @@ class Octopussy(pg.sprite.Sprite):
         elif self.rect.bottom >= win.get_height():
             self.rect.bottom = win.get_height()
 
+# HUD (Head Up Display)
+
+class HUD(pg.sprite.Sprite):
+    
+    def __init__(self):
+        pg.sprite.Sprite.__init__(self)
+        self.hearts = 5
+        self.score  = 0
+        self.font = pg.font.SysFont("None", 50)
+    
+    def update(self):
+        self.text = "Hearts: %d, Score: %d" %(self.hearts, self.score)
+        self.image = self.font.render(self.text, True, (255, 255, 255))
+        self.rect = self.image.get_rect()
+        self.rect.x = 15
+        self.rect.y = 10
 
 ## Ende Klassendefinitionen ----------------------------------------------
 
@@ -111,12 +132,12 @@ planets = []
 for i in range(2):
     planet = Planet()
     planets.append(planet)
-allSprites = pg.sprite.Group(planets, rocketboys, octopussy)
+scoreboard = HUD()
+allSprites = pg.sprite.Group(planets, rocketboys, octopussy, scoreboard)
 
 clock = pg.time.Clock()
 clock.tick(30)  # Framerate
 
-hearts = 10
 keep_going = True
 while keep_going:
     for event in pg.event.get():
@@ -136,17 +157,18 @@ while keep_going:
     # Kollisionserkennung
     for rocketboy in rocketboys:
         if rocketboy.rect.colliderect(octopussy.rect):
-            hearts -= 1
-            print("Kollision! Hearts = ", hearts)
-            if hearts <= 0:
+            scoreboard.hearts -= 1
+            # print("Kollision! Hearts = ", hearts)
+            if scoreboard.hearts <= 0:
                 keep_going = False
             rocketboy.reset()
 
     for planet in planets:
         if planet.rect.colliderect(octopussy.rect):
-            if hearts < 10:
-                hearts += 1
-            print("Auftanken! Hearts = ", hearts)
+            scoreboard.score += 1
+            if scoreboard.hearts < 5:
+                scoreboard.hearts += 1
+            # print("Auftanken! Hearts = ", hearts)
             planet.reset()
 
     allSprites.clear(win, background)
