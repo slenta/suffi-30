@@ -6,4 +6,4 @@ Irgendwie kann ich von meiner Liebe zu PyGame nicht lassen, auch wenn es bisher 
 
 **Update: 5. Dezember 2018**: Habe zusätzlich und zufällig die Bibliothek [Pygame Zero](https://pygame-zero.readthedocs.io/en/stable/introduction.html) entdeckt, ein Wrapper über PyGame, die speziell das Event-Handling noch einmal deutlich vereinfacht. Auch sie arbeitet auf meinen Macs nur mit `pythonw`statt mit `python` vernünftig. Aber erste Versuche machten Spaß.
 
-![PyGame bunt](pygasmebunt.png)
+![PyGame bunt](pygamebunt.png)
