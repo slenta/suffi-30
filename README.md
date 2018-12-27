@@ -15,4 +15,4 @@ Irgendwie kann ich von meiner Liebe zu PyGame nicht lassen, auch wenn es bisher 
 - [Rudiment](https://www.fontspace.com/kevin-richey/rudiment) ist ein Freeware-Font von *[Kevin Richey](https://www.fontspace.com/xerographer-fonts)*, der sowohl für den privaten wie auch den kommerziellen Gebrauch freigegeben ist.
 - [FunSized](https://www.fontspace.com/xerographer-fonts/funsized) ist ein Headline-Font von *[Xerographer Fonts](https://www.fontspace.com/xerographer-fonts)*, der für den persönlichen Gebrauch freigegeben ist. Die kommerzielle Verwendung verlangt eine Lizenz!
 
-Beide Fonts sind sehr eingeschränkt (keine Umlaute, nicht alle Satzzeichen sind vorhanden).
+**Notiz an mich**: Beide Fonts sind sehr eingeschränkt (keine Umlaute, nicht alle Satzzeichen sind vorhanden). Daher wären statt FunSized eventuell der Font [Barrio](https://fonts.google.com/specimen/Barrio)  und statt [Rudiment](https://fonts.google.com/specimen/Just+Me+Again+Down+Here) (beide Open Font Licence) jeweils eine Alternative. *Still digging!*
