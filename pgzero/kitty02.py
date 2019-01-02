@@ -8,7 +8,7 @@ kitty = Actor("horngirl")
 kitty.topleft = 200, -10
 
 score = 0
-mouse_pos = (-200, -200)
+mouse_pos = (-2000, -2000)
 
 def draw():
     global mouse_pos
