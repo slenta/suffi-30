@@ -16,7 +16,6 @@ def draw():
     kitty.draw()
     screen.draw.circle(mouse_pos, 30, "pink")
     mouse_pos = -200, -200
-    
 
 def update():
     kitty.left += 2
