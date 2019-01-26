@@ -1,7 +1,7 @@
 # coding=utf-8
 
 # Minimales PyGame-Grundgerüst
-# Als Template für alle Python/PyGame-Projekte verwenden
+# Als Template für alle Python/PyGame-Projekte zu verwenden
 
 import pygame as pg
 from pygame.locals import *  # Wenn dies nicht importiert wird,
