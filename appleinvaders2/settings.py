@@ -2,14 +2,20 @@
 import pygame as pg
 
 # Einige nützliche Konstanten
-TITLE = "Motion Demo"
+TITLE = "Apple Invaders Stage 2: Jumping"
 WIDTH = 640
 HEIGHT = 480
 FPS = 60   # Framerate
 
-# Payer Eigenschaften
+# Player Eigenschaften
 PLAYER_ACC = 0.5
 PLAYER_FRICTION = -0.12
+PLAYER_GRAV = 0.4
+
+# Blocks Eigenschaften
+BLOCKS_LIST = [(0, HEIGHT - 64, WIDTH, 32),
+               (WIDTH/2 - 64, HEIGHT - 192, 128, 32)
+               ]
 
 # Nützliche Farbdefinitionen 
 WHITE = (255, 255, 255)

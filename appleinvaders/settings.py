@@ -2,14 +2,16 @@
 import pygame as pg
 
 # Einige nützliche Konstanten
-TITLE = "Motion Demo"
+TITLE = "Apple Invaders Stage 1"
 WIDTH = 640
 HEIGHT = 480
 FPS = 60   # Framerate
 
-# Payer Eigenschaften
+# Player Eigenschaften
 PLAYER_ACC = 0.5
 PLAYER_FRICTION = -0.12
+PLAYER_GRAV = 0.4
+
 
 # Nützliche Farbdefinitionen 
 WHITE = (255, 255, 255)
