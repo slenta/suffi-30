@@ -43,7 +43,7 @@ class World:
     def events(self):
         # Game-Loop Events
         for event in pg.event.get():
-            if event.type == pg.QUIT:
+            if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
                 if self.playing:
                     self.playing = False
                 self.keep_going = False
