@@ -1,9 +1,6 @@
 # Erweitertes Pygame-Grundgerüst
 # Als Template für alle größeren Python/Pygame-Projekte zu verwenden
-
 import pygame as pg
-from pygame.locals import *  # Wenn dies nicht importiert wird,
-                             # kann man UTF-8 (Umlaute) knicken
 from settings import *
 import random
 import os
@@ -46,7 +43,7 @@ class World:
                 self.keep_going = False
   
     def draw(self):
-        # Game-Loop Drawkkk
+        # Game-Loop Draw
         self.screen.fill(BLACK)
         self.all_sprites.draw(self.screen)
         pg.display.flip()
@@ -66,6 +63,3 @@ while w.keep_going:
     w.game_over()
     
 pg.quit()
-    
-    
-

@@ -2,7 +2,7 @@
 import pygame as pg
 
 # Einige nützliche Konstanten
-TITLE = "Hällo Pygäme!"
+TITLE = "🐍 Hällo Pygäme! 🐍"
 WIDTH = 640
 HEIGHT = 480
 FPS = 60   # Framerate
