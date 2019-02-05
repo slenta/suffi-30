@@ -15,7 +15,9 @@ PLAYER_GRAV = 0.4
 
 # Blocks Eigenschaften
 BLOCKS_LIST = [(0, HEIGHT - 64, WIDTH, 32),
-               (WIDTH/2 - 64, HEIGHT - 192, 128, 32)
+               (WIDTH/2 - 64, HEIGHT - 192, 128, 32),
+               (0, HEIGHT - 192, 128, 32),
+               (WIDTH - 128, HEIGHT - 192, 128, 32)
                ]
 
 # Nützliche Farbdefinitionen 

@@ -22,7 +22,7 @@ class Player(pg.sprite.Sprite):
         colls = pg.sprite.spritecollide(self, self.world.blocks, False)
         self.rect.x -= 1
         if colls:
-            self.vel.y = -15
+            self.vel.y = -12
     
     def update(self):
         self.acc = vec(0, PLAYER_GRAV)
