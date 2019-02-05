@@ -2,7 +2,7 @@
 import pygame as pg
 
 # Einige nützliche Konstanten
-TITLE = "Motion Demo"
+TITLE = "Motion Demo 1"
 WIDTH = 640
 HEIGHT = 480
 FPS = 60   # Framerate

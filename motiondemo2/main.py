@@ -1,5 +1,4 @@
-# Natürliche Bewegung mit Beschleunigung und Reibung
-
+# Natürliche Bewegung mit Beschleunigung und Reibung und langsamen Abbremsen vor den Ecken
 import pygame as pg
 from settings import *
 from sprites import Player
