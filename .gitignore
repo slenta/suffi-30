@@ -5,3 +5,4 @@
 *.pyc
 appleinvaders2/__pycache__/settings.cpython-37.pyc
 appleinvaders2/__pycache__/sprites.cpython-37.pyc
+*.pyc
