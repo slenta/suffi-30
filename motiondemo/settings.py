@@ -1,29 +1,26 @@
 # Konstanten und Einstellungen für das Spiel
 import pygame as pg
 
-# Einige nützliche Konstanten
-TITLE = "Motion Demo 1"
-WIDTH = 640
-HEIGHT = 480
-FPS = 60   # Framerate
+class Settings():
+    
+    def __init__(self):
 
-# Payer Eigenschaften
-PLAYER_ACC = 0.5
-PLAYER_FRICTION = -0.12
+        # Einige nützliche Konstanten
+        self.TITLE = "Motion Demo 1"
+        self.WIDTH = 640
+        self.HEIGHT = 480
+        self.FPS = 60   # Framerate
+        
+        # Player Eigenschaften
+        self.PLAYER_ACC = 0.5
+        self.PLAYER_FRICTION = -0.12
 
-# Nützliche Farbdefinitionen 
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-BLUE = (0, 0, 255)
-YELLOW = (255, 255, 0)
-GREY = (160, 160, 160)
-LEIGHTGREY = (100, 100, 100)
-DARKGREY = (51, 51, 51)
-VERY_DARKGREY = (40, 40, 40)
-LIGHTBLUE = (108, 131, 163)
-WATERBLUE = (0, 80, 125)
-AQUA = (0, 153, 204)
-BROWN = (163, 143, 109)
-LIGHTBROWN = (210, 180, 140)
+        # Nützliche Farbdefinitionen 
+        self.WHITE = (255, 255, 255)
+        self.BLACK = (0, 0, 0)
+        self.RED = (255, 0, 0)
+        self.GREEN = (0, 255, 0)
+        self.BLUE = (0, 0, 255)
+        self.YELLOW = (255, 255, 0)
+        self.GREY = (160, 160, 160)
+

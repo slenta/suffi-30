@@ -1,6 +1,6 @@
 # Natürliche Bewegung mit Beschleunigung und Reibung und langsamen Abbremsen vor den Ecken
 import pygame as pg
-from settings import *
+from settings import Settings
 from sprites import Player
 import random
 import os
@@ -11,8 +11,8 @@ class World:
         # Initialisiert die Spielewelt
         pg.init()
         pg.mixer.init()
-        self.screen = pg.display.set_mode((WIDTH, HEIGHT))
-        pg.display.set_caption(TITLE)
+        self.screen = pg.display.set_mode((s.WIDTH, s.HEIGHT))
+        pg.display.set_caption(s.TITLE)
         self.clock = pg.time.Clock()
         self.keep_going = True
     
@@ -27,7 +27,7 @@ class World:
         # Game Loop
         self.playing = True
         while self.playing:
-            self.clock.tick(FPS)
+            self.clock.tick(s.FPS)
             self.events()
             self.update()
             self.draw()
@@ -46,7 +46,7 @@ class World:
   
     def draw(self):
         # Game-Loop Draw 
-        self.screen.fill(BLACK)
+        self.screen.fill(s.BLACK)
         self.all_sprites.draw(self.screen)
         pg.display.flip()
 
@@ -57,7 +57,7 @@ class World:
     def game_over(self):
         pass
         
-
+s = Settings()
 w = World()
 w.splash_screen()
 while w.keep_going:
