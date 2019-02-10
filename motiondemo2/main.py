@@ -1,4 +1,4 @@
-# Natürliche Bewegung mit Beschleunigung und Reibung und langsamen Abbremsen vor den Ecken
+# Natürliche Bewegung mit Beschleunigung und Reibung
 import pygame as pg
 from settings import Settings
 from sprites import Player
@@ -35,7 +35,7 @@ class World:
     def update(self):
         # Game-Loop Update
         self.all_sprites.update()
-    
+
     def events(self):
         # Game-Loop Events
         for event in pg.event.get():
@@ -43,7 +43,7 @@ class World:
                 if self.playing:
                     self.playing = False
                 self.keep_going = False
-  
+
     def draw(self):
         # Game-Loop Draw 
         self.screen.fill(s.BLACK)
@@ -53,10 +53,10 @@ class World:
     def splash_screen(self):
         # Start-Screen
         pass
-        
+
     def game_over(self):
         pass
-        
+
 s = Settings()
 w = World()
 w.splash_screen()

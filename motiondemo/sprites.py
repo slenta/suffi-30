@@ -28,7 +28,7 @@ class Player(pg.sprite.Sprite):
         # Bewegungsgleichungen
         self.acc.x += self.vel.x*s.PLAYER_FRICTION
         self.vel += self.acc
-        self.pos += self.vel + 0.5*self.acc
+        self.pos += self.vel # + 0.5*self.acc ???
     
         # Randbehandlung
         if self.pos.x > s.WIDTH:

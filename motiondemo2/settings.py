@@ -6,7 +6,7 @@ class Settings():
     def __init__(self):
 
         # Einige nützliche Konstanten
-        self.TITLE = "Motion Demo 1"
+        self.TITLE = "Motion Demo 🚀"
         self.WIDTH = 640
         self.HEIGHT = 480
         self.FPS = 60   # Framerate

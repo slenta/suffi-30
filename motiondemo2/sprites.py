@@ -25,10 +25,10 @@ class Player(pg.sprite.Sprite):
             self.acc.x = -s.PLAYER_ACC
         if keys[pg.K_RIGHT]:
             self.acc.x = s.PLAYER_ACC
-        # Bewegungsgleichungen
+        # Bewegungsgleichungen nach Newton
         self.acc.x += self.vel.x*s.PLAYER_FRICTION
         self.vel += self.acc
-        self.pos += self.vel + 0.5*self.acc
+        self.pos += self.vel
         
         # Randbehandlung
         if self.pos.x >= s.WIDTH - s.TILESIZE/2:
@@ -37,4 +37,3 @@ class Player(pg.sprite.Sprite):
             self.pos.x = s.TILESIZE/2
 
         self.rect.center = self.pos
-        
