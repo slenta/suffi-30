@@ -3,7 +3,7 @@
 import pygame as pg
 from pygame.locals import *  # Wenn dies nicht importiert wird,
                              # kann man UTF-8 (Umlaute) knicken
-from settings import *
+from settings import Settings
 from sprites import Player, Block
 import random
 import os
@@ -14,8 +14,8 @@ class World:
         # Initialisiert die Spielewelt
         pg.init()
         pg.mixer.init()
-        self.screen = pg.display.set_mode((WIDTH, HEIGHT))
-        pg.display.set_caption(TITLE)
+        self.screen = pg.display.set_mode((s.WIDTH, s.HEIGHT))
+        pg.display.set_caption(s.TITLE)
         self.clock = pg.time.Clock()
         self.keep_going = True
     
@@ -25,7 +25,7 @@ class World:
         self.blocks = pg.sprite.Group()
         self.player = Player(w)
         self.all_sprites.add(self.player)
-        for block in BLOCKS_LIST:
+        for block in s.BLOCKS_LIST:
             b = Block(*block)
             self.all_sprites.add(b)
             self.blocks.add(b)
@@ -35,7 +35,7 @@ class World:
         # Game Loop
         self.playing = True
         while self.playing:
-            self.clock.tick(FPS)
+            self.clock.tick(s.FPS)
             self.events()
             self.update()
             self.draw()
@@ -63,7 +63,7 @@ class World:
   
     def draw(self):
         # Game-Loop Drawkkk
-        self.screen.fill(BLACK)
+        self.screen.fill(s.BLACK)
         self.all_sprites.draw(self.screen)
         pg.display.flip()
 
@@ -74,7 +74,7 @@ class World:
     def game_over(self):
         pass
         
-
+s = Settings()
 w = World()
 w.splash_screen()
 while w.keep_going:
@@ -82,6 +82,3 @@ while w.keep_going:
     w.game_over()
     
 pg.quit()
-    
-    
-
