@@ -6,7 +6,7 @@ class Settings():
     def __init__(self):
 
         # Einige nützliche Konstanten
-        self.TITLE = "🍎 Apple Invaders 🍏 Stage 2: Jumping"
+        self.TITLE = "🍎 Apple Invaders 🍏 Stage 1: Jumping"
         self.WIDTH = 640
         self.HEIGHT = 480
         self.FPS = 60   # Framerate
@@ -16,6 +16,7 @@ class Settings():
         self.PLAYER_ACC = 0.5
         self.PLAYER_FRICTION = -0.12
         self.PLAYER_GRAV = 0.4
+        self.PLAYER_JUMP = -12
 
         # Block Eigenschaften
         self.BLOCKS_LIST = [(0, self.HEIGHT - 64, self.WIDTH, 32),

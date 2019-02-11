@@ -1,8 +1,6 @@
 # Apple Invaders Stage 2: Jumping
 
 import pygame as pg
-from pygame.locals import *  # Wenn dies nicht importiert wird,
-                             # kann man UTF-8 (Umlaute) knicken
 from settings import Settings
 from sprites import Player, Block
 import random
@@ -58,11 +56,11 @@ class World:
                     self.playing = False
                 self.keep_going = False
             if event.type == pg.KEYDOWN:
-                if event.key == pg.K_SPACE:
+                if (event.key == pg.K_a) or (event.key == pg.K_SPACE):
                     self.player.jump()
   
     def draw(self):
-        # Game-Loop Drawkkk
+        # Game-Loop Draw
         self.screen.fill(s.BLACK)
         self.all_sprites.draw(self.screen)
         pg.display.flip()
