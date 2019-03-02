@@ -19,8 +19,8 @@ MAP_SIZE = MAP_WIDTH*MAP_HEIGHT
 
 GAME_MAP = [["Raum 0 – wo unnützes Zeug aufbewahrt wird", 0, 0, False, False]]
 
-outdoor = range(1, 26) # Sektor 1 bis Sektor 25
-for planetsectors in outdoor:
+outdoor_rooms = range(1, 26) # Sektor 1 bis Sektor 25
+for planetsectors in outdoor_rooms:
     GAME_MAP.append( ["Die staubige Planetenpberfläche", 13, 13, True, True])
 
 GAME_MAP += [
