@@ -30,5 +30,4 @@ def draw():
                 (top_left_x + (x*TILE_SIZE),
                  top_left_y + (y*TILE_SIZE) - image_to_draw.get_height()))
 
-
 pgzrun.go()
