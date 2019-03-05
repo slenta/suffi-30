@@ -2,7 +2,7 @@ import pgzrun
 import time, random, math
 
 # Konstanten
-TITLE = "Spacewalk 6 (The Player arrives)"
+TITLE = "Spacewalk 7 (Cleaning Up)"
 WIDTH = 800
 HEIGHT = 800
 TILE_SIZE = 30
@@ -15,6 +15,14 @@ FRIEND2_NAME = "Joey"
 LANDER_SECTOR = random.randint(1, 24)
 LANDER_X = random.randint(2, 11)
 LANDER_Y = random.randint(2, 11)
+
+BLACK = (0, 0, 0)
+BLUE = (0, 155, 255)
+YELLOW = (255, 255, 0)
+WHITE = (255, 255, 255)
+GREEN = (0, 255, 0)
+RED = (128, 0, 0)
+
 
 ## Variablen #####################################################################
 
@@ -49,7 +57,30 @@ player_frame = 0
 player_image = PLAYER[player_direction][player_frame]
 player_offset_x, player_offset_y = 0, 0
 
+PLAYER_SHADOW = {
+    "left": [images.spacesuit_left_shadow, images.spacesuit_left_1_shadow,
+             images.spacesuit_left_2_shadow, images.spacesuit_left_3_shadow,
+             images.spacesuit_left_4_shadow],
+    "right": [images.spacesuit_right_shadow, images.spacesuit_right_1_shadow,
+              images.spacesuit_right_2_shadow, images.spacesuit_right_3_shadow,
+              images.spacesuit_right_4_shadow],
+    "up": [images.spacesuit_back_shadow, images.spacesuit_back_1_shadow,
+           images.spacesuit_back_2_shadow, images.spacesuit_back_3_shadow,
+           images.spacesuit_back_4_shadow],
+    "down": [images.spacesuit_front_shadow, images.spacesuit_front_1_shadow,
+             images.spacesuit_front_2_shadow, images.spacesuit_front_3_shadow,
+             images.spacesuit_front_4_shadow]
+}
+
+player_image_shadow = PLAYER_SHADOW["down"][0]
+
 ## Ende Player ###################################################################
+
+PILLARS = [images.pillar, images.pillar_95, images.pillar_80,
+           images.pillar_60, images.pillar_50]
+        
+wall_transparency_frame = 0
+
 
 ## Game Map ######################################################################
 
@@ -62,7 +93,7 @@ GAME_MAP = [["Raum 0 – wo unnützes Zeug aufbewahrt wird", 0, 0, False, False]
 
 outdoor_rooms = range(1, 26) # Sektor 1 bis Sektor 25
 for planetsectors in outdoor_rooms:
-    GAME_MAP.append( ["Die staubige Planetenpberfläche", 13, 13, True, True])
+    GAME_MAP.append( ["Die staubige Planetenoberfläche", 13, 13, True, True])
 
 GAME_MAP += [
         # ["Raum-Name", height, width, Top Exit? Right Exit]
@@ -358,32 +389,20 @@ def generate_map():
             image_width_in_tiles = image_width//TILE_SIZE
             for tile_number in range(1, image_width_in_tiles):
                 room_map[scenery_y][scenery_x + tile_number] = 255
+    
+    center_y = HEIGHT//2
+    center_x = WIDTH//2
+    room_pixel_width = room_width*TILE_SIZE
+    room_pixel_height = room_height*TILE_SIZE
+    top_left_x = center_x - 0.5*room_pixel_width
+    top_left_y = (center_y - 0.5*room_pixel_height) + 110
 
 ## Ende Karte erstellen ###########################################################
 
-## Explorer #######################################################################
-
-def draw():
-    global room_height, room_width, room_map
-    generate_map()
-    screen.clear()
-    
-    
-    for y in range(room_height):
-        for x in range(room_width):
-            if room_map[y][x] != 255:
-                image_to_draw = objects[room_map[y][x]][0]
-                screen.blit(image_to_draw, (top_left_x + (x*TILE_SIZE), 
-                                            top_left_y + (y*TILE_SIZE) - image_to_draw.get_height()))
-        if player_y == y:
-            image_to_draw = PLAYER[player_direction][player_frame]
-            screen.blit(image_to_draw, (top_left_x + (player_x*TILE_SIZE) + (player_offset_x*TILE_SIZE), 
-                                        top_left_y + (player_y*TILE_SIZE) + (player_offset_y*TILE_SIZE)
-                                        - image_to_draw.get_height()))
-
-## Ende Explorer ##################################################################
-
 ## Game Loop ######################################################################
+
+def start_room():
+    show_text("Du bist hier (" + str(current_room) + "): " + room_name, 0)
 
 def game_loop():
     global player_x, player_y, current_room
@@ -443,6 +462,7 @@ def game_loop():
         player_x = 0   # enter at left
         player_y = room_height//2   # enter at door
         player_frame = 0
+        start_room()
         return
     
     #through door on left
@@ -452,6 +472,7 @@ def game_loop():
         player_x = room_width - 1   # enter at right
         player_y = room_height//2   # enter at door
         player_frame = 0
+        start_room()
         return
     
     # through door at bottom
@@ -461,6 +482,7 @@ def game_loop():
         player_y = 0   # enter at to
         player_x = room_width//2   # enter at door
         player_frame = 0
+        start_room()
         return
     
     # through door at top
@@ -470,6 +492,7 @@ def game_loop():
         player_y = room_height - 1   # enter at left
         player_x = room_width//2     # enter at door
         player_frame = 0
+        start_room()
         return
     
 
@@ -491,6 +514,102 @@ def game_loop():
 
 ## Ende Game Loop #################################################################
 
+## Display ########################################################################
+
+def draw_image(image, y, x):
+    screen.blit(image, (top_left_x + (x*TILE_SIZE), top_left_y + (y*TILE_SIZE) - image.get_height()))
+
+def draw_shadow(image, y, x):
+    screen.blit(image, (top_left_x + (x*TILE_SIZE), top_left_y + (y*TILE_SIZE)))
+
+def draw_player():
+    player_image = PLAYER[player_direction][player_frame]
+    draw_image(player_image, player_y + player_offset_y, player_x + player_offset_x)
+    player_image_shadow = PLAYER_SHADOW[player_direction][player_frame]
+    draw_shadow(player_image_shadow, player_y + player_offset_y, player_x + player_offset_x)
+
+def draw():
+    if game_over:
+        return
+    
+    # Draw background image
+    box = Rect((0, 150), (800, 600))
+    screen.draw.filled_rect(box, RED)
+    box = Rect((0, 0), (800, top_left_y + (room_height - 1)*TILE_SIZE))
+    screen.surface.set_clip(box)
+    floor_type = get_floor_type()
+    
+    # Lay down floor tiles, then items on floor
+    for y in range(room_height):
+        for x in range(room_width):
+            draw_image(objects[floor_type][0], y, x)
+            # Next line enables shadows to fall on top of objects on floor
+            if room_map[y][x] in items_player_may_stand_on:
+                draw_image(objects[room_map[y][x]][0], y, x)
+                
+    # Sonderbehandlung pressure pad (Raum 26)
+    if current_room == 26:
+        draw_image(objects[39][0], 8, 2)
+        image_on_pad = room_map[8][2]
+        if image_on_pad > 0:
+            draw_image(objects[image_on_pad][0], 8, 2)
+    
+    for y in range(room_height):
+        for x in range(room_width):
+            item_here = room_map[y][x]
+            # Player cannot walk on 255
+            if item_here not in items_player_may_stand_on + [255]:
+                image = objects[item_here][0]
+                
+                if ((current_room in outdoor_rooms and y == room_height - 1 and room_map[y][x] == 1)
+                or (current_room not in outdoor_rooms and y == room_height - 1 and room_map[y][x] == 1
+                and x > 0 and x < room_width - 1)):
+                    image = PILLARS[wall_transparency_frame]
+                    
+                draw_image(image, y, x)
+                
+                # If object has a shadow
+                if objects[item_here][1] is not None:
+                    shadow_image = objects[item_here][1]
+                    # if shadow might need horizontal tiling
+                    if shadow_image in [images.half_shadow, images.full_shadow]:
+                        shadow_width = image.get_width()//TILE_SIZE
+                        # Use shadow across width of object
+                        for z in range(0, shadow_width):
+                            draw_shadow(shadow_image, y, x + z)
+                    else:
+                        draw_shadow(shadow_image, y, x)
+        if (player_y == y):
+            draw_player()
+            
+    screen.surface.set_clip(None)
+
+def adjust_wall_transparency():
+    global wall_transparency_frame
+    
+    if (player_y == room_height - 2
+        and room_map[room_height - 1][player_x] == 1
+        and wall_transparency_frame < 4):
+        wall_transparency_frame += 1   # Fade wall out
+        
+    if ((player_y < room_height - 2 or room_map[room_height - 1][player_x] != 1)
+        and wall_transparency_frame > 0):
+        wall_transparency_frame -= 1   # Fade wall in
+
+def show_text(text_to_show, line_number):
+    if game_over:
+        return
+    text_lines = [15, 50]
+    box = Rect((0, text_lines[line_number]), (800, 35))
+    screen.draw.filled_rect(box, BLACK)
+    screen.draw.text(text_to_show, (20, text_lines[line_number]), color = GREEN)
+
+## Ende Display ###################################################################
+
+## Start ##########################################################################
+
 clock.schedule_interval(game_loop, 0.03)
+generate_map()
+clock.schedule_interval(adjust_wall_transparency, 0.05)
 
 pgzrun.go()
