@@ -1,7 +1,7 @@
 # Escape - A Python Adventure 
 # by Sean McManus / www.sean.co.uk
 # Typed in by PUT YOUR NAME HERE
-
+import pgzrun
 import time, random, math
 
 ###############
@@ -183,3 +183,4 @@ def movement():
 
 clock.schedule_interval(movement, 0.08)
 
+pgzrun.go()

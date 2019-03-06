@@ -10,6 +10,11 @@ PLAYER_NAME = "Jörg"
 FRIEND1_NAME = "Zebu"
 FRIEND2_NAME = "Joey"
 
+# Variablen
+top_left_x = 100
+top_left_y = 150
+current_room = 31
+
 DEMO_OBJECTS = [images.floor, images.pillar, images.soil]
 
 # Karten-Daten
@@ -58,10 +63,6 @@ assert len(GAME_MAP) - 1 == MAP_SIZE, "Kartengröße GAME_MAP stimmen nicht übe
 
 ## Ende Game Map #################################################################
 
-# Variablen
-top_left_x = 100
-top_left_y = 150
-current_room = 31
 
 ## Karte erstellen ###############################################################
 
@@ -120,8 +121,8 @@ def generate_map():
     # If exit at top of this room
     if room_data[3]:
         room_map[0][middle_column] = floor_type
-        room_map[middle_row + 1][0] = floor_type
-        room_map[middle_row - 1][0] = floor_type
+        room_map[0][middle_column + 1] = floor_type
+        room_map[0][middle_column - 1] = floor_type
     
     # If room is not on bottom row:
     if current_room <= MAP_SIZE - MAP_WIDTH:

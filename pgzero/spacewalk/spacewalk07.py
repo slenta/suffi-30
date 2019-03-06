@@ -366,8 +366,8 @@ def generate_map():
     # If exit at top of this room
     if room_data[3]:
         room_map[0][middle_column] = floor_type
-        room_map[middle_row + 1][0] = floor_type
-        room_map[middle_row - 1][0] = floor_type
+        room_map[0][middle_column + 1] = floor_type
+        room_map[0][middle_column - 1] = floor_type
     
     # If room is not on bottom row:
     if current_room <= MAP_SIZE - MAP_WIDTH:
