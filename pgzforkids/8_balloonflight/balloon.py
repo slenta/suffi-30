@@ -7,8 +7,11 @@ WIDTH = 800
 HEIGHT = 600
 
 # Hier wird der Pfad zum Verzeichnis des ».py«-Files gesetzt
-file_path = os.path.dirname(os.path.abspath(__file__))
-os.chdir(file_path)
+# file_path = os.path.dirname(os.path.abspath(__file__))
+# os.chdir(file_path)
+cwd = os.getcwd()
+file_path = os.path.join(cwd, "pgzforkids", "8_balloonflight")
+# print(file_path)
 
 
 balloon = Actor("balloon")
@@ -26,13 +29,33 @@ game_over = False
 score = 0
 frames = 0
 
-scores = []
+# scores = []
 
 def update_high_scores():
-    pass
+    global score, scores
+    filename = os.path.join(file_path, "highscores.txt")
+    scores = []
+    with open(filename, "r") as file:
+        line = file.readline()
+        high_scores = line.split()
+        for high_score in high_scores:
+            if (score > int(high_score)):
+                scores.append(str(score) + " ")
+                score = int(high_score)
+            else:
+                scores.append(str(high_score) + " ")
+    with open(filename, "w") as file:
+        for high_score in scores:
+            file.write(high_score)
 
 def display_high_scores():
-    pass
+    screen.draw.text("HIGHSCORES", (350, 150), color="black")
+    y = 175
+    position = 1
+    for high_score in scores:
+        screen.draw.text(str(position) + ":  " + high_score, (350, y), color="black")
+        y += 25
+        position += 1
 
 def draw():
     screen.blit("background", (0, 0))
