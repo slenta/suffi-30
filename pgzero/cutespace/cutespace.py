@@ -16,23 +16,25 @@ for rocketboy in rocketboys:
 
 planets = []
 for i in range(2):
-    planets.append(Actor("planet", center = (randint(700, 1400), randint(40, 440))))
+    planets.append(Actor("planet"))
+planets[0].pos = (800, 125)
+planets[1].pos = (1025, 220)
 
 
 score = 0
 game_over = False
 
 def reset(actor):
-    actor.x = randint(700, 1400)
+    actor.x = randint(700, 2100)
     actor.y = randint(40, 440)
 
 def draw():
     screen.fill((0, 80, 125))
     for planet in planets:
         planet.draw()
+    octopussy.draw()
     for rocketboy in rocketboys:
         rocketboy.draw()
-    octopussy.draw()
 
 def update():
     global game_over, score
