@@ -7,12 +7,8 @@ WIDTH = 800
 HEIGHT = 600
 
 # Hier wird der Pfad zum Verzeichnis des ».py«-Files gesetzt
-# file_path = os.path.dirname(os.path.abspath(__file__))
-# os.chdir(file_path)
 cwd = os.getcwd()
 file_path = os.path.join(cwd, "pgzforkids", "8_balloonflight")
-# print(file_path)
-
 
 balloon = Actor("balloon")
 balloon.pos = 400, 300
