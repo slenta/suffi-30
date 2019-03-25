@@ -20,7 +20,6 @@ for i in range(2):
 planets[0].pos = (800, 125)
 planets[1].pos = (1025, 220)
 
-
 score = 0
 game_over = False
 up = False
@@ -34,9 +33,9 @@ def draw():
         screen.fill((0, 80, 125))
         for planet in planets:
             planet.draw()
-            octopussy.draw()
-            for rocketboy in rocketboys:
-                rocketboy.draw()
+        octopussy.draw()
+        for rocketboy in rocketboys:
+            rocketboy.draw()
         screen.draw.text("Punkte: " + str(score), (10, 10), color = "white")
     else:
         screen.fill((0, 80, 125))
