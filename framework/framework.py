@@ -16,7 +16,7 @@ FPS = 30   # Framerate
 # Pygame initialisieren und das Fenster und die Hintergrundfarbe festlegen
 pg.init()
 win = pg.display.set_mode((WIDTH, HEIGHT))
-pg.display.set_caption("Hallo Wörld!")
+pg.display.set_caption("Hällo Wörld!")
 background = pg.Surface(win.get_size())
 background = background.convert()
 background.fill((0, 80, 125))
@@ -36,7 +36,7 @@ while keep_going:
     clock.tick(FPS)
     # Eingabe verarbeiten (Input Events)
     for event in pg.event.get():
-        if event.type == pg.QUIT:
+        if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
             keep_going = False
 
     # Update
