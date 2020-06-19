@@ -4,19 +4,17 @@
 # Als Template für alle Python/PyGame-Projekte zu verwenden
 
 import pygame as pg
-from pygame.locals import *  # Wenn dies nicht importiert wird,
-                             # kann man UTF-8 (Umlaute) knicken
 import os
 
 # Einige nützliche Konstanten
 WIDTH = 640
 HEIGHT = 480
-FPS = 30   # Framerate
+FPS = 60   # Framerate
 
 # Pygame initialisieren und das Fenster und die Hintergrundfarbe festlegen
 pg.init()
 win = pg.display.set_mode((WIDTH, HEIGHT))
-pg.display.set_caption("Hällo Wörld!")
+pg.display.set_caption("🐍 Hällo Wörld! 🐍")
 background = pg.Surface(win.get_size())
 background = background.convert()
 background.fill((0, 80, 125))

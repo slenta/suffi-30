@@ -1,10 +1,15 @@
 # PyGame-Projekte
 
-Irgendwie kann ich von meiner Liebe zu PyGame nicht lassen, auch wenn es bisher nur unter Python 2.7.x einigermaßen vernünftig läuft. Hier will ich einfach alles sammeln, was ich mit dieser Bibliothek angestellt habe.
+Das ist ein Repositorium für meine Experimente mit [Pygame](http://cognitiones.kantel-chaos-team.de/multimedia/spieleprogrammierung/pygame.html).
 
-**Update: 29. September 2018**: Habe die Entdeckung gemacht, daß PyGame auch unter Pythton3 korrekt arbeitet, wenn man es mit `pythonw` statt mit `python` startet. Warum weiß ich nicht, aber darüber habe ich Lust auf neue Experimente mit der Bibliothek bekommen. *Still digging!*
+## Anmerkungen
 
-**Update: 5. Dezember 2018**: Habe zusätzlich und zufällig die Bibliothek [Pygame Zero](https://pygame-zero.readthedocs.io/en/stable/introduction.html) entdeckt, ein Wrapper über PyGame, die speziell das Event-Handling noch einmal deutlich vereinfacht. Auch sie arbeitet auf meinen Macs nur mit `pythonw`statt mit `python` vernünftig. Aber erste Versuche machten Spaß.
+1. Unter Anaconda-Python auf dem Mac arbeitet Pygame nur mit `pythonw`.
+2. Ebenfalls auf dem Mac läuft Pygame stabiler mit Python 3.7.7 oder größer
+
+## Pygame Zero
+
+Pygame Zero hat ein [eigenes Repositorium](https://github.com/kantel/pygamezero) bekommen.
 
 ![PyGame bunt](pygamebunt.png)
 
