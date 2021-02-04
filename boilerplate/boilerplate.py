@@ -8,7 +8,7 @@ os.chdir(file_path)
 
 # Konstanten deklarieren
 WIDTH, HEIGHT = 500, 500
-TITLE = "🐍 Pygame Boilerplate 🐍"
+TITLE = "🐍 Pygäme Boilerpläte 🐍"
 FPS = 60
 # BG = (234, 218, 184) # Packpapier-Farbe
 BG = (49, 197, 244) # Coding Train Blue
