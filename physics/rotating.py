@@ -1,4 +1,4 @@
-# In ach Richtungen rotierendes Raumschiff
+# In acht Richtungen rotierendes Raumschiff
 
 import pygame
 from pygame.locals import *
@@ -12,17 +12,15 @@ os.chdir(file_path)
 WIDTH, HEIGHT = 640, 480
 TITLE = "Rotating Space Ship in 8 Directions"
 FPS = 60
-# BG = (234, 218, 184) # Packpapier-Farbe
-BG = (49, 197, 244)  # Coding Train Blue
-# BG = (0, 80, 125)      # Dunkelblau
+BG = (52, 152, 219)      # Dunkelblau
 
 class Ship(pygame.sprite.Sprite):
     
     def __init__(self, screen):
         pygame.sprite.Sprite.__init__(self)
         self.screen = screen
-        self.imageMaster = pygame.image.load("images/ship.png").convert()
-        self.imageMaster = pygame.transform.scale(self.imageMaster, (48, 60))
+        self.imageMaster = pygame.image.load("images/playership.gif").convert()
+        self.imageMaster = pygame.transform.scale(self.imageMaster, (50, 38))
         
         self.image = self.imageMaster
         self.rect = self.image.get_rect()
@@ -49,14 +47,15 @@ class Ship(pygame.sprite.Sprite):
         self.rect.centery = self.y
         
     def turnLeft(self):
-        self.dir += 45
-        if self.dir >= 360:
-            self.dir = 45
+        self.dir -= 45
+        if self.dir < 0:
+            self.dir = 315
     
     def turnRight(self):
-        self.dir -= 45
-        if self.dir <= 0:
-            self.dir = 315
+        self.dir += 45
+        if self.dir == 360:
+            self.dir = 0
+        
     
     def speedUp(self):
         self.speed += 1
@@ -95,6 +94,7 @@ class Ship(pygame.sprite.Sprite):
             self.dy = 0.7
         else:
             print("Es ist was faul im Staate Dänemark: " + str(self.dir))
+        
         self.dx *= self.speed
         self.dy *= self.speed
     
