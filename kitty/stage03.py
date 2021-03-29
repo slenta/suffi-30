@@ -3,7 +3,7 @@
 import pygame as pg
 from pygame.locals import *  # Wenn dies nicht importiert wird,
                              # kann man UTF-8 (Umlaute) knicken
-import os
+import os, sys
 import random
 pg.init()
 
@@ -68,4 +68,5 @@ while keep_going:
     allSprites.draw(win)
     
     pg.display.flip()
-            
+
+sys.exit()
