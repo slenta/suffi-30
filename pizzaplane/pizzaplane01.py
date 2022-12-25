@@ -112,6 +112,9 @@ while keep_going:
                 plane.dir = "UP"
             elif event.key == pygame.K_DOWN:
                 plane.dir = "DOWN"
+                
+        if event.type == pygame.KEYUP:
+            plane.dir = "NONE"
 
     backs.update()
     backs.draw(screen)
