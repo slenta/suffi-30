@@ -142,7 +142,6 @@ class Enemy(pygame.sprite.Sprite):
             self.reset()
             plane.score -= 2
         
-
 class HUD():
     
     def __init__(self):
@@ -157,10 +156,7 @@ class HUD():
         self.score_rect = self.score.get_rect()
         self.score_rect.x = self.score_x
         self.score_rect.y = self.score_y
-    
-        
-        
-        
+           
 # Pygame initialisieren und das Fenster und die Hintergrundfarbe festlegen
 clock = pygame.time.Clock()
 pygame.init()
