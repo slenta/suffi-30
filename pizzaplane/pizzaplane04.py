@@ -11,7 +11,7 @@ FONTPATH = os.path.join(os.getcwd(), "fonts")
 # Konstanten deklarieren
 WIDTH, HEIGHT = 720, 520
 BG_WIDTH = 1664
-TITLE = "Pizza Plane Stage 3: Punkte, Punkte!"
+TITLE = "Pizza Plane Stage 4: Der grüne Flieger"
 FPS = 60
 ANIM = 4 # Animation cycle
 UPDOWN = 3
@@ -28,8 +28,7 @@ class Background(pygame.sprite.Sprite):
         self.x = _x
         self.y = _y
         self.start_x = _x
-        self.image = pygame.image.load(os.path.join(DATAPATH,
-                     "desert.png"))
+        self.image = pygame.image.load(os.path.join(DATAPATH, "desert.png"))
         self.rect = self.image.get_rect()
         
     def update(self):
@@ -43,8 +42,7 @@ class Missile(pygame.sprite.Sprite):
     
     def __init__(self, _x, _y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(os.path.join(DATAPATH,
-                     "missile.png"))
+        self.image = pygame.image.load(os.path.join(DATAPATH, "missile.png"))
         self.rect = self.image.get_rect()
         self.rect.x = _x
         self.rect.y = _y
@@ -68,8 +66,7 @@ class Explosion(pygame.sprite.Sprite):
     
     def __init__(self, _x, _y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(os.path.join(DATAPATH,
-                     "explosion.png"))
+        self.image = pygame.image.load(os.path.join(DATAPATH, "explosion.png"))
         self.rect = self.image.get_rect()
         self.rect.x = _x
         self.rect.y = _y
@@ -86,9 +83,8 @@ class  Plane(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         # Load Images
         self.images = []
-        for i in range (3):
-            img = pygame.image.load(os.path.join(DATAPATH,
-                  "planered_" + str(i) + ".png"))
+        for i in range (2):
+            img = pygame.image.load(os.path.join(DATAPATH, f"planegreen_{i}.png"))
             self.images.append(img)
         self.image = self.images[0]
         self.rect = self.image.get_rect()
@@ -99,6 +95,7 @@ class  Plane(pygame.sprite.Sprite):
         self.dir = "NONE"
         self.firecount = 0
         self.score = 0
+        self.lives = 5
     
     def update(self):
         if self.dir == "NONE":
@@ -110,11 +107,22 @@ class  Plane(pygame.sprite.Sprite):
             if self.y < HEIGHT - 20:
                 self.y += UPDOWN
         self.rect.center = (self.x, self.y)
+        for enemy in enemies:
+            if pygame.sprite.collide_rect(self, enemy):
+                enemy.reset()
+                self.lives -= 1
+                if self.lives < 0:
+                    print("Verloren!")
+                    pygame.quit()
+                    try:
+                        sys.exit()
+                    finally:
+                        keep_going = False
         self.ani += 1
         if self.ani >= ANIM:
             self.ani = 0
             self.frame += 1
-            if self.frame > 2:
+            if self.frame > 1:
                 self.frame = 0
         self.firecount -= 1
         self.image = self.images[self.frame]
@@ -129,8 +137,7 @@ class Enemy(pygame.sprite.Sprite):
     
     def __init__(self, _x, _y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(os.path.join(DATAPATH,
-                     "pizza.png"))
+        self.image = pygame.image.load(os.path.join(DATAPATH, "pizza.png"))
         self.rect = self.image.get_rect()
         self.rect.x = _x
         self.rect.y = _y
@@ -146,29 +153,45 @@ class Enemy(pygame.sprite.Sprite):
         if self.rect.x < -30:
             self.reset()
             plane.score -= 2
-        
+            if plane.score < 0:
+                print("Zu viele Pizzas entkommen lassen!")
+                pygame.quit()
+                try:
+                    sys.exit()
+                finally:
+                    keep_going = False
+
 class HUD():
     
     def __init__(self):
         self.score_x = 30
         self.score_y = 15
-        self.score_font = pygame.font.Font(os.path.join(FONTPATH,
-                          "RubikGemstones-Regular.ttf"), 25)
+        self.heart_x = 250
+        self.heart_y = 20
+        # Load Fonts
+        self.score_font = pygame.font.Font(os.path.join(FONTPATH, "RubikGemstones-Regular.ttf"), 25)
         self.score = ""
+        # Load Hearts
+        self.score_live = "Lifes :" 
+        self.heart_img = pygame.image.load(os.path.join(DATAPATH, "heart.png"))
+        self.heart_rect = self.heart_img.get_rect()
+        
         
     def update(self, points):
-        self.score = self.score_font.render(f"Score: {points}",
-                     True, (0, 0, 0))
+        self.score = self.score_font.render(f"Score: {points}", True, (0, 0, 0))
         self.score_rect = self.score.get_rect()
         self.score_rect.x = self.score_x
         self.score_rect.y = self.score_y
+        self.score_lives = self.score_font.render("Lives: ", True, (0, 0, 0))
+        self.score_lives_rect = self.score_lives.get_rect()
+        self.score_lives_rect.x = self.heart_x
+        self.score_lives_rect.y = self.score_y
+        
            
-# Pygame initialisieren und das Fenster
-# und die Hintergrundfarbe festlegen
+# Pygame initialisieren und das Fenster und die Hintergrundfarbe festlegen
 clock = pygame.time.Clock()
 pygame.init()
-# Ein übler Hack, um die Position des Fensters
-# auf meinen zweiten Bildschirm zu setzen,
+# Ein übler Hack, um die Position des Fensters auf meinen zweiten Bildschirm zu setzen,
 # aber er funktioniert …
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (1320, 60)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -194,7 +217,7 @@ for _ in range(NO_ENEMIES):
     all_sprites.add(pizza)
     enemies.add(pizza)
 
-# Der rote Flieger
+# Der Flieger
 plane = Plane()
 all_sprites.add(plane)
 
@@ -204,8 +227,7 @@ while keep_going:
     clock.tick(FPS)
     for event in pygame.event.get():
         if ((event.type == pygame.QUIT)
-            or (event.type == pygame.KEYDOWN
-                and event.key == pygame.K_ESCAPE)):
+            or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE)):
             print("Bye, Bye, Baby!")
             pygame.quit()
             try:
@@ -230,5 +252,9 @@ while keep_going:
     all_sprites.draw(screen)
     hud.update(plane.score)
     screen.blit(hud.score, hud.score_rect)
+    screen.blit(hud.score_lives, (hud.score_lives_rect.x, hud.score_lives_rect.y))
+    for i in range(plane.lives):
+        hud.heart_rect.x = hud.score_lives_rect.right + 10 + i*(hud.heart_img.get_width() + 10)
+        screen.blit(hud.heart_img, (hud.heart_rect.x, hud.heart_y))
     pygame.display.update()
     pygame.display.flip()
