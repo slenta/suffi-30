@@ -1,30 +1,29 @@
 import pygame
 from pygame.locals import *
-import os
+import os, sys
+from random import randint
 
-# Hier wird der Pfad zum Verzeichnis des ».py«-Files gesetzt
-file_path = os.path.dirname(os.path.abspath(__file__))
-os.chdir(file_path)
+# Hier wird der Pfad zum Verzeichnis der Assets gesetzt
+DATAPATH = os.path.join(os.getcwd(), "data")
 
 # Konstanten deklarieren
-WIDTH, HEIGHT = 500, 500
-TITLE = "🐍 Pygäme Boilerpläte 🐍"
+WIDTH, HEIGHT = 640, 480
+TITLE = "🐍 Pygame Boilerplate 🐍"
 FPS = 60
-# BG = (234, 218, 184) # Packpapier-Farbe
-BG = (49, 197, 244) # Coding Train Blue
 
+# Farben
+BG_COLOR = (231, 229, 226) # Sandgrau
+           
 # Pygame initialisieren und das Fenster und die Hintergrundfarbe festlegen
+clock = pygame.time.Clock()
 pygame.init()
+# Ein übler Hack, um die Position des Fensters auf meinen zweiten Bildschirm zu setzen
+os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (1320, 60)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption(TITLE)
-clock = pygame.time.Clock()
 
-def update():
-    pass
 
-def draw():
-    pass
-
+# Hauptschleife
 keep_going = True
 while keep_going:
     
@@ -33,11 +32,10 @@ while keep_going:
         if ((event.type == pygame.QUIT)
             or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE)):
             keep_going = False
-
-    screen.fill(BG)
-    update()
-    draw()
-    pygame.display.update()
+            print("Bye, Bye, Baby!")
+            pygame.quit()
+            sys.exit()
+                           
+    screen.fill(BG_COLOR)
     pygame.display.flip()
-
-pygame.quit()
+    
