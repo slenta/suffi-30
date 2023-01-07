@@ -14,7 +14,7 @@ FPS = 60
 # Farben
 BG_COLOR = (231, 229, 226) # Sandgrau
            
-# Pygame initialisieren und das Fenster und die Hintergrundfarbe festlegen
+# Pygame und das Fenster initialisieren
 clock = pygame.time.Clock()
 pygame.init()
 # Ein übler Hack, um die Position des Fensters auf meinen zweiten Bildschirm zu setzen

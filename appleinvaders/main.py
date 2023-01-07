@@ -6,7 +6,7 @@ from pygame.locals import *  # Wenn dies nicht importiert wird,
 from settings import Settings
 from sprites import Player, Block
 import random
-import os
+import os, sys
 
 class World:
     
@@ -59,7 +59,7 @@ class World:
                 self.keep_going = False
   
     def draw(self):
-        # Game-Loop Drawkkk
+        # Game-Loop Draw
         self.screen.fill(s.BLACK)
         self.all_sprites.draw(self.screen)
         pg.display.flip()
@@ -80,6 +80,6 @@ while w.keep_going:
     w.game_over()
     
 pg.quit()
-    
+sys.exit()    
     
 

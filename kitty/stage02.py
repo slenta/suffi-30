@@ -3,7 +3,7 @@
 import pygame as pg
 from pygame.locals import *  # Wenn dies nicht importiert wird,
                              # kann man UTF-8 (Umlaute) knicken
-import os
+import os, sys
 import random
 pg.init()
 
@@ -50,6 +50,8 @@ while keep_going:
     for event in pg.event.get():
         if event.type == pg.QUIT:
             keep_going = False
+            pg.quit()  # ????
+            sys.exit()
     
     allSprites.clear(win, background)
     allSprites.update()
