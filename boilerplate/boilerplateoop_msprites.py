@@ -113,5 +113,5 @@ class GameWorld:
 # Hauptprogramm
 w = GameWorld()
 w.start_screen()
-w. reset()
+w.reset()
 w.run()
