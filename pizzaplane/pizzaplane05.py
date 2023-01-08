@@ -5,8 +5,10 @@ import os
 import sys
 
 # Hier wird der Pfad zum Verzeichnis der Assets gesetzt
-DATAPATH = os.path.join(os.getcwd(), "data")
-FONTPATH = os.path.join(os.getcwd(), "fonts")
+# DATAPATH = os.path.join(os.getcwd(), "data")
+# FONTPATH = os.path.join(os.getcwd(), "fonts")
+DATAPATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
+FONTPATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fonts")
 
 # Konstanten deklarieren
 WIDTH, HEIGHT = 720, 520
