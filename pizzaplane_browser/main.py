@@ -32,10 +32,10 @@ class Player(pygame.sprite.Sprite):
   
     def update(self):
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_UP]:
+        if keys[pygame.K_a]:
             if self.y > 20:
                 self.y -= self.updown
-        elif keys[pygame.K_DOWN]:
+        elif keys[pygame.K_d]:
             if self.y < HEIGHT - 20:
                 self.y += self.updown
         else:
