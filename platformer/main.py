@@ -16,10 +16,14 @@ TITLE = "Simple Platformer"
 FPS = 60                     # Frames per second
 PLAYER_WIDTH = 24
 PLAYER_HEIGHT = 24
+PLAYER_START_X, PLAYER_START_Y = 5, 1
 PLAYER_SPEED = 5
 
+# Physikalische Konstanten
+GRAVITY = 0.5
+
 ## Hier wird der Pfad zum Verzeichnis der Assets gesetzt
-DATAPATH = os.path.join(os.getcwd(), "data")
+IMAGEPATH = os.path.join(os.getcwd(), "data/images")
 
 ## Farben
 BG_COLOR = (65, 166, 246)     # Himmelblau
@@ -40,8 +44,8 @@ class GameWorld:
         # Neustart oder Status zurücksetzen
         # Hier werden alle Elemente der GameWorld initialisiert
         ## Load Assets
-        grass_image = pg.image.load(os.path.join(DATAPATH, "grass_02.png")).convert_alpha()
-        # block_image = pg.image.load(os.path.join(DATAPATH, "block_00.png")).convert_alpha()
+        grass_image = pg.image.load(os.path.join(IMAGEPATH, "grass_02.png")).convert_alpha()
+        block_image = pg.image.load(os.path.join(IMAGEPATH, "block_00.png")).convert_alpha()
 
         grass_locations = []
         for i in range(GRID_WIDTH):
@@ -55,8 +59,20 @@ class GameWorld:
             p = Platform(x, y, grass_image)
             self.platforms.add(p)
             self.all_sprites.add(p)
+    
+        block_locations = [(11, 7), (12, 7), (13, 7), (14, 7),
+                           (17, 10), (18, 10), (19, 10),
+                           (38, 12), (38, 13)]
+        for loc in block_locations:
+            x = loc[0]
+            y = loc[1]
+            p = Platform(x, y, block_image)
+            self.platforms.add(p)
+            self.all_sprites.add(p)
 
-        self.player = Player(PLAYER_WIDTH, HEIGHT - PLAYER_HEIGHT-GRIDSIZE)
+        self.player = Player(PLAYER_START_X, PLAYER_START_Y)
+        self.player_sprite_group = pg.sprite.GroupSingle()
+        self.player_sprite_group.add(self.player)
         self.all_sprites.add(self.player)
   
     def events(self):
@@ -108,27 +124,60 @@ class Player(pg.sprite.Sprite):
         super().__init__()
         self.img = []
         for i in range(2):
-            player_image = pg.image.load(os.path.join(DATAPATH, "alien_green_0" + str(i) + ".png")).convert_alpha()
+            player_image = pg.image.load(os.path.join(IMAGEPATH, "alien_green_0" + str(i) + ".png")).convert_alpha()
             self.img.append(player_image)
         self.image = self.img[0]
         self.rect = self.image.get_rect()
-        self.x = _x
-        self.y = _y
-        self.rect.topleft = (self.x, self.y)
-        self.dx = PLAYER_SPEED
+        self.rect.x = _x*GRIDSIZE
+        self.rect.bottom = _y*GRIDSIZE
+        # self.rect.topleft = (self.rect.x, self.rect.y)
+        self.speed = PLAYER_SPEED
+        self.vx = 0
+        self.vy = 0
+    
+    def jump(self):
+        pass
 
-    def update(self):
+    def apply_gravity(self):
+        self.vy += GRAVITY
+
+    def move(self):
         keys = pg.key.get_pressed()
         if keys[pg.K_a]:        # LEFT
-            if self.x > 0:
-                self.x -= self.dx
+            if self.rect.x > 0:
+                self.vx = -1*self.speed
         elif keys[pg.K_d]:      # RIGHT
-            if self.x < WIDTH - PLAYER_WIDTH:
-                self.x += self.dx
+            if self.rect.x < WIDTH - PLAYER_WIDTH:
+                self.vx = self.speed
         else:
-            self.x += 0
-            self.y += 0
-        self.rect.topleft = (self.x, self.y)
+            self.vx = 0
+        # Horizonfale Kollision
+        self.rect.x += self.vx
+        hits = pg.sprite.spritecollide(self, world.platforms, False)
+        for hit in hits:
+            if self.vx > 0:
+                self.rect.right = hit.rect.left
+            if self.vx < 0:
+                self.rect.left = hit.rect.right
+        # Vertikale Kollision
+        self.rect.y += self.vy
+        hits = pg.sprite.spritecollide(self, world.platforms, False)
+        for hit in hits:
+            if self.vy > 0:
+                self.rect.bottom = hit.rect.top
+            self.vy = 0
+
+    def check_edges(self):
+        if self.rect.left < 0:
+            self.rect.left = 0
+        elif self.rect.right > WIDTH:
+            self.rect.right = WIDTH
+
+    def update(self):
+        self.apply_gravity()
+        self.move()
+        self.check_edges()
+
 ## End Class Player
 
 # Hauptprgramm
