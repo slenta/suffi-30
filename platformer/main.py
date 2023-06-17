@@ -85,7 +85,6 @@ class GameWorld:
             self.items.add(g)
             self.all_sprites.add(g)
 
-
         self.player = Player(PLAYER_START_X, PLAYER_START_Y)
         self.player_sprite_group = pg.sprite.GroupSingle()
         self.player_sprite_group.add(self.player)
@@ -223,7 +222,6 @@ class Player(pg.sprite.Sprite):
         self.move()
         self.check_edges()
         self.check_items()
-
 ## End Class Player
 
 # Hauptprgramm
