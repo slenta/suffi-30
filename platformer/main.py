@@ -23,6 +23,7 @@ PLAYER_SPEED = 3
 
 # Physikalische Konstanten
 GRAVITY = 0.5
+MAX_VELOCITY = 18
 JUMP_POWER = 10
 
 ## Hier wird der Pfad zum Verzeichnis der Assets gesetzt
@@ -39,7 +40,6 @@ class GameWorld:
         pg.init()
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_caption(TITLE)
-
         self.clock = pg.time.Clock()
         self.keep_going = True
 
@@ -50,7 +50,6 @@ class GameWorld:
         grass_image = pg.image.load(os.path.join(IMAGEPATH, "grass_02.png")).convert_alpha()
         block_image = pg.image.load(os.path.join(IMAGEPATH, "block_00.png")).convert_alpha()
         gem_image   = pg.image.load(os.path.join(IMAGEPATH, "gem.png")).convert_alpha()
-
         grass_locations = []
         for i in range(GRID_WIDTH):
             grass_loc = (i, GRID_HEIGHT - 1)
@@ -174,6 +173,8 @@ class Player(pg.sprite.Sprite):
 
     def apply_gravity(self):
         self.vy += GRAVITY
+        if self.vy > MAX_VELOCITY:
+            self.vy = MAX_VELOCITY
 
     def move(self):
         keys = pg.key.get_pressed()
