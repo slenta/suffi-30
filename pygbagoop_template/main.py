@@ -1,3 +1,4 @@
+# Pygame OOP-Template zur Verwendung mit Pygbag Version 0.2
 import pygame as pg
 import asyncio
 from pygame.locals import *
@@ -37,15 +38,21 @@ class GameWorld:
         self.all_sprites = pg.sprite.Group()
         self.player = Player()
         self.all_sprites.add(self.player)
+        # self.run()
+    
+    def run(self):
+        # Game Loop
+        pass
   
     def events(self):
         for event in pg.event.get():
             if ((event.type == pg.QUIT)
                 or (event.type == pg.KEYDOWN
                 and event.key == pg.K_ESCAPE)):
+                if self.playing:
+                    self.playing = False
                 self.keep_going = False
-                self.game_over()
-
+ 
     def update(self):
         self.all_sprites.update()
 
@@ -57,16 +64,10 @@ class GameWorld:
     def start_screen(self):
         pass
     
-    def win_screen(self):
-        pass
-    
-    def loose_screen(self):
-        pass
+    def game_over_screen(self):
+        # print("Game Over")
+        pass    
 
-    def game_over(self):
-        # print("Bye, Bye, Baby!")
-        pg.quit()
-        sys.exit()
 ## Ende Class GameWorld
 
 ## Class Player
@@ -104,15 +105,20 @@ class Player(pg.sprite.Sprite):
 # Hauptprgramm
 world = GameWorld()
 world.start_screen()
-world.reset()
 
 # Hauptschleife
 async def main():
     while world.keep_going:
-        world.clock.tick(FPS)
-        world.events()
-        world.update()
-        world.draw()
-        await asyncio.sleep(0)  # Very important, and keep it 0
+        world.reset()
+        world.playing = True
+        while world.playing:
+            world.clock.tick(FPS)
+            world.events()
+            world.update()
+            world.draw()
+            await asyncio.sleep(0)  # Very important, and keep it 0
+        world.game_over_screen()
+    pg.quit()
+    sys.exit()
 
 asyncio.run(main())
