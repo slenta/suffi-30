@@ -88,7 +88,7 @@ class GameWorld:
 class Player(pg.sprite.Sprite):
 
     def __init__(self, _world):
-        pg.sprite.Sprite.__init__(self)
+        super().__init__()
         self.game_world = _world
         self.image = self.game_world.skull_image
         self.rect = self.image.get_rect()
@@ -107,7 +107,7 @@ class Player(pg.sprite.Sprite):
 class Enemy(pg.sprite.Sprite):
 
     def __init__(self, _x, _y, _world):
-        pg.sprite.Sprite.__init__(self)
+        super().__init__()
         self.x, self.y = _x, _y
         self.game_world = _world
         self.image = self.game_world.smiley0_image
