@@ -1,4 +1,4 @@
-# Avoider Game Stage 0.5
+# Avoider Game Stage 1
 import pygame as pg
 import asyncio
 from pygame.locals import *
