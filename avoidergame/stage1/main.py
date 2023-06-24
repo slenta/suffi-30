@@ -9,14 +9,14 @@ import os, sys
 WIDTH, HEIGHT = 640, 480
 TITLE = "Avoider Game, Stage 1"
 FPS = 60                   # Frame per second
-TW, TH = 36, 36            # Größe der einzelnen Sprites
+TW, TH = 24, 24            # Größe der einzelnen Sprites
 TW2 = TW // 2
-PLAYER_Y = 320
-NO_ENEMIES = 7
+PLAYER_Y = HEIGHT // 1.2
+NO_ENEMIES = 10
 SPEED_MIN = 2
 SPEED_MAX = 7
-START_ZONE = 200
-DANGER_ZONE = 360
+START_ZONE = HEIGHT // 1.5
+DANGER_ZONE = PLAYER_Y
 
 ## Hier wird der Pfad zum Verzeichnis der Assets gesetzt
 DATAPATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
@@ -54,9 +54,11 @@ class GameWorld:
         # Neustart oder Status zurücksetzen
         # Hier werden alle Elemente der GameWorld initialisiert
         self.all_sprites = pg.sprite.Group()
+        self.enemies = pg.sprite.Group()
         for _ in range(NO_ENEMIES):
             enemy = Enemy(randint(TW2, WIDTH - TW2), -randint(50, 250), self)
-            self.all_sprites.add(enemy)        
+            self.all_sprites.add(enemy)
+            self.enemies.add(enemy)        
         self.player = Player(self)
         self.all_sprites.add(self.player)
         self.hud = HUD(self)
@@ -72,20 +74,28 @@ class GameWorld:
  
     def update(self):
         self.all_sprites.update()
-        self.hud.update(self.player.score)
+        self.hud.update(self.player.score, self.player.lives)
 
     def draw(self):
         self.screen.fill(BG_COLOR)
         self.all_sprites.draw(self.screen)
         self.screen.blit(self.hud.score, self.hud.score_rect)
+        self.screen.blit(self.hud.lives, self.hud.lives_rect)
         pg.display.flip()
     
     def start_screen(self):
         pass
 
     def game_over_screen(self):
-        # print("Game Over")
-        pass    
+        text = "Game Over"       # Debugging
+        print(text)
+        # self.screen_font = self.score_font
+        # text = self.screen_font.render(text, True, (255, 255, 255))
+        # text_rect = text.get_rect()
+        # text_rect.centerx = WIDTH // 2
+        # text_rect.y = HEIGHT // 2
+        # self.screen.blit(text, text_rect)
+        self.keep_going = False   # Debugging
 ## Ende Class GameWorld
 
 ## Class Player
@@ -97,7 +107,9 @@ class Player(pg.sprite.Sprite):
         self.image = self.game_world.skull_image
         self.rect = self.image.get_rect()
         self.x, self.y = WIDTH/2, PLAYER_Y
+        self.radius = TW2
         self.score = 0
+        self.lives = 5
     
     def update(self):
         x, y = pg.mouse.get_pos()
@@ -106,6 +118,13 @@ class Player(pg.sprite.Sprite):
         elif x >= WIDTH - TW2:
             x = WIDTH - TW2
         self.rect.center = (x, self.y)
+        self.check_and_handle_collisions()
+    
+    def check_and_handle_collisions(self):
+        for enemy in self.game_world.enemies:
+            if pg.sprite.collide_circle(self, enemy):
+                enemy.reset()
+                self.lives -= 1
 ## End Class Player
 
 ## Class Enemy
@@ -119,6 +138,7 @@ class Enemy(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (self.x, self.y)
         self.dy = randint(SPEED_MIN, SPEED_MAX)
+        self.radius = TW2
     
     def update(self):
         self.over = False
@@ -133,7 +153,6 @@ class Enemy(pg.sprite.Sprite):
         if self.rect.top >= HEIGHT:
             self.over = True
             self.game_world.player.score += 1
-            # print(self.game_world.player.score)
             self.reset()
     
     def reset(self):
@@ -141,6 +160,7 @@ class Enemy(pg.sprite.Sprite):
         self.y = -randint(50, 250)
         self.rect.center = (self.x, self.y)
         self.dy = randint(SPEED_MIN, SPEED_MAX)
+    # End Class Enemy
 
 class HUD():
 
@@ -149,13 +169,20 @@ class HUD():
         self.score_x = 30
         self.score_y = 15
         self.score_font = self.game_world.score_font
-        self.score = ""
+        self.score = self.lives = ""
+        self.live_count_x = WIDTH - 150
+        self.live_count_y = 15
     
-    def update(self, points):
+    def update(self, points, lives):
         self.score = self.score_font.render(f"Score: {points}", True, (255, 255, 255))
         self.score_rect = self.score.get_rect()
         self.score_rect.x = self.score_x
         self.score_rect.y = self.score_y
+        self.lives = self.score_font.render(f"Lives: {lives}", True, (255, 255, 255))
+        self.lives_rect = self.lives.get_rect()
+        self.lives_rect.x = self.live_count_x
+        self.lives_rect.y = self.live_count_y
+    # End Class HUD
 
 # Hauptprgramm
 world = GameWorld()
@@ -168,11 +195,14 @@ async def main():
         world.playing = True
         while world.playing:
             world.clock.tick(FPS)
+            if world.player.lives == 0:
+                world.playing = False
             world.events()
             world.update()
             world.draw()
-            await asyncio.sleep(0)  # Very important, and keep it 0
+            await asyncio.sleep(0)      # Very important, and keep it 0
         world.game_over_screen()
+        print("After Game Over Screen")
     pg.quit()
     sys.exit()
 
