@@ -1,0 +1,106 @@
+{
+  "meta": {
+    "version": "0.6.7"
+  },
+  "savePath": "",
+  "images": [
+    {
+      "name": "alien_green_00.png",
+      "path": "/Users/admin/git/pygameprojects/platformer/data/images/alien_green_00.png",
+      "folder": ""
+    },
+    {
+      "name": "alien_green_01.png",
+      "path": "/Users/admin/git/pygameprojects/platformer/data/images/alien_green_01.png",
+      "folder": ""
+    },
+    {
+      "name": "alien_green_back_00.png",
+      "path": "/Users/admin/git/pygameprojects/platformer/data/images/alien_green_back_00.png",
+      "folder": ""
+    },
+    {
+      "name": "alien_green_back_01.png",
+      "path": "/Users/admin/git/pygameprojects/platformer/data/images/alien_green_back_01.png",
+      "folder": ""
+    },
+    {
+      "name": "alien_green_back_02.png",
+      "path": "/Users/admin/git/pygameprojects/platformer/data/images/alien_green_back_02.png",
+      "folder": ""
+    },
+    {
+      "name": "alien_green_front_00.png",
+      "path": "/Users/admin/git/pygameprojects/platformer/data/images/alien_green_front_00.png",
+      "folder": ""
+    },
+    {
+      "name": "alien_green_front_01.png",
+      "path": "/Users/admin/git/pygameprojects/platformer/data/images/alien_green_front_01.png",
+      "folder": ""
+    },
+    {
+      "name": "alien_green_front_02.png",
+      "path": "/Users/admin/git/pygameprojects/platformer/data/images/alien_green_front_02.png",
+      "folder": ""
+    },
+    {
+      "name": "alien_green_idle_00.png",
+      "path": "/Users/admin/git/pygameprojects/platformer/data/images/alien_green_idle_00.png",
+      "folder": ""
+    },
+    {
+      "name": "alien_green_idle_01.png",
+      "path": "/Users/admin/git/pygameprojects/platformer/data/images/alien_green_idle_01.png",
+      "folder": ""
+    },
+    {
+      "name": "alien_green_walk_left_00.png",
+      "path": "/Users/admin/git/pygameprojects/platformer/data/images/alien_green_walk_left_00.png",
+      "folder": ""
+    },
+    {
+      "name": "alien_green_walk_left_01.png",
+      "path": "/Users/admin/git/pygameprojects/platformer/data/images/alien_green_walk_left_01.png",
+      "folder": ""
+    },
+    {
+      "name": "alien_green_walk_right_00.png",
+      "path": "/Users/admin/git/pygameprojects/platformer/data/images/alien_green_walk_right_00.png",
+      "folder": ""
+    },
+    {
+      "name": "alien_green_walk_right_01.png",
+      "path": "/Users/admin/git/pygameprojects/platformer/data/images/alien_green_walk_right_01.png",
+      "folder": ""
+    }
+  ],
+  "folders": [],
+  "packOptions": {
+    "textureName": "alien_green",
+    "textureFormat": "png",
+    "removeFileExtension": false,
+    "prependFolderName": false,
+    "base64Export": false,
+    "tinify": false,
+    "tinifyKey": "",
+    "scale": 1,
+    "filter": "none",
+    "exporter": "JSON (hash)",
+    "fileName": "pack-result",
+    "savePath": "",
+    "width": 240,
+    "height": 48,
+    "fixedSize": false,
+    "powerOfTwo": false,
+    "padding": 0,
+    "extrude": 0,
+    "allowRotation": false,
+    "allowTrim": false,
+    "trimMode": "trim",
+    "alphaThreshold": "0",
+    "detectIdentical": false,
+    "packer": "MaxRectsBin",
+    "packerMethod": "BestShortSideFit"
+  }
+}
