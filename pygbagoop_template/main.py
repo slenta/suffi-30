@@ -5,8 +5,8 @@ from pygame.locals import *
 import os, sys
 
 ## Settings
-WIDTH, HEIGHT = 640, 480   # 16x16: 40, 30; 32x32: 20, 15
-TITLE = "Pygame OOP Template"
+WIDTH, HEIGHT =  800, 450  #  640, 480 – 16x16: 40, 30; 32x32: 20, 15
+TITLE = "Pygame (Pygbag) OOP Template"
 FPS = 60                   # Frame per second
 PLAYER_WIDTH = 30
 PLAYER_HEIGHT = 45
@@ -84,16 +84,16 @@ class Player(pg.sprite.Sprite):
     
     def update(self):
         keys = pg.key.get_pressed()
-        if keys[pg.K_w]:     # UP
+        if keys[pg.K_w] or keys[pg.K_UP]:     # UP
             if self.y > PLAYER_HEIGHT - 20:
                 self.y -= self.speed
-        elif keys[pg.K_s]:   # DOWN
+        elif keys[pg.K_s] or keys[pg.K_DOWN]:   # DOWN
             if self.y < HEIGHT - PLAYER_HEIGHT:
                 self.y += self.speed
-        elif keys[pg.K_a]:   # LEFT
+        elif keys[pg.K_a] or keys[pg.K_LEFT]:   # LEFT
             if self.x > PLAYER_WIDTH:
                 self.x -= self.speed
-        elif keys[pg.K_d]:   # RIGHT
+        elif keys[pg.K_d] or keys[pg.K_RIGHT]:   # RIGHT
             if self.x < WIDTH - PLAYER_WIDTH:
                 self.x += self.speed
         else:
