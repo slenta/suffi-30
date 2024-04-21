@@ -13,7 +13,7 @@ PLAYER_HEIGHT = 45
 PLAYER_SPEED = 5
 
 ## Hier wird der Pfad zum Verzeichnis der Assets gesetzt
-DATAPATH = os.path.join(os.getcwd(), "data")
+# DATAPATH = os.path.join(os.getcwd(), "data")
 
 ## Farben
 BG_COLOR = (40, 40, 40)
@@ -76,7 +76,8 @@ class Player(pg.sprite.Sprite):
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
         # Load Image
-        img = pg.image.load(os.path.join(DATAPATH, "platformchar_idle.png")).convert_alpha()
+        # img = pg.image.load(os.path.join(DATAPATH, "platformchar_idle.png")).convert_alpha()
+        img = pg.image.load("data/platformchar_idle.png").convert_alpha()
         self.image = img
         self.rect = self.image.get_rect()
         self.x, self.y = WIDTH/2, HEIGHT/2
