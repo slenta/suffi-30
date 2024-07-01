@@ -25,7 +25,7 @@ class Kitty(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.centerx = 275
         self.rect.centery = 240
-        self.dx = 5
+        self.dx = 0.05
         self.dy = 0
         
     def update(self):

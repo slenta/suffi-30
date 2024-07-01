@@ -5,6 +5,9 @@ from pygame.locals import *  # Wenn dies nicht importiert wird,
                              # kann man UTF-8 (Umlaute) knicken
 import os, sys
 import random
+
+FPS = 1                     # Framerate
+
 pg.init()
 
 class Spaceship(pg.sprite.Sprite):
@@ -55,7 +58,7 @@ beetle.dx = 3
 allSprites = pg.sprite.Group(planet, rocket, octopussy, beetle)
 
 clock = pg.time.Clock()
-clock.tick(30)  # Framerate
+clock.tick(FPS)  # Framerate
 
 keep_going = True
 while keep_going:

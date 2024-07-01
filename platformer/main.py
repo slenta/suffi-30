@@ -27,7 +27,7 @@ MAX_VELOCITY = 18
 JUMP_POWER = 10
 
 ## Hier wird der Pfad zum Verzeichnis der Assets gesetzt
-IMAGEPATH = os.path.join(os.getcwd(), "data/images")
+IMAGEPATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data/images")
 
 ## Farben
 BG_COLOR = (65, 166, 246)     # Himmelblau
