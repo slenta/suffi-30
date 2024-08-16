@@ -85,6 +85,7 @@ class Player(pygame.sprite.Sprite):
         # print("update")
         if self.rect.x >= WIDTH:
             self.rect.x = -214           
+
 # Hauptprogramm
 world = GameWorld()
 world.start_screen()
