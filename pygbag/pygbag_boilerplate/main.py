@@ -1,22 +1,19 @@
-# Pygame OOP-Template zur Verwendung mit Pygbag Version 0.2
+# Pygbag Boilerplate
 import asyncio
 import pygame as pg
 from pygame.locals import *
 import os, sys
 
 ## Settings
-WIDTH, HEIGHT =  800, 450  #  640, 480 – 16x16: 40, 30; 32x32: 20, 15
-TITLE = "Pygame (Pygbag) OOP Template"
-FPS = 60                   # Frame per second
-PLAYER_WIDTH = 30
-PLAYER_HEIGHT = 45
-PLAYER_SPEED = 5
+WIDTH, HEIGHT =  800, 450
+TITLE = "Pygbag Boilerplate"
+FPS = 60                   # Frames per second
 
 ## Hier wird der Pfad zum Verzeichnis der Assets gesetzt
 DATAPATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
 
 ## Farben
-BG_COLOR = (40, 40, 40)
+BG_COLOR = (40, 40, 40)  # Dunkelgrau
 
 # Klassen
 
@@ -38,7 +35,6 @@ class GameWorld:
         self.all_sprites = pg.sprite.Group()
         self.player = Player()
         self.all_sprites.add(self.player)
-        # self.run()
     
     def run(self):
         # Game Loop
@@ -67,8 +63,8 @@ class GameWorld:
     def game_over_screen(self):
         # print("Game Over")
         pass    
-
 ## Ende Class GameWorld
+    
 
 ## Class Player
 class Player(pg.sprite.Sprite):
@@ -76,34 +72,18 @@ class Player(pg.sprite.Sprite):
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
         # Load Image
-        img = pg.image.load(os.path.join(DATAPATH, "platformchar_idle.png")).convert_alpha()
-        # img = pg.image.load("data/platformchar_idle.png").convert_alpha()
+        img = pg.image.load(os.path.join(DATAPATH, "pygbag_logo.png")).convert_alpha()
         self.image = img
         self.rect = self.image.get_rect()
         self.x, self.y = WIDTH/2, HEIGHT/2
-        self.speed = PLAYER_SPEED
+        self.rect.center = (self.x, self.y)
     
     def update(self):
-        keys = pg.key.get_pressed()
-        if keys[pg.K_w] or keys[pg.K_UP]:     # UP
-            if self.y > PLAYER_HEIGHT - 20:
-                self.y -= self.speed
-        elif keys[pg.K_s] or keys[pg.K_DOWN]:   # DOWN
-            if self.y < HEIGHT - PLAYER_HEIGHT:
-                self.y += self.speed
-        elif keys[pg.K_a] or keys[pg.K_LEFT]:   # LEFT
-            if self.x > PLAYER_WIDTH:
-                self.x -= self.speed
-        elif keys[pg.K_d] or keys[pg.K_RIGHT]:   # RIGHT
-            if self.x < WIDTH - PLAYER_WIDTH:
-                self.x += self.speed
-        else:
-            self.x += 0
-            self.y += 0
-        self.rect.center = (self.x, self.y)
+        pass
 ## End Class Player
 
-# Hauptprgramm
+
+# --------------------------- Hauptprgramm --------------------------- #
 world = GameWorld()
 world.start_screen()
 
@@ -123,3 +103,4 @@ async def main():
     sys.exit()
 
 asyncio.run(main())
+
