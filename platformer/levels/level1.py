@@ -31,8 +31,8 @@ level_config = {
     ],
     "gem_locations": [(20, 3), (12, 6), (26, 6), (36, 13), (65, 5)],
     "powerup_locations": [
-        {"x": 40, "y": 10, "type": "bigger"},  # Power-up to make the player bigger
-        {"x": 60, "y": 8, "type": "faster"},  # Power-up to make the player faster
+        {"x": 40, "y": 10, "type": 0},  # Power-up to make the player bigger
+        {"x": 60, "y": 8, "type": 1},  # Power-up to make the player faster
     ],
     "enemy_locations": [
         {
