@@ -1,12 +1,13 @@
 import pygame as pg
 import os
 from .settings import *
+from .bullet import ExplodingObject  # Import the ExplodingObject class
 
 
 ## Class Player
 class Player(pg.sprite.Sprite):
 
-    def __init__(self, _x, _y, world, start_gems=0):
+    def __init__(self, _x, _y, world, start_gems=0, health=100):
         super().__init__()
         self.img = []
         for i in range(2):
@@ -24,7 +25,12 @@ class Player(pg.sprite.Sprite):
         self.vx = 0
         self.vy = 0
         self.gems = start_gems
+        self.max_health = health  # Maximum health
+        self.health = health  # Current health
         self.world = world
+        self.knockback_timer = 0  # Timer to track incapacitation
+        self.is_knocked_back = False  # Flag to indicate knockback state
+        self.active_powerups = {}
 
     def jump(self):
         self.rect.y += 2
@@ -70,7 +76,6 @@ class Player(pg.sprite.Sprite):
 
         # Von der Plattform runterfallen
         if self.rect.y > self.world.top + 20:
-            print(self.rect)
             self.loose()
 
     def check_edges(self):
@@ -85,7 +90,17 @@ class Player(pg.sprite.Sprite):
         hits = pg.sprite.spritecollide(self, self.world.items, True)
         for item in hits:
             item.apply(self)
-            print(self.gems)  # Nur für Testzwecke
+
+    def check_powerups(self):
+        hits = pg.sprite.spritecollide(self, self.world.powerups, True)
+        for powerup in hits:
+            powerup.apply_effect(self)
+
+    def take_damage(self, damage):
+        self.health -= damage
+        if self.health <= 0:
+            self.health = 0
+            self.loose()  # Call the loose function when health is 0
 
     def loose(self):
         if self.gems >= 1:
@@ -96,10 +111,108 @@ class Player(pg.sprite.Sprite):
             self.world.game_over()
 
     def update(self):
-        self.apply_gravity()
-        self.check_edges()
-        self.move()
-        self.check_items()
+        if self.knockback_timer > 0:
+            self.knockback_timer -= 1  # Decrease knockback timer
+        else:
+            self.is_knocked_back = False  # End knockback state
+
+        if not self.is_knocked_back:  # Only allow normal updates if not incapacitated
+            self.apply_gravity()
+            self.check_edges()
+            self.move()
+            self.check_items()
+            self.check_powerups()
+
+            # Check for collisions with enemies
+            enemy_hit = pg.sprite.spritecollideany(self, self.world.enemies)
+            if enemy_hit:
+                self.handle_enemy_collision()
+
+    def handle_enemy_collision(self):
+        if not self.is_knocked_back:  # Prevent repeated knockback during incapacitation
+            # Take damage
+            self.take_damage(1)
+
+            # Start knockback
+            self.is_knocked_back = True
+            self.knockback_timer = (
+                30  # Incapacitated for 30 frames (~0.5 seconds at 60 FPS)
+            )
+
+            # Determine the direction to throw the player
+            knockback_distance = GRIDSIZE * 6
+            if self.vx > 0:  # Moving right
+                self.knockback_direction = -1  # Throw left
+            elif self.vx < 0:  # Moving left
+                self.knockback_direction = 1  # Throw right
+            else:
+                self.knockback_direction = -1  # Default to left if no movement
+
+            self.knockback(knockback_distance)
+
+    def knockback(self, distance):
+        # Smoothly move the player during knockback
+        steps = 30  # Number of steps for the knockback animation
+        step_distance = distance // steps
+
+        for _ in range(steps):
+            # Apply horizontal knockback
+            self.rect.x += self.knockback_direction * step_distance
+            self.rect.y -= 2  # Slightly lift the player during knockback
+
+            # Check for horizontal collisions
+            hits = pg.sprite.spritecollide(self, self.world.platforms, False)
+            for hit in hits:
+                if self.knockback_direction > 0:  # Moving right
+                    self.rect.right = hit.rect.left
+                elif self.knockback_direction < 0:  # Moving left
+                    self.rect.left = hit.rect.right
+
+            # Apply gravity during knockback
+            self.vy += GRAVITY
+            if self.vy > MAX_VELOCITY:
+                self.vy = MAX_VELOCITY
+
+            # Apply vertical movement
+            self.rect.y += self.vy
+
+            # Check for vertical collisions
+            hits = pg.sprite.spritecollide(self, self.world.platforms, False)
+            for hit in hits:
+                if self.vy > 0:  # Falling
+                    self.rect.bottom = hit.rect.top
+                elif self.vy < 0:  # Jumping
+                    self.rect.top = hit.rect.bottom
+                self.vy = 0  # Stop vertical movement on collision
+
+            # Ensure the player doesn't move out of bounds
+            self.check_edges()
+
+            # Update the camera to follow the player
+            self.world.update_camera()
+
+            # Redraw the game world to show the knockback animation
+            self.world.draw()
+            pg.display.flip()
+            pg.time.delay(10)  # Delay for smooth animation
+
+    def throw_exploding_object(self):
+        # Determine the direction of the throw based on the player's facing direction
+        direction_x = 1 if self.vx >= 0 else -1
+        direction_y = 0  # Exploding objects are thrown horizontally
+        damage = 20  # Set the damage dealt by the exploding object
+
+        # Create the exploding object
+        exploding_object = ExplodingObject(
+            self.rect.centerx,
+            self.rect.centery,
+            direction_x,
+            direction_y,
+            damage,
+            self.world,
+        )
+        self.world.bullets.add(exploding_object)
+        self.world.all_sprites.add(exploding_object)
 
 
 ## End Class Player

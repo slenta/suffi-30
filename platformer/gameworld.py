@@ -5,6 +5,9 @@ from .gem import Gem
 from .player import Player
 from .settings import *
 from .bullet import Bullet  # Import the Bullet class
+from .enemies import Enemy
+from .bullet import ExplodingObject  # Import the ExplodingObject class
+from .powerup import PowerUp  # Import the PowerUp class
 import importlib
 
 
@@ -21,6 +24,8 @@ class GameWorld:
         self.camera_offset_x = 0  # Horizontal camera offset
         self.player_gems = 0
         self.bullets = pg.sprite.Group()  # Group to manage bullets
+        self.enemies = pg.sprite.Group()  # Group to manage enemies
+        self.powerups = pg.sprite.Group()  # Group to manage power-ups
 
     def load_level(self, level_name):
         # Dynamically import the level configuration
@@ -69,6 +74,36 @@ class GameWorld:
         self.player_sprite_group.add(self.player)
         self.all_sprites.add(self.player)
 
+        # Load enemies
+        for enemy_data in self.level_config["enemy_locations"]:
+            enemy = Enemy(
+                enemy_data["x"],  # Grid-based x-coordinate
+                enemy_data["y"],  # Grid-based y-coordinate
+                os.path.join(IMAGEPATH, enemy_data["image"]),
+                enemy_data["speed"],
+                enemy_data["patrol_range"],
+                enemy_data.get(
+                    "size_multiplier", 1
+                ),  # Default to 1 square if not specified
+                enemy_data.get("health", 1),  # Default health to 1 if not specified
+                enemy_data.get("damage", 1),  # Default damage to 1 if not specified
+                enemy_data.get("shoot_range", 5),  # Default shooting range to 5 tiles
+                self,  # Pass the GameWorld instance as the world
+            )
+            self.enemies.add(enemy)
+            self.all_sprites.add(enemy)
+
+        # Load power-ups
+        for powerup_data in self.level_config["powerup_locations"]:
+            powerup = PowerUp(
+                powerup_data["x"] * GRIDSIZE,
+                powerup_data["y"] * GRIDSIZE,
+                powerup_data["type"],
+                self,
+            )
+            self.all_sprites.add(powerup)
+            self.powerups.add(powerup)
+
     def reset(self):
         # Neustart oder Status zurücksetzen
         # Hier werden alle Elemente der GameWorld initialisiert
@@ -100,6 +135,14 @@ class GameWorld:
             self.items.add(item)
             self.all_sprites.add(item)
 
+        # Load enemies
+        for enemy in self.enemies:
+            enemy.reset_position()
+            self.all_sprites.add(enemy)
+
+        for powerup in self.powerups:
+            self.all_sprites.add(powerup)
+
         self.player = Player(
             PLAYER_START_X, PLAYER_START_Y, world=self, start_gems=self.player_gems
         )
@@ -116,13 +159,46 @@ class GameWorld:
                 self.game_over()
             elif event.type == pg.KEYDOWN and event.key == pg.K_f:
                 self.shoot_bullet()
+            elif (
+                event.type == pg.KEYDOWN and event.key == pg.K_e
+            ):  # Detect 'E' key press
+                self.throw_exploding_object()
 
     def shoot_bullet(self):
-        # Determine the direction based on player's x-velocity
-        self.direction = 1 if self.player.vx >= 0 else -1
-        bullet = Bullet(self.player.rect.centerx, self.player.rect.centery, self)
+        # Determine the direction of the bullet based on the player's current velocity
+        direction_x = 1 if self.player.vx >= 0 else -1
+        direction_y = 0  # Assuming bullets only move horizontally for now
+        damage = 1  # Set the damage dealt by the player's bullets
+
+        # Create the bullet
+        bullet = Bullet(
+            self.player.rect.centerx,
+            self.player.rect.centery,
+            direction_x,
+            direction_y,
+            damage,  # Pass the GameWorld instance as the world
+            self,
+        )
         self.bullets.add(bullet)
         self.all_sprites.add(bullet)
+
+    def throw_exploding_object(self):
+        # Determine the direction of the throw based on the player's facing direction
+        direction_x = 1 if self.player.vx >= 0 else -1
+        direction_y = 0  # Exploding objects are thrown horizontally
+        damage = 10  # Set the damage dealt by the exploding object
+
+        # Create the exploding object
+        exploding_object = ExplodingObject(
+            self.player.rect.centerx,
+            self.player.rect.centery,
+            direction_x,
+            direction_y,
+            damage,
+            self,
+        )
+        self.bullets.add(exploding_object)
+        self.all_sprites.add(exploding_object)
 
     def update_camera(self):
         # Define the free movement range dynamically based on the camera offset
@@ -137,10 +213,19 @@ class GameWorld:
             self.camera_offset_x += player_center_x - free_range_right
 
     def update(self):
-        # Update all sprites
-        self.all_sprites.update()
+        # Update all sprites except enemies
+        for sprite in self.all_sprites:
+            if not isinstance(sprite, Enemy):
+                sprite.update()
+
+        # Update enemies and pass the player object
+        for enemy in self.enemies:
+            enemy.update(self.player)
+
         # Update bullets
-        self.bullets.update()
+        for bullet in self.bullets:
+            bullet.update()
+
         # Update the camera
         self.update_camera()
 
@@ -153,8 +238,13 @@ class GameWorld:
             offset_rect = sprite.rect.move(-self.camera_offset_x, 0)
             self.screen.blit(sprite.image, offset_rect)
 
-        # Draw the player's gems (lifes) at the top left corner
+        # Draw health bars for enemies
+        for enemy in self.enemies:
+            enemy.draw_health_bar(self.screen, self.camera_offset_x)
+
+        # Draw the player's gems (lives) at the top left corner
         self.draw_gems()
+        self.draw_health_bar()  # Draw the health bar
 
         # Update the display
         pg.display.flip()
@@ -166,6 +256,31 @@ class GameWorld:
             f"Player Lives: {self.player.gems}", True, (255, 255, 255)
         )  # White color
         self.screen.blit(text, (10, 10))  # Position at top-left corner (10, 10)
+
+    def draw_health_bar(self):
+        # Define the position and size of the health bar
+        bar_width = 200
+        bar_height = 20
+        bar_x = WIDTH - bar_width - 20  # Top-right corner with padding
+        bar_y = 10
+
+        # Calculate the width of the filled portion based on player's health
+        max_health = self.player.max_health  # Assume max_health is defined in Player
+        current_health = self.player.health
+        fill_width = int((current_health / max_health) * bar_width)
+
+        # Draw the health bar background (gray)
+        pg.draw.rect(
+            self.screen, (100, 100, 100), (bar_x, bar_y, bar_width, bar_height)
+        )
+
+        # Draw the filled portion of the health bar (green)
+        pg.draw.rect(self.screen, (0, 255, 0), (bar_x, bar_y, fill_width, bar_height))
+
+        # Optionally, draw a border around the health bar (white)
+        pg.draw.rect(
+            self.screen, (255, 255, 255), (bar_x, bar_y, bar_width, bar_height), 2
+        )
 
     def start_screen(self):
         pass
