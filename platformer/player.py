@@ -95,6 +95,18 @@ class Player(pg.sprite.Sprite):
         hits = pg.sprite.spritecollide(self, self.world.powerups, True)
         for powerup in hits:
             powerup.apply_effect(self)
+            self.active_powerups[powerup.power_type] = [300, powerup]
+
+    def handle_powerup_timers(self):
+        expired = []
+        for ptype in self.active_powerups:
+            self.active_powerups[ptype][0] -= 1
+            if self.active_powerups[ptype][0] <= 0:
+                # Timer expired, power down and mark for removal
+                self.active_powerups[ptype][1].power_down(self)
+                expired.append(ptype)
+        for ptype in expired:
+            del self.active_powerups[ptype]
 
     def take_damage(self, damage):
         self.health -= damage
@@ -122,6 +134,7 @@ class Player(pg.sprite.Sprite):
             self.move()
             self.check_items()
             self.check_powerups()
+            self.handle_powerup_timers()
 
             # Check for collisions with enemies
             enemy_hit = pg.sprite.spritecollideany(self, self.world.enemies)
