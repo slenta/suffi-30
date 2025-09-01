@@ -8,6 +8,7 @@ from .bullet import Bullet  # Import the Bullet class
 from .enemies import Enemy
 from .bullet import ExplodingObject  # Import the ExplodingObject class
 from .powerup import PowerUp  # Import the PowerUp class
+from .trophy import Exit, Trophy
 import importlib
 
 
@@ -104,6 +105,18 @@ class GameWorld:
             self.all_sprites.add(powerup)
             self.powerups.add(powerup)
 
+        # Load trophies and exits
+        self.trophies = pg.sprite.Group()
+        for x, y in self.level_config["trophy_locations"]:
+            trophy = Trophy(x * GRIDSIZE, y * GRIDSIZE)
+            self.trophies.add(trophy)
+            self.all_sprites.add(trophy)
+        self.total_trophies = len(self.level_config["trophy_locations"])
+
+        exit_x, exit_y = self.level_config["exit_location"]
+        self.exit = Exit(exit_x * GRIDSIZE, exit_y * GRIDSIZE)
+        self.all_sprites.add(self.exit)
+
     def reset(self):
         # Neustart oder Status zurücksetzen
         # Hier werden alle Elemente der GameWorld initialisiert
@@ -143,8 +156,17 @@ class GameWorld:
         for powerup in self.powerups:
             self.all_sprites.add(powerup)
 
+        for trophy in self.trophies:
+            self.all_sprites.add(trophy)
+
+        self.all_sprites.add(self.exit)
+
         self.player = Player(
-            PLAYER_START_X, PLAYER_START_Y, world=self, start_gems=self.player_gems
+            PLAYER_START_X,
+            PLAYER_START_Y,
+            world=self,
+            start_gems=self.player_gems,
+            trophies_collected=self.player.trophies_collected,
         )
         self.player_sprite_group = pg.sprite.GroupSingle()
         self.player_sprite_group.add(self.player)
@@ -200,6 +222,47 @@ class GameWorld:
         self.bullets.add(exploding_object)
         self.all_sprites.add(exploding_object)
 
+    def fade_to_black(self, duration=60):
+        """Fade the screen to black from the center outward over 'duration' frames."""
+        clock = pg.time.Clock()
+        for frame in range(duration):
+            self.draw()  # Draw the current frame
+            # Calculate the radius for this frame
+            max_radius = int((WIDTH**2 + HEIGHT**2) ** 0.5 // 2)
+            radius = int((frame / duration) * max_radius)
+            # Create a transparent surface
+            fade_surface = pg.Surface((WIDTH, HEIGHT), pg.SRCALPHA)
+            # Draw a solid black circle in the center
+            pg.draw.circle(
+                fade_surface, (0, 0, 0, 255), (WIDTH // 2, HEIGHT // 2), radius
+            )
+            self.screen.blit(fade_surface, (0, 0))
+            pg.display.flip()
+            clock.tick(60)
+
+    def show_level_complete_text(self):
+        """Display 'Level Complete!' in big white letters at the center of the screen."""
+        self.screen.fill((0, 0, 0))
+        font = pg.font.Font(None, 120)  # Big font
+        text = font.render("Level Complete!", True, (255, 255, 255))
+        text_rect = text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+        self.screen.blit(text, text_rect)
+        pg.display.flip()
+
+        # Wait until the user closes the window or presses any key
+        waiting = True
+        while waiting:
+            for event in pg.event.get():
+                if event.type == pg.QUIT or (event.type == pg.KEYDOWN):
+                    waiting = False
+        pg.quit()
+        sys.exit()
+
+    def level_complete(self):
+        self.fade_to_black(duration=60)
+        self.show_level_complete_text()
+        # Implement your transition logic here (e.g., load next level or quit)
+
     def update_camera(self):
         # Define the free movement range dynamically based on the camera offset
         free_range_left = self.camera_offset_x + WIDTH // 3
@@ -244,10 +307,21 @@ class GameWorld:
 
         # Draw the player's gems (lives) at the top left corner
         self.draw_gems()
+        self.draw_trophies()
         self.draw_health_bar()  # Draw the health bar
 
         # Update the display
         pg.display.flip()
+
+    def draw_trophies(self):
+        # Render the text showing the number of trophies collected
+        font = pg.font.Font(None, 36)  # Use default font with size 36
+        text = font.render(
+            f"Trophies Collected: {self.player.trophies_collected} / {self.total_trophies}",
+            True,
+            (255, 255, 255),
+        )  # White color
+        self.screen.blit(text, (10, 50))  # Position below the gems text
 
     def draw_gems(self):
         # Render the text showing the number of gems
