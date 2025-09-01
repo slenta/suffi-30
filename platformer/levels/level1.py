@@ -28,6 +28,9 @@ level_config = {
         (61, 10),
         (63, 8),
         (65, 6),
+        (79, 10),
+        (80, 10),
+        (81, 10),
     ],
     "gem_locations": [(20, 3), (12, 6), (26, 6), (36, 13), (65, 5)],
     "powerup_locations": [
@@ -62,6 +65,6 @@ level_config = {
             "melee_damage": 10,
         },
     ],
-    "trophy_locations": [(10, 5), (25, 8), (44, 12)],
-    "exit_location": (60, 12),
+    "trophy_locations": [(10, 5), (25, 8), (80, 8)],
+    "exit_location": (95, 13),
 }
