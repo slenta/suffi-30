@@ -7,7 +7,7 @@ from .bullet import ExplodingObject  # Import the ExplodingObject class
 ## Class Player
 class Player(pg.sprite.Sprite):
 
-    def __init__(self, _x, _y, world, start_gems=0, health=100):
+    def __init__(self, _x, _y, world, start_gems=0, trophies_collected=0, health=100):
         super().__init__()
         self.img = []
         for i in range(2):
@@ -31,6 +31,7 @@ class Player(pg.sprite.Sprite):
         self.knockback_timer = 0  # Timer to track incapacitation
         self.is_knocked_back = False  # Flag to indicate knockback state
         self.active_powerups = {}
+        self.trophies_collected = trophies_collected
 
     def jump(self):
         self.rect.y += 2
@@ -97,6 +98,19 @@ class Player(pg.sprite.Sprite):
             powerup.apply_effect(self)
             self.active_powerups[powerup.power_type] = [300, powerup]
 
+    def check_trophies(self):
+        hits = pg.sprite.spritecollide(self, self.world.trophies, True)
+        self.trophies_collected += len(hits)
+
+    def check_exit(self):
+        if self.trophies_collected == len(self.world.trophies) + len(
+            self.world.trophies.sprites()
+        ):
+            self.world.exit.open()
+            # All trophies collected
+        if pg.sprite.collide_rect(self, self.world.exit) and self.world.exit.is_open:
+            self.world.level_complete()
+
     def handle_powerup_timers(self):
         expired = []
         for ptype in self.active_powerups:
@@ -135,6 +149,8 @@ class Player(pg.sprite.Sprite):
             self.check_items()
             self.check_powerups()
             self.handle_powerup_timers()
+            self.check_trophies()
+            self.check_exit()
 
             # Check for collisions with enemies
             enemy_hit = pg.sprite.spritecollideany(self, self.world.enemies)

@@ -62,4 +62,6 @@ level_config = {
             "melee_damage": 10,
         },
     ],
+    "trophy_locations": [(10, 5), (25, 8), (44, 12)],
+    "exit_location": (60, 12),
 }
