@@ -9,6 +9,7 @@ from .enemies import Enemy
 from .bullet import ExplodingObject  # Import the ExplodingObject class
 from .powerup import PowerUp  # Import the PowerUp class
 from .trophy import Exit, Trophy
+from .draw import *
 import importlib
 
 
@@ -180,75 +181,21 @@ class GameWorld:
                 self.keep_going = False
                 self.game_over()
             elif event.type == pg.KEYDOWN and event.key == pg.K_f:
-                self.shoot_bullet()
+                self.player.shoot_bullet()
             elif (
                 event.type == pg.KEYDOWN and event.key == pg.K_e
             ):  # Detect 'E' key press
-                self.throw_exploding_object()
+                self.player.throw_exploding_object()
 
-    def shoot_bullet(self):
-        # Determine the direction of the bullet based on the player's current velocity
-        direction_x = 1 if self.player.vx >= 0 else -1
-        direction_y = 0  # Assuming bullets only move horizontally for now
-        damage = 1  # Set the damage dealt by the player's bullets
-
-        # Create the bullet
-        bullet = Bullet(
-            self.player.rect.centerx,
-            self.player.rect.centery,
-            direction_x,
-            direction_y,
-            damage,  # Pass the GameWorld instance as the world
-            self,
+    def level_complete(self):
+        fade_to_black(
+            screen=self.screen,
+            draw_callback=self.draw,
+            width=WIDTH,
+            height=HEIGHT,
+            duration=60,
         )
-        self.bullets.add(bullet)
-        self.all_sprites.add(bullet)
-
-    def throw_exploding_object(self):
-        # Determine the direction of the throw based on the player's facing direction
-        direction_x = 1 if self.player.vx >= 0 else -1
-        direction_y = 0  # Exploding objects are thrown horizontally
-        damage = 10  # Set the damage dealt by the exploding object
-
-        # Create the exploding object
-        exploding_object = ExplodingObject(
-            self.player.rect.centerx,
-            self.player.rect.centery,
-            direction_x,
-            direction_y,
-            damage,
-            self,
-        )
-        self.bullets.add(exploding_object)
-        self.all_sprites.add(exploding_object)
-
-    def fade_to_black(self, duration=60):
-        """Fade the screen to black from the center outward over 'duration' frames."""
-        clock = pg.time.Clock()
-        for frame in range(duration):
-            self.draw()  # Draw the current frame
-            # Calculate the radius for this frame
-            max_radius = int((WIDTH**2 + HEIGHT**2) ** 0.5 // 2)
-            radius = int((frame / duration) * max_radius)
-            # Create a transparent surface
-            fade_surface = pg.Surface((WIDTH, HEIGHT), pg.SRCALPHA)
-            # Draw a solid black circle in the center
-            pg.draw.circle(
-                fade_surface, (0, 0, 0, 255), (WIDTH // 2, HEIGHT // 2), radius
-            )
-            self.screen.blit(fade_surface, (0, 0))
-            pg.display.flip()
-            clock.tick(60)
-
-    def show_level_complete_text(self):
-        """Display 'Level Complete!' in big white letters at the center of the screen."""
-        self.screen.fill((0, 0, 0))
-        font = pg.font.Font(None, 120)  # Big font
-        text = font.render("Level Complete!", True, (255, 255, 255))
-        text_rect = text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
-        self.screen.blit(text, text_rect)
-        pg.display.flip()
-
+        show_level_complete_text(screen=self.screen, width=WIDTH, height=HEIGHT)
         # Wait until the user closes the window or presses any key
         waiting = True
         while waiting:
@@ -258,9 +205,6 @@ class GameWorld:
         pg.quit()
         sys.exit()
 
-    def level_complete(self):
-        self.fade_to_black(duration=60)
-        self.show_level_complete_text()
         # Implement your transition logic here (e.g., load next level or quit)
 
     def update_camera(self):
@@ -306,55 +250,20 @@ class GameWorld:
             enemy.draw_health_bar(self.screen, self.camera_offset_x)
 
         # Draw the player's gems (lives) at the top left corner
-        self.draw_gems()
-        self.draw_trophies()
-        self.draw_health_bar()  # Draw the health bar
+        draw_gems(screen=self.screen, player=self.player)
+        draw_trophies(
+            screen=self.screen, player=self.player, total_trophies=self.total_trophies
+        )
+        draw_health_bar(
+            screen=self.screen,
+            player=self.player,
+            width=200,
+            height=15,
+            max_health=self.player.max_health,
+        )
 
         # Update the display
         pg.display.flip()
-
-    def draw_trophies(self):
-        # Render the text showing the number of trophies collected
-        font = pg.font.Font(None, 36)  # Use default font with size 36
-        text = font.render(
-            f"Trophies Collected: {self.player.trophies_collected} / {self.total_trophies}",
-            True,
-            (255, 255, 255),
-        )  # White color
-        self.screen.blit(text, (10, 50))  # Position below the gems text
-
-    def draw_gems(self):
-        # Render the text showing the number of gems
-        font = pg.font.Font(None, 36)  # Use default font with size 36
-        text = font.render(
-            f"Player Lives: {self.player.gems}", True, (255, 255, 255)
-        )  # White color
-        self.screen.blit(text, (10, 10))  # Position at top-left corner (10, 10)
-
-    def draw_health_bar(self):
-        # Define the position and size of the health bar
-        bar_width = 200
-        bar_height = 20
-        bar_x = WIDTH - bar_width - 20  # Top-right corner with padding
-        bar_y = 10
-
-        # Calculate the width of the filled portion based on player's health
-        max_health = self.player.max_health  # Assume max_health is defined in Player
-        current_health = self.player.health
-        fill_width = int((current_health / max_health) * bar_width)
-
-        # Draw the health bar background (gray)
-        pg.draw.rect(
-            self.screen, (100, 100, 100), (bar_x, bar_y, bar_width, bar_height)
-        )
-
-        # Draw the filled portion of the health bar (green)
-        pg.draw.rect(self.screen, (0, 255, 0), (bar_x, bar_y, fill_width, bar_height))
-
-        # Optionally, draw a border around the health bar (white)
-        pg.draw.rect(
-            self.screen, (255, 255, 255), (bar_x, bar_y, bar_width, bar_height), 2
-        )
 
     def start_screen(self):
         pass

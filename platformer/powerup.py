@@ -19,7 +19,7 @@ class PowerUp(pg.sprite.Sprite):
             image.fill((255, 255, 0))  # Yellow for unknown power-ups
 
         # Scale the image to the grid size
-        self.image = pg.transform.scale(image, (GRIDSIZE, GRIDSIZE))
+        self.image = pg.transform.scale(image, (2 * GRIDSIZE, 2 * GRIDSIZE))
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
 

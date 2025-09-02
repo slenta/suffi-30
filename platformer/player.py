@@ -1,7 +1,7 @@
 import pygame as pg
 import os
 from .settings import *
-from .bullet import ExplodingObject  # Import the ExplodingObject class
+from .bullet import Bullet, ExplodingObject  # Import the ExplodingObject class
 
 
 ## Class Player
@@ -19,7 +19,6 @@ class Player(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = _x * GRIDSIZE
         self.rect.bottom = _y * GRIDSIZE
-        # self.rect.topleft = (self.rect.x, self.rect.y)
         self.speed = PLAYER_SPEED
         self.jump_power = JUMP_POWER
         self.vx = 0
@@ -79,6 +78,36 @@ class Player(pg.sprite.Sprite):
         if self.rect.y > self.world.top + 20:
             self.loose()
 
+    def shoot_bullet(self):
+        direction_x = 1 if self.vx >= 0 else -1
+        direction_y = 0
+        damage = 1
+        bullet = Bullet(
+            self.rect.centerx,
+            self.rect.centery,
+            direction_x,
+            direction_y,
+            damage,
+            self.world,
+        )
+        self.world.bullets.add(bullet)
+        self.world.all_sprites.add(bullet)
+
+    def throw_exploding_object(self):
+        direction_x = 1 if self.vx >= 0 else -1
+        direction_y = 0
+        damage = 10
+        exploding_object = ExplodingObject(
+            self.rect.centerx,
+            self.rect.centery,
+            direction_x,
+            direction_y,
+            damage,
+            self.world,
+        )
+        self.world.bullets.add(exploding_object)
+        self.world.all_sprites.add(exploding_object)
+
     def check_edges(self):
         left_edge = self.world.ground_start
         right_edge = self.world.ground_end
@@ -103,9 +132,7 @@ class Player(pg.sprite.Sprite):
         self.trophies_collected += len(hits)
 
     def check_exit(self):
-        if self.trophies_collected == len(self.world.trophies) + len(
-            self.world.trophies.sprites()
-        ):
+        if self.trophies_collected == self.world.total_trophies:
             self.world.exit.open()
             # All trophies collected
         if pg.sprite.collide_rect(self, self.world.exit) and self.world.exit.is_open:
