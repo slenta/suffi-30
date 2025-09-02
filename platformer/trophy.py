@@ -7,7 +7,7 @@ class Trophy(pg.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
         image = pg.image.load(os.path.join(IMAGEPATH, "trophy.png")).convert_alpha()
-        self.image = pg.transform.scale(image, (GRIDSIZE, GRIDSIZE))
+        self.image = pg.transform.scale(image, (2 * GRIDSIZE, 2 * GRIDSIZE))
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
 
