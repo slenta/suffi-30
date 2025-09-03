@@ -1,7 +1,7 @@
 import asyncio
 import pygame as pg
 from .gameworld import GameWorld
-from .settings import FPS
+from .settings import FPS, KEYBINDINGS
 
 # Initialize the game world
 world = GameWorld()
@@ -22,7 +22,8 @@ async def main():
             if event.type == pg.QUIT:
                 running = False
             elif event.type == pg.KEYDOWN:
-                if event.key == pg.K_e:  # Check if the 'E' key is pressed
+                # Keep handling minimal here; specific actions are handled in GameWorld.events()
+                if event.key == KEYBINDINGS.get("throw"):
                     world.player.throw_exploding_object()
 
 

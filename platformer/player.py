@@ -46,11 +46,12 @@ class Player(pg.sprite.Sprite):
 
     def move(self):
         keys = pg.key.get_pressed()
-        if keys[pg.K_a]:  # LEFT
+        # Use centralized keybindings from settings
+        if keys[KEYBINDINGS.get("left")]:
             self.vx = -1 * self.speed
-        elif keys[pg.K_d]:  # RIGHT
+        elif keys[KEYBINDINGS.get("right")]:
             self.vx = self.speed
-        elif keys[pg.K_w]:  # JUMP
+        elif keys[KEYBINDINGS.get("jump")]:
             self.jump()
         else:
             self.vx = 0
@@ -92,21 +93,6 @@ class Player(pg.sprite.Sprite):
         )
         self.world.bullets.add(bullet)
         self.world.all_sprites.add(bullet)
-
-    def throw_exploding_object(self):
-        direction_x = 1 if self.vx >= 0 else -1
-        direction_y = 0
-        damage = 10
-        exploding_object = ExplodingObject(
-            self.rect.centerx,
-            self.rect.centery,
-            direction_x,
-            direction_y,
-            damage,
-            self.world,
-        )
-        self.world.bullets.add(exploding_object)
-        self.world.all_sprites.add(exploding_object)
 
     def check_edges(self):
         left_edge = self.world.ground_start
