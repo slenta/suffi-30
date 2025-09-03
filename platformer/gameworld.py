@@ -176,15 +176,13 @@ class GameWorld:
     def events(self):
         for event in pg.event.get():
             if (event.type == pg.QUIT) or (
-                event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE
+                event.type == pg.KEYDOWN and event.key == KEYBINDINGS.get("quit")
             ):
                 self.keep_going = False
                 self.game_over()
-            elif event.type == pg.KEYDOWN and event.key == pg.K_f:
+            elif event.type == pg.KEYDOWN and event.key == KEYBINDINGS.get("shoot"):
                 self.player.shoot_bullet()
-            elif (
-                event.type == pg.KEYDOWN and event.key == pg.K_e
-            ):  # Detect 'E' key press
+            elif event.type == pg.KEYDOWN and event.key == KEYBINDINGS.get("throw"):
                 self.player.throw_exploding_object()
 
     def level_complete(self):
