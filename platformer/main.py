@@ -1,11 +1,20 @@
 import asyncio
+import os
 import pygame as pg
 from .gameworld import GameWorld
 from .settings import FPS, KEYBINDINGS
 
+
+def get_level_to_load():
+    """Get the level to load from environment variable or use default."""
+    level_name = os.environ.get('PLATFORMER_LEVEL', 'level1')
+    print(f"🎯 Loading level: {level_name}")
+    return level_name
+
+
 # Initialize the game world
 world = GameWorld()
-world.load_level("level1")  # Load level1 configuration
+world.load_level(get_level_to_load())  # Load selected level configuration
 world.start_screen()
 
 
