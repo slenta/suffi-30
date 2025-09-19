@@ -164,4 +164,5 @@ level_config = {
     
     # Extended exit location - much further
     "exit_location": (420, 13),
+    "background_music": "music/level1-advanced.mp3",  # Path relative to game root, or use absolute path
 }

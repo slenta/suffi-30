@@ -1,5 +1,6 @@
 import pygame as pg
 from .settings import *
+from .sound_manager import sound_manager  # Import the sound manager
 import math
 
 
@@ -77,6 +78,7 @@ class ExplodingObject(pg.sprite.Sprite):
             self.explode()
 
     def explode(self):
+        sound_manager.play_sound_effect("explode")  # Play explosion sound
         # Deal damage to the player
         if pg.sprite.collide_rect(self, self.world.player):
             self.world.player.take_damage(self.damage)

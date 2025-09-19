@@ -80,4 +80,5 @@ level_config = {
     ],
     "trophy_locations": [(10, 5), (26, 6), (80, 8)],
     "exit_location": (95, 13),
+    "background_music": "music/level1.mp3",  # Path relative to game root, or use absolute path
 }
