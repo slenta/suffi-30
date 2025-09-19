@@ -2,6 +2,7 @@ import pygame as pg
 import os
 from .settings import *
 from .bullet import Bullet, ExplodingObject  # Import the ExplodingObject class
+from .sound_manager import sound_manager  # Import the sound manager
 
 
 ## Class Player
@@ -38,6 +39,7 @@ class Player(pg.sprite.Sprite):
         self.rect.y -= 2
         if len(hits) > 0:
             self.vy = -1 * self.jump_power
+            sound_manager.play_sound_effect("jump")  # Play jump sound
 
     def apply_gravity(self):
         self.vy += GRAVITY
@@ -106,15 +108,19 @@ class Player(pg.sprite.Sprite):
         hits = pg.sprite.spritecollide(self, self.world.items, True)
         for item in hits:
             item.apply(self)
+            sound_manager.play_sound_effect("gem_collect")  # Play gem collection sound
 
     def check_powerups(self):
         hits = pg.sprite.spritecollide(self, self.world.powerups, True)
         for powerup in hits:
             powerup.apply_effect(self)
             self.active_powerups[powerup.power_type] = [300, powerup]
+            sound_manager.play_sound_effect("powerup_collect")  # Play powerup collection sound
 
     def check_trophies(self):
         hits = pg.sprite.spritecollide(self, self.world.trophies, True)
+        if len(hits) > 0:
+            sound_manager.play_sound_effect("trophy_collect")  # Play trophy collection sound
         self.trophies_collected += len(hits)
 
     def check_exit(self):
@@ -122,6 +128,7 @@ class Player(pg.sprite.Sprite):
             self.world.exit.open()
             # All trophies collected
         if pg.sprite.collide_rect(self, self.world.exit) and self.world.exit.is_open:
+            sound_manager.play_sound_effect("level_complete")  # Play level complete sound
             self.world.level_complete()
 
     def handle_powerup_timers(self):
@@ -136,12 +143,14 @@ class Player(pg.sprite.Sprite):
             del self.active_powerups[ptype]
 
     def take_damage(self, damage):
+        sound_manager.play_sound_effect("player_hurt")  # Play hurt sound
         self.health -= damage
         if self.health <= 0:
             self.health = 0
             self.loose()  # Call the loose function when health is 0
 
     def loose(self):
+        sound_manager.play_sound_effect("player_death")  # Play death/fall sound
         if self.gems >= 1:
             self.gems -= 1
             self.world.loose_screen()

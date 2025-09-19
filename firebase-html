@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>My Pygame Platformer</title>
+    <style>
+        body { margin: 0; padding: 0; background: #000; }
+        canvas { display: block; margin: 0 auto; }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    
+    <script>
+        // Your Firebase config (replace with your actual config)
+        const firebaseConfig = {
+            apiKey: "AIzaSyADl6J6GZvnu0NJ7zkW4JT6Ws8JIOQMRgY",
+            authDomain: "suffi-30.firebaseapp.com",
+            projectId: "suffi-30",
+            storageBucket: "suffi-30.firebasestorage.app",
+            messagingSenderId: "479761051090",
+            appId: "1:479761051090:web:0a4c801868b8b76da5ac0b"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // Global functions for pygame to use
+        window.saveHighscore = async function(playerName, score) {
+            try {
+                await db.collection('highscores').add({
+                    player: playerName,
+                    score: score,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                console.log('Score saved successfully!');
+                return true;
+            } catch (error) {
+                console.error('Error saving score:', error);
+                return false;
+            }
+        };
+        
+        window.getHighscores = async function(limit = 10) {
+            try {
+                const snapshot = await db.collection('highscores')
+                    .orderBy('score', 'desc')
+                    .limit(limit)
+                    .get();
+                
+                const scores = [];
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    scores.push({
+                        player: data.player,
+                        score: data.score,
+                        timestamp: data.timestamp
+                    });
+                });
+                return scores;
+            } catch (error) {
+                console.error('Error fetching scores:', error);
+                return [];
+            }
+        };
+    </script>
+    
+    <!-- Your pygbag generated script goes here -->
+    <script src="main.js"></script>
+</body>
+</html>

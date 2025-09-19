@@ -10,6 +10,7 @@ from .bullet import ExplodingObject  # Import the ExplodingObject class
 from .powerup import PowerUp  # Import the PowerUp class
 from .trophy import Exit, Trophy
 from .draw import *
+from .sound_manager import sound_manager  # Import the sound manager
 import importlib
 
 
@@ -117,6 +118,18 @@ class GameWorld:
         exit_x, exit_y = self.level_config["exit_location"]
         self.exit = Exit(exit_x * GRIDSIZE, exit_y * GRIDSIZE)
         self.all_sprites.add(self.exit)
+
+        # Load level-specific background music
+        if "background_music" in self.level_config and self.level_config["background_music"]:
+            music_path = self.level_config["background_music"]
+            # Check if it's an absolute path or relative to game directory
+            if not os.path.isabs(music_path):
+                # Try relative to game root directory first
+                music_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), music_path)
+            sound_manager.play_background_music(music_path)
+
+        # Load common sound effects (if they exist)
+        self.load_sound_effects()
 
     def reset(self):
         # Neustart oder Status zurücksetzen
@@ -262,6 +275,28 @@ class GameWorld:
 
         # Update the display
         pg.display.flip()
+
+    pass
+
+    def load_sound_effects(self):
+        """Load common sound effects for the game."""
+        # Define common sound effects with their file paths
+        sound_effects = {
+            "jump": "sounds/jump.wav",
+            "gem_collect": "sounds/gem_collect.wav", 
+            "enemy_hit": "sounds/enemy_hit.wav",
+            "player_hurt": "sounds/player_hurt.wav",
+            "player_death": "sounds/player_death.wav",  # Player death/fall sound
+            "powerup_collect": "sounds/powerup_collect.wav",
+            "trophy_collect": "sounds/trophy_collect.wav",
+            "level_complete": "sounds/level_complete.wav",
+            "explode": "sounds/explode.wav"
+        }
+        
+        # Load each sound effect (silently ignore missing files)
+        for name, path in sound_effects.items():
+            full_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), path)
+            sound_manager.load_sound_effect(name, full_path)
 
     def start_screen(self):
         pass

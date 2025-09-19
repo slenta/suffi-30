@@ -4,6 +4,7 @@ import pygame as pg
 from .bullet import Bullet  # Import the Bullet class
 from .settings import *
 from .bullet import ExplodingObject
+from .sound_manager import sound_manager  # Import the sound manager
 
 
 class Enemy(pg.sprite.Sprite):
@@ -154,6 +155,7 @@ class Enemy(pg.sprite.Sprite):
         player.take_damage(self.melee_damage)
 
     def take_damage(self, damage):
+        sound_manager.play_sound_effect("enemy_hit")  # Play enemy hit sound
         self.health -= damage
         if self.health <= 0:
             self.kill()
