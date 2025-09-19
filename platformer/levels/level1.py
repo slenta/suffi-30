@@ -70,7 +70,7 @@ level_config = {
             "image": "police.png",
             "speed": 5,
             "patrol_range": 150,
-            "size_multiplier": 1,
+            "size_multiplier": 3,
             "health": 15,
             "damage": 50,
             "shoot_range": 20,
@@ -81,4 +81,6 @@ level_config = {
     "trophy_locations": [(10, 5), (26, 6), (80, 8)],
     "exit_location": (95, 13),
     "background_music": "music/level1.mp3",  # Path relative to game root, or use absolute path
+    "background_image": "backgrounds/level1_bg.png",  # Path to background image
+    "background_scroll_speed": 0.3,  # Optional: parallax scrolling speed (0.0 = static, 1.0 = moves with camera)
 }

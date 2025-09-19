@@ -165,4 +165,6 @@ level_config = {
     # Extended exit location - much further
     "exit_location": (420, 13),
     "background_music": "music/level1-advanced.mp3",  # Path relative to game root, or use absolute path
+    "background_image": "backgrounds/level1-advanced_bg.png",  # Path to background image
+    "background_scroll_speed": 0.2,  # Slower parallax for advanced level
 }
