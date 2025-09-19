@@ -48,15 +48,18 @@ class Player(pg.sprite.Sprite):
 
     def move(self):
         keys = pg.key.get_pressed()
-        # Use centralized keybindings from settings
+        
+        # Handle horizontal movement
         if keys[KEYBINDINGS.get("left")]:
             self.vx = -1 * self.speed
         elif keys[KEYBINDINGS.get("right")]:
             self.vx = self.speed
-        elif keys[KEYBINDINGS.get("jump")]:
-            self.jump()
         else:
             self.vx = 0
+        
+        # Handle jumping independently of horizontal movement
+        if keys[KEYBINDINGS.get("jump")]:
+            self.jump()
 
         # Horizonfale Kollision
         self.rect.x += self.vx
