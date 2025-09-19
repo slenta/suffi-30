@@ -128,6 +128,9 @@ class GameWorld:
                 music_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), music_path)
             sound_manager.play_background_music(music_path)
 
+        # Load background image
+        self.load_background_image()
+
         # Load common sound effects (if they exist)
         self.load_sound_effects()
 
@@ -248,8 +251,8 @@ class GameWorld:
         self.update_camera()
 
     def draw(self):
-        # Fill the screen with the background color
-        self.screen.fill(BG_COLOR)
+        # Draw background
+        self.draw_background()
 
         # Draw all sprites with the camera offset
         for sprite in self.all_sprites:
@@ -276,6 +279,37 @@ class GameWorld:
         # Update the display
         pg.display.flip()
 
+    def draw_background(self):
+        """Draw the background - either an image or solid color."""
+        if self.background_image:
+            # Calculate parallax scrolling offset
+            bg_offset = int(self.camera_offset_x * self.background_scroll_speed)
+            
+            # Get background and screen dimensions
+            bg_width = self.background_image.get_width()
+            bg_height = self.background_image.get_height()
+            screen_width = self.screen.get_width()
+            screen_height = self.screen.get_height()
+            
+            # Scale background to fit screen height if needed
+            if bg_height != screen_height:
+                scale_factor = screen_height / bg_height
+                scaled_width = int(bg_width * scale_factor)
+                self.background_image = pg.transform.scale(self.background_image, (scaled_width, screen_height))
+                bg_width = scaled_width
+            
+            # Tile the background horizontally to cover the entire screen width
+            start_x = -(bg_offset % bg_width)
+            
+            # Draw background tiles
+            x = start_x
+            while x < screen_width:
+                self.screen.blit(self.background_image, (x, 0))
+                x += bg_width
+        else:
+            # Fall back to solid color background
+            self.screen.fill(BG_COLOR)
+
     pass
 
     def load_sound_effects(self):
@@ -297,6 +331,35 @@ class GameWorld:
         for name, path in sound_effects.items():
             full_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), path)
             sound_manager.load_sound_effect(name, full_path)
+
+    def load_background_image(self):
+        """Load level-specific background image."""
+        self.background_image = None
+        self.background_scroll_speed = 0.5  # Default parallax scroll speed
+        
+        if "background_image" in self.level_config and self.level_config["background_image"]:
+            bg_path = self.level_config["background_image"]
+            
+            # Check if it's an absolute path or relative to game directory
+            if not os.path.isabs(bg_path):
+                # Try relative to game root directory first
+                bg_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), bg_path)
+            
+            # Load background image
+            if os.path.exists(bg_path):
+                try:
+                    self.background_image = pg.image.load(bg_path).convert()
+                    print(f"🖼️ Loaded background image: {os.path.basename(bg_path)}")
+                    
+                    # Get optional background settings
+                    if "background_scroll_speed" in self.level_config:
+                        self.background_scroll_speed = self.level_config["background_scroll_speed"]
+                        
+                except pg.error as e:
+                    print(f"❌ Error loading background image: {e}")
+                    self.background_image = None
+            else:
+                print(f"❌ Background image not found: {bg_path}")
 
     def start_screen(self):
         pass
