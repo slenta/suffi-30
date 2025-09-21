@@ -15,6 +15,8 @@ The game will look for these sound effect files:
 - `trophy_collect.wav` - Sound when collecting trophies
 - `level_complete.wav` - Sound when completing a level
 - `explode.wav` - Sound for explosions
+- `menu_move.wav` - Sound when moving cursor in menus
+- `menu_select.wav` - Sound when selecting menu options
 
 ## Supported Formats
 

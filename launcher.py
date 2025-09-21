@@ -35,9 +35,9 @@ def parse_arguments():
 {chr(10).join(f'   🎯 {level}' for level in available_levels)}
 
 📝 Examples:
-   python launcher.py                         # Play default level (level1)
-   python launcher.py level1                  # Play level1  
-   python launcher.py level1-advanced         # Play the advanced level
+   python launcher.py                         # Show level selection screen
+   python launcher.py level1                  # Play level1 directly 
+   python launcher.py level1-advanced         # Play the advanced level directly
    python launcher.py --list-levels           # Show all available levels
         """
     )
@@ -45,8 +45,8 @@ def parse_arguments():
     parser.add_argument(
         'level',
         nargs='?',
-        default='level1',
-        help='Level to play (default: level1)'
+        default=None,  # Changed to None to trigger level selection screen
+        help='Level to play directly (default: show level selection screen)'
     )
     
     parser.add_argument(
@@ -64,8 +64,8 @@ def parse_arguments():
             print(f"   🎯 {level}")
         sys.exit(0)
     
-    # Validate level exists
-    if args.level not in available_levels:
+    # Validate level exists (only if level was specified)
+    if args.level and args.level not in available_levels:
         print(f"❌ Error: Level '{args.level}' not found!")
         print(f"📋 Available levels: {', '.join(available_levels)}")
         print(f"💡 Use 'python launcher.py --list-levels' to see all options")
@@ -76,12 +76,17 @@ def parse_arguments():
 
 def launch_game(level_name):
     """Launch the platformer game with the specified level."""
-    print(f"🚀 Loading level: {level_name}")
-    print("🎮 Starting game...")
-    
-    # Set environment variable for the level
-    env = os.environ.copy()
-    env['PLATFORMER_LEVEL'] = level_name
+    if level_name:
+        print(f"🚀 Loading level: {level_name}")
+        print("🎮 Starting game...")
+        
+        # Set environment variable for the level
+        env = os.environ.copy()
+        env['PLATFORMER_LEVEL'] = level_name
+    else:
+        print("🎮 Starting level selection screen...")
+        env = os.environ.copy()
+        # Don't set PLATFORMER_LEVEL to trigger level selection screen
     
     # Launch the game
     try:

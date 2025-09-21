@@ -324,7 +324,9 @@ class GameWorld:
             "powerup_collect": "sounds/powerup_collect.wav",
             "trophy_collect": "sounds/trophy_collect.wav",
             "level_complete": "sounds/level_complete.wav",
-            "explode": "sounds/explode.wav"
+            "explode": "sounds/explode.wav",
+            "menu_move": "sounds/menu_move.wav",  # Menu cursor movement
+            "menu_select": "sounds/menu_select.wav"  # Menu selection
         }
         
         # Load each sound effect (silently ignore missing files)

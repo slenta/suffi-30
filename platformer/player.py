@@ -13,7 +13,7 @@ class Player(pg.sprite.Sprite):
         self.img = []
         for i in range(2):
             player_image = pg.image.load(
-                os.path.join(IMAGEPATH, "alien_green_0" + str(i) + ".png")
+                os.path.join(IMAGEPATH, "suffi_0" + str(i) + ".png")
             ).convert_alpha()
             self.img.append(player_image)
         self.image = self.img[0]
