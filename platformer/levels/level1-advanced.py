@@ -161,6 +161,7 @@ level_config = {
         (325, 12),   # Pyramid base
         (390, 12),   # Final area
     ],
+    "trophy_image": "data/images/spraydose.png",  # Path to trophy image for UI display
     
     # Extended exit location - much further
     "exit_location": (420, 13),

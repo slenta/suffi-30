@@ -265,8 +265,12 @@ class GameWorld:
 
         # Draw the player's gems (lives) at the top left corner
         draw_gems(screen=self.screen, player=self.player)
+        trophy_image_path = self.level_config.get("trophy_image", "data/images/trophy.png")
         draw_trophies(
-            screen=self.screen, player=self.player, total_trophies=self.total_trophies
+            screen=self.screen, 
+            player=self.player, 
+            total_trophies=self.total_trophies,
+            trophy_image_path=trophy_image_path
         )
         draw_health_bar(
             screen=self.screen,

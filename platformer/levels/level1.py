@@ -79,6 +79,7 @@ level_config = {
         },
     ],
     "trophy_locations": [(10, 5), (26, 6), (80, 8)],
+    "trophy_image": "data/images/trophy.png",  # Path to trophy image for UI display
     "exit_location": (95, 13),
     "background_music": "music/level1.mp3",  # Path relative to game root, or use absolute path
     "background_image": "backgrounds/level1_bg.png",  # Path to background image
