@@ -4,9 +4,10 @@ from .settings import IMAGEPATH, GRIDSIZE
 
 
 class Trophy(pg.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, image_path="trophy.png"):
         super().__init__()
-        image = pg.image.load(os.path.join(IMAGEPATH, "trophy.png")).convert_alpha()
+        # Use the provided image path, defaulting to "trophy.png" if not specified
+        image = pg.image.load(os.path.join(IMAGEPATH, image_path)).convert_alpha()
         self.image = pg.transform.scale(image, (2 * GRIDSIZE, 2 * GRIDSIZE))
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)

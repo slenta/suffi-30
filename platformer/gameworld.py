@@ -109,8 +109,11 @@ class GameWorld:
 
         # Load trophies and exits
         self.trophies = pg.sprite.Group()
+        trophy_image_path = self.level_config.get("trophy_image", "data/images/trophy.png")
+        # Extract just the filename from the path for the Trophy class
+        trophy_filename = os.path.basename(trophy_image_path)
         for x, y in self.level_config["trophy_locations"]:
-            trophy = Trophy(x * GRIDSIZE, y * GRIDSIZE)
+            trophy = Trophy(x * GRIDSIZE, y * GRIDSIZE, trophy_filename)
             self.trophies.add(trophy)
             self.all_sprites.add(trophy)
         self.total_trophies = len(self.level_config["trophy_locations"])
