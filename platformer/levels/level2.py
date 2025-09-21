@@ -161,11 +161,11 @@ level_config = {
         (325, 12),   # Pyramid base
         (390, 12),   # Final area
     ],
-    "trophy_image": "data/images/spraydose.png",  # Path to trophy image for UI display
+    "trophy_image": "data/images/mushroom.png",  # Path to trophy image for UI display
     
     # Extended exit location - much further
     "exit_location": (420, 13),
-    "background_music": "music/level1-advanced.mp3",  # Path relative to game root, or use absolute path
-    "background_image": "backgrounds/level1-advanced_bg.png",  # Path to background image
+    "background_music": "music/level2.mp3",  # Path relative to game root, or use absolute path
+    "background_image": "backgrounds/level2.png",  # Path to background image
     "background_scroll_speed": 0.2,  # Slower parallax for advanced level
 }
