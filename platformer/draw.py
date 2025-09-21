@@ -2,19 +2,62 @@ import pygame as pg
 
 
 def draw_gems(screen, player):
-    font = pg.font.Font(None, 36)
-    text = font.render(f"Player Lives: {player.gems}", True, (255, 255, 255))
-    screen.blit(text, (10, 10))
+    # Load the heart image
+    try:
+        heart_image = pg.image.load("platformer/data/images/heart_02.png")
+        # Scale the heart to a reasonable size (adjust as needed)
+        heart_image = pg.transform.scale(heart_image, (30, 30))
+    except pg.error:
+        # Fallback to text if image can't be loaded
+        font = pg.font.Font(None, 36)
+        text = font.render(f"Lives: {player.gems}", True, (255, 255, 255))
+        screen.blit(text, (10, 10))
+        return
+    
+    # Draw hearts for each life
+    heart_spacing = 35  # Space between hearts
+    start_x = 10
+    start_y = 10
+    
+    for i in range(player.gems):
+        x_pos = start_x + (i * heart_spacing)
+        screen.blit(heart_image, (x_pos, start_y))
 
 
-def draw_trophies(screen, player, total_trophies):
-    font = pg.font.Font(None, 36)
-    text = font.render(
-        f"Trophies Collected: {player.trophies_collected} / {total_trophies}",
-        True,
-        (255, 255, 255),
-    )
-    screen.blit(text, (10, 50))
+def draw_trophies(screen, player, total_trophies, trophy_image_path="data/images/trophy.png"):
+    # Load the trophy image
+    try:
+        trophy_image = pg.image.load(f"platformer/{trophy_image_path}")
+        # Scale the trophy to a reasonable size (adjust as needed)
+        trophy_image = pg.transform.scale(trophy_image, (25, 25))
+    except pg.error:
+        # Fallback to text if image can't be loaded
+        font = pg.font.Font(None, 36)
+        text = font.render(
+            f"Trophies: {player.trophies_collected} / {total_trophies}",
+            True,
+            (255, 255, 255),
+        )
+        screen.blit(text, (10, 50))
+        return
+    
+    # Draw trophies
+    trophy_spacing = 30  # Space between trophies
+    start_x = 10
+    start_y = 50
+    
+    # Draw collected trophies (full color)
+    for i in range(player.trophies_collected):
+        x_pos = start_x + (i * trophy_spacing)
+        screen.blit(trophy_image, (x_pos, start_y))
+    
+    # Draw uncollected trophies (grayed out)
+    for i in range(player.trophies_collected, total_trophies):
+        x_pos = start_x + (i * trophy_spacing)
+        # Create a grayed out version of the trophy
+        gray_trophy = trophy_image.copy()
+        gray_trophy.fill((100, 100, 100), special_flags=pg.BLEND_MULT)
+        screen.blit(gray_trophy, (x_pos, start_y))
 
 
 def draw_health_bar(screen, player, width, height, max_health):
