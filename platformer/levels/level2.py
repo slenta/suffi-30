@@ -1,16 +1,16 @@
 level_config = {
-    "x_bounds": [-600, 6000],  # Extended gameworld width (doubled)
+    "x_bounds": [-600, 600],  # Extended gameworld width (doubled)
     "y_bounds": [-400, 400],  # Increased gameworld height for more vertical space
     
     # Extended grass locations - keeping original and adding more sections
     "grass_locations": [(i, 14) for i in range(-20, 20)]
     + [(i, 14) for i in range(25, 59)]
     + [(i, 14) for i in range(70, 120)]
-    + [(i, 14) for i in range(130, 170)]  # New section 1
-    + [(i, 14) for i in range(180, 220)]  # New section 2
-    + [(i, 14) for i in range(240, 280)]  # New section 3
-    + [(i, 14) for i in range(300, 350)]  # New section 4
-    + [(i, 14) for i in range(370, 420)],  # Final section
+    + [(i, 14) for i in range(125, 170)]  # New section 1
+    + [(i, 14) for i in range(175, 220)]  # New section 2
+    + [(i, 14) for i in range(225, 280)]  # New section 3
+    + [(i, 14) for i in range(285, 350)]  # New section 4
+    + [(i, 14) for i in range(360, 420)],  # Final section
     
     # Extended block locations - original plus new challenging platforming sections
     "block_locations": [
