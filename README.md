@@ -1,6 +1,14 @@
 # suffi-30
 level up through suffisuffzich's life by playing this simple jump n run game
 
+## Features
+- Dynamic platforming with moving platforms (linear & circular movement)
+- Enemy AI with patrol, chase, and shooting behaviors
+- Collectible weapons with different stats
+- Power-ups and trophies
+- Background music and sound effects
+- Multiple levels with custom configurations
+
 # HowToPlay
 ## Run default level (level1)
 python launcher.py
@@ -10,6 +18,30 @@ python launcher.py level1-advanced
 
 ## List all available levels
 python launcher.py --list-levels
+
+# Game Mechanics
+
+## Moving Platforms (NEW!)
+The game now supports moving platforms that can be configured in level files. See [MOVING_PLATFORMS.md](MOVING_PLATFORMS.md) for detailed documentation.
+
+- **Linear Movement**: Platforms that move horizontally or vertically
+- **Circular Movement**: Platforms that rotate in a circular pattern
+- Players automatically move with the platform when standing on it
+- Fully customizable speed, distance, and appearance
+
+Example configuration:
+```python
+"moving_platform_locations": [
+    {
+        "x": 50, "y": 8,
+        "platform_type": "grass",
+        "movement_type": "linear",
+        "speed": 1,
+        "distance": 8,
+        "direction": "horizontal"
+    }
+]
+```
 
 # Project Structure
 ```

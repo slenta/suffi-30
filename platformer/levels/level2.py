@@ -249,6 +249,54 @@ level_config = {
     "weapon_locations": [
         {"x": 50, "y": 13, "type": "wasserpistole"},  # Erste Waffe
     ],
+    # Moving platform locations - new feature!
+    "moving_platform_locations": [
+        {
+            "x": 30,  # Starting x position (grid units)
+            "y": 10,  # Starting y position (grid units)
+            "platform_type": "block",  # "grass" or "block"
+            "movement_type": "linear",  # "linear" or "circular"
+            "speed": 1,  # Movement speed (pixels per frame)
+            "distance": 10,  # Distance to travel (grid units for linear, radius for circular)
+            "direction": "horizontal",  # "horizontal" or "vertical" (for linear only)
+        },
+        # {
+        #     "x": 60,
+        #     "y": 8,
+        #     "platform_type": "grass",
+        #     "movement_type": "linear",
+        #     "speed": 2,
+        #     "distance": 8,
+        #     "direction": "vertical"
+        # },
+        # {
+        #     "x": 100,
+        #     "y": 9,
+        #     "platform_type": "block",
+        #     "movement_type": "linear",
+        #     "speed": 1.5,
+        #     "distance": 15,
+        #     "direction": "horizontal"
+        # },
+        # {
+        #     "x": 280,
+        #     "y": 9,
+        #     "platform_type": "grass",
+        #     "movement_type": "circular",
+        #     "speed": 1,
+        #     "distance": 5,  # This acts as radius for circular movement
+        #     "direction": "horizontal"  # Not used for circular
+        # },
+        # {
+        #     "x": 365,
+        #     "y": 8,
+        #     "platform_type": "block",
+        #     "movement_type": "linear",
+        #     "speed": 2,
+        #     "distance": 12,
+        #     "direction": "horizontal"
+        # },
+    ],
     "trophy_locations": [
         # Original trophies
         (84, 0),
