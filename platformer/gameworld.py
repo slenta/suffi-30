@@ -1,6 +1,7 @@
 import pygame as pg
 import os, sys
 from .platform_class import Platform
+from .moving_platform import MovingPlatform  # Import the MovingPlatform class
 from .gem import Gem
 from .player import Player
 from .settings import *
@@ -30,6 +31,7 @@ class GameWorld:
         # Sprite groups
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
+        self.moving_platforms = pg.sprite.Group()
         self.gems = pg.sprite.Group()
         self.enemies = pg.sprite.Group()
         self.bullets = pg.sprite.Group()
@@ -48,6 +50,7 @@ class GameWorld:
         # Clear all sprite groups
         self.all_sprites.empty()
         self.platforms.empty()
+        self.moving_platforms.empty()
         self.gems.empty()
         self.enemies.empty()
         self.bullets.empty()
@@ -89,6 +92,28 @@ class GameWorld:
             p = Platform(x, y, block_image)
             self.platforms.add(p)
             self.all_sprites.add(p)
+
+        # Load moving platforms
+        for moving_data in self.level_config.get("moving_platform_locations", []):
+            # Determine which image to use
+            platform_image = (
+                grass_image
+                if moving_data.get("platform_type", "block") == "grass"
+                else block_image
+            )
+
+            mp = MovingPlatform(
+                moving_data["x"],
+                moving_data["y"],
+                platform_image,
+                moving_data.get("movement_type", "linear"),
+                moving_data.get("speed", 1),
+                moving_data.get("distance", 5),
+                moving_data.get("direction", "horizontal"),
+            )
+            self.moving_platforms.add(mp)
+            self.platforms.add(mp)  # Add to platforms for collision detection
+            self.all_sprites.add(mp)
 
         for loc in self.level_config["gem_locations"]:
             x, y = loc
@@ -210,6 +235,7 @@ class GameWorld:
 
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
+        self.moving_platforms = pg.sprite.Group()
 
         for loc in self.level_config["grass_locations"]:
             x, y = loc
@@ -222,6 +248,28 @@ class GameWorld:
             p = Platform(x, y, block_image)
             self.platforms.add(p)
             self.all_sprites.add(p)
+
+        # Load moving platforms
+        for moving_data in self.level_config.get("moving_platform_locations", []):
+            # Determine which image to use
+            platform_image = (
+                grass_image
+                if moving_data.get("platform_type", "block") == "grass"
+                else block_image
+            )
+
+            mp = MovingPlatform(
+                moving_data["x"],
+                moving_data["y"],
+                platform_image,
+                moving_data.get("movement_type", "linear"),
+                moving_data.get("speed", 1),
+                moving_data.get("distance", 5),
+                moving_data.get("direction", "horizontal"),
+            )
+            self.moving_platforms.add(mp)
+            self.platforms.add(mp)  # Add to platforms for collision detection
+            self.all_sprites.add(mp)
 
         for item in self.items:
             self.items.add(item)
@@ -311,9 +359,13 @@ class GameWorld:
             self.camera_offset_x += player_center_x - free_range_right
 
     def update(self):
+        # Update moving platforms first
+        for moving_platform in self.moving_platforms:
+            moving_platform.update()
+
         # Update all sprites except enemies
         for sprite in self.all_sprites:
-            if not isinstance(sprite, Enemy):
+            if not isinstance(sprite, Enemy) and sprite not in self.moving_platforms:
                 sprite.update()
 
         # Update enemies and pass the player object

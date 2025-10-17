@@ -80,6 +80,27 @@ level_config = {
     ],
     "trophy_locations": [(10, 5), (26, 6), (80, 8)],
     "trophy_image": "trophy.png",  # Path to trophy image (relative to assets/images)
+    # Moving platform locations
+    "moving_platform_locations": [
+        {
+            "x": 50,  # Starting x position (grid units)
+            "y": 8,  # Starting y position (grid units)
+            "platform_type": "grass",  # "grass" or "block"
+            "movement_type": "linear",  # "linear" or "circular"
+            "speed": 1,  # Movement speed (pixels per frame)
+            "distance": 8,  # Distance to travel (grid units for linear, radius for circular)
+            "direction": "horizontal",  # "horizontal" or "vertical" (for linear only)
+        },
+        {
+            "x": 70,
+            "y": 6,
+            "platform_type": "block",
+            "movement_type": "linear",
+            "speed": 1.5,
+            "distance": 6,
+            "direction": "vertical",
+        },
+    ],
     "exit_location": (95, 13),
     "background_music": "assets/music/level1.mp3",  # Path relative to game root
     "background_image": "assets/backgrounds/level1_bg.png",  # Path to background image

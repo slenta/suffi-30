@@ -82,6 +82,10 @@ class Player(pg.sprite.Sprite):
         for hit in hits:
             if self.vy > 0:
                 self.rect.bottom = hit.rect.top
+                # If standing on a moving platform, move with it
+                if hit in self.world.moving_platforms:
+                    vel_x, vel_y = hit.get_velocity()
+                    self.rect.x += vel_x
             elif self.vy < 0:
                 self.rect.top = hit.rect.bottom
             self.vy = 0
