@@ -7,7 +7,7 @@ from .weapon_stats import WEAPON_CONFIG
 def draw_gems(screen, player):
     # Load the heart image
     try:
-        heart_image = pg.image.load("platformer/data/images/heart_02.png")
+        heart_image = pg.image.load(os.path.join(IMAGEPATH, "heart_02.png"))
         # Scale the heart to a reasonable size (adjust as needed)
         heart_image = pg.transform.scale(heart_image, (30, 30))
     except pg.error:
@@ -27,12 +27,11 @@ def draw_gems(screen, player):
         screen.blit(heart_image, (x_pos, start_y))
 
 
-def draw_trophies(
-    screen, player, total_trophies, trophy_image_path="data/images/trophy.png"
-):
+def draw_trophies(screen, player, total_trophies, trophy_image_path="trophy.png"):
     # Load the trophy image
     try:
-        trophy_image = pg.image.load(f"platformer/{trophy_image_path}")
+        # trophy_image_path is relative to IMAGEPATH (assets/images/)
+        trophy_image = pg.image.load(os.path.join(IMAGEPATH, trophy_image_path))
         # Scale the trophy to a reasonable size (adjust as needed)
         trophy_image = pg.transform.scale(trophy_image, (25, 25))
     except pg.error:

@@ -230,18 +230,18 @@ level_config = {
         (84, 2),
         (175, 1),
     ],
-    "trophy_image": "data/images/mushroom.png",  # Path to trophy image for UI display
+    "trophy_image": "mushroom.png",  # Path to trophy image (relative to assets/images)
     # Extended exit location - much further
     "exit_location": (420, 13),
-    "background_music": "music/level1.mp3",  # Path relative to game root, or use absolute path
-    # "background_image": "backgrounds/level2.png",  # Path to background image
+    "background_music": "assets/music/level1.mp3",  # Path relative to game root
+    # "background_image": "assets/backgrounds/level2.png",  # Path to background image
     "background_scroll_speed": 0.2,  # Slower parallax for advanced level
     # Alternative backgrounds for type 2 power-up
     "alternative_backgrounds": [
-        "backgrounds/level2.png",  # You can add more background images here to cycle through
+        "assets/backgrounds/level2.png",  # You can add more background images here to cycle through
     ],
     # Alternative music tracks for type 2 power-up
     "alternative_music_tracks": [
-        "music/level2.mp3",  # Plays when switching to first alternative background
+        "assets/music/level2.mp3",  # Plays when switching to first alternative background
     ],
 }

@@ -44,11 +44,11 @@ level_config = {
     "trophy_locations": [
         (30, 13),
     ],
-    "trophy_image": "data/images/trophy.png",
+    "trophy_image": "trophy.png",  # Path relative to assets/images
     # Exit
     "exit_location": (48, 13),
     # Assets
-    "background_music": "music/baby_level.mp3",
-    "background_image": "backgrounds/kindergarten_bg.png",
+    "background_music": "assets/music/baby_level.mp3",
+    "background_image": "assets/backgrounds/kindergarten_bg.png",
     "background_scroll_speed": 0.2,
 }

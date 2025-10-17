@@ -32,12 +32,13 @@ def load_sprite_image(image_path, size=None):
         return IMAGE_CACHE[image_path]
 
     try:
-        # Try different possible paths
+        # Try different possible paths (updated for centralized assets)
         possible_paths = [
             image_path,
-            f"platformer/{image_path}",
-            f"platformer/data/images/{image_path}",
-            f"platformer/data/images/{os.path.basename(image_path)}",
+            f"assets/images/{image_path}",
+            f"assets/images/{os.path.basename(image_path)}",
+            f"assets/backgrounds/{image_path}",
+            f"assets/backgrounds/{os.path.basename(image_path)}",
         ]
 
         image = None
@@ -477,7 +478,7 @@ def main():
     )
     parser.add_argument(
         "--output-dir",
-        default="level_renders",
+        default="assets/renders",
         help="Output directory for rendered images",
     )
 

@@ -79,9 +79,9 @@ level_config = {
         },
     ],
     "trophy_locations": [(10, 5), (26, 6), (80, 8)],
-    "trophy_image": "data/images/trophy.png",  # Path to trophy image for UI display
+    "trophy_image": "trophy.png",  # Path to trophy image (relative to assets/images)
     "exit_location": (95, 13),
-    "background_music": "music/level1.mp3",  # Path relative to game root, or use absolute path
-    "background_image": "backgrounds/level1_bg.png",  # Path to background image
+    "background_music": "assets/music/level1.mp3",  # Path relative to game root
+    "background_image": "assets/backgrounds/level1_bg.png",  # Path to background image
     "background_scroll_speed": 0.3,  # Optional: parallax scrolling speed (0.0 = static, 1.0 = moves with camera)
 }
