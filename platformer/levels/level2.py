@@ -3,7 +3,7 @@ level_config = {
     "y_bounds": [-400, 400],  # Increased gameworld height for more vertical space
     # Player spawn point (optional) - x and y coordinates in grid units
     # If not specified, defaults to PLAYER_START_X, PLAYER_START_Y from settings.py
-    "player_spawn": (160, 1),  # Example: spawn at grid position (5, 1)
+    # "player_spawn": (160, 1),  # Example: spawn at grid position (5, 1)
     # Extended grass locations - keeping original and adding more sections
     "grass_locations": [(i, 14) for i in range(-20, 16)]
     + [(i, 14) for i in range(25, 30)]
@@ -194,33 +194,32 @@ level_config = {
         {"x": 108, "y": 5, "type": 0},
     ],
     "enemy_locations": [
-        # Original enemies
-        # {
-        #     "x": 140,
-        #     "y": 7,
-        #     "image": "enemies/trance-totem.png",
-        #     "speed": 1,
-        #     "patrol_range": 20,
-        #     "size_multiplier": 4,
-        #     "health": 15,
-        #     "damage": 5,
-        #     "shoot_range": 0,
-        #     "chase_range": 10,
-        #     "melee_damage": 2,
-        # },
-        # {
-        #     "x": 165,
-        #     "y": 10,
-        #     "image": "enemies/trance-jesus.png",
-        #     "speed": 3,
-        #     "patrol_range": 150,
-        #     "size_multiplier": 4,
-        #     "health": 20,
-        #     "damage": 15,
-        #     "shoot_range": 30,
-        #     "chase_range": 20,
-        #     "melee_damage": 10,
-        # },
+        {
+            "x": 140,
+            "y": 7,
+            "image": "enemies/trance-totem.png",
+            "speed": 1,
+            "patrol_range": 20,
+            "size_multiplier": 4,
+            "health": 15,
+            "damage": 5,
+            "shoot_range": 0,
+            "chase_range": 10,
+            "melee_damage": 2,
+        },
+        {
+            "x": 165,
+            "y": 10,
+            "image": "enemies/trance-jesus.png",
+            "speed": 3,
+            "patrol_range": 150,
+            "size_multiplier": 4,
+            "health": 20,
+            "damage": 15,
+            "shoot_range": 30,
+            "chase_range": 20,
+            "melee_damage": 10,
+        },
         {
             "x": 195,
             "y": 4,
@@ -270,7 +269,7 @@ level_config = {
         #     "movement_type": "linear",
         #     "speed": 2,
         #     "distance": 8,
-        #     "direction": "vertical"
+        #     "direction": "vertical",
         # },
         # {
         #     "x": 100,
@@ -279,17 +278,17 @@ level_config = {
         #     "movement_type": "linear",
         #     "speed": 1.5,
         #     "distance": 15,
-        #     "direction": "horizontal"
+        #     "direction": "horizontal",
         # },
-        # {
-        #     "x": 150,
-        #     "y": 9,
-        #     "platform_type": "grass",
-        #     "movement_type": "circular",
-        #     "speed": 20,
-        #     "distance": 5,  # This acts as radius for circular movement
-        #     "direction": "horizontal",  # Not used for circular
-        # },
+        {
+            "x": 180,
+            "y": 9,
+            "platform_type": "block",
+            "movement_type": "circular",
+            "speed": 30,
+            "distance": 5,  # This acts as radius for circular movement
+            "direction": "horizontal",  # Not used for circular
+        },
         # {
         #     "x": 365,
         #     "y": 8,
@@ -307,7 +306,7 @@ level_config = {
     "trophy_image": "mushroom.png",  # Path to trophy image (relative to assets/images)
     # Extended exit location - much further
     "exit_location": (420, 13),
-    "background_music": "assets/music/level1.mp3",  # Path relative to game root
+    "background_music": "assets/music/default.mp3",  # Path relative to game root
     # "background_image": "assets/backgrounds/level2.png",  # Path to background image
     "background_scroll_speed": 0.2,  # Slower parallax for advanced level
     # Alternative backgrounds for type 2 power-up
