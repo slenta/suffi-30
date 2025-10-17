@@ -1,83 +1,115 @@
 level_config = {
-    "x_bounds": [-600, 6000],  # Extended gameworld width (doubled)
+    "x_bounds": [-300, 9000],  # Extended gameworld width (doubled)
     "y_bounds": [-400, 400],  # Increased gameworld height for more vertical space
     # Extended grass locations - keeping original and adding more sections
-    "grass_locations": [(i, 14) for i in range(-20, 20)]
-    + [(i, 14) for i in range(25, 59)]
-    + [(i, 14) for i in range(70, 120)]
-    + [(i, 14) for i in range(125, 170)]  # New section 1
-    + [(i, 14) for i in range(175, 220)]  # New section 2
+    "grass_locations": [(i, 14) for i in range(-20, 16)]
+    + [(i, 14) for i in range(25, 30)]
+    + [(i, 14) for i in range(40, 59)]
+    + [(i, 14) for i in range(78, 99)]
+    + [(i, 14) for i in range(113, 170)]
+    + [(i, 14) for i in range(180, 220)]
     + [(i, 14) for i in range(225, 280)]  # New section 3
     + [(i, 14) for i in range(285, 350)]  # New section 4
     + [(i, 14) for i in range(360, 420)],  # Final section
     # Extended block locations - original plus new challenging platforming sections
     "block_locations": [
-        # Original blocks
-        (18, 4),
-        (19, 4),
-        (20, 4),
-        (21, 4),
-        (11, 7),
-        (12, 7),
-        (13, 7),
-        (14, 7),
-        (25, 13),
-        (25, 7),
-        (26, 7),
-        (27, 7),
-        (17, 10),
+        # pyramid structure
+        (15, 13),
+        (16, 12),
+        (17, 11),
         (18, 10),
-        (19, 10),
-        (38, 12),
-        (38, 13),
+        (19, 9),
+        (20, 8),
+        (21, 9),
+        (22, 10),
+        (23, 11),
+        (24, 12),
+        (25, 13),
+        # abgrund
+        (33, 10),
+        (34, 10),
+        (35, 10),
+        # first gem
         (45, 10),
         (46, 10),
-        (47, 10),
+        (49, 7),
+        (50, 7),
+        (43, 3),
+        # 2. abgrund
+        (60, 10),
         (61, 10),
-        (63, 8),
+        (64, 6),
         (65, 6),
-        (79, 10),
-        (80, 10),
-        (81, 10),
-        # New challenging platform sections
-        # Section 1 - Vertical tower
-        (125, 13),
-        (125, 12),
-        (125, 11),
-        (125, 10),
-        (125, 9),
-        (127, 8),
-        (129, 7),
-        (131, 6),
-        # Section 2 - Staircase up
-        (140, 13),
-        (142, 12),
-        (144, 11),
-        (146, 10),
-        (148, 9),
-        (150, 8),
-        # Section 3 - Floating platforms
-        (160, 11),
-        (162, 11),
-        (164, 9),
-        (166, 9),
-        (168, 7),
-        # Section 4 - Underground maze entrance
-        (185, 13),
-        (185, 12),
-        (187, 11),
-        (189, 10),
-        (191, 9),
-        (195, 13),
-        (196, 13),
-        (197, 13),
-        (198, 13),
-        # Section 5 - High platforms
-        (210, 8),
-        (212, 8),
-        (214, 6),
-        (216, 6),
-        (218, 4),
+        (68, 2),
+        (69, 3),
+        (70, 4),
+        (71, 5),
+        (72, 6),
+        (73, 7),
+        (74, 8),
+        (75, 9),
+        # first trophy
+        (79, 3),
+        (80, 3),
+        (81, 3),
+        (82, 3),
+        (83, 3),
+        (84, 3),
+        # höhle für powerup type 2
+        (82, 11),
+        (83, 11),
+        (84, 11),
+        (85, 11),
+        (86, 11),
+        (89, 12),
+        (89, 13),
+        (89, 11),
+        (89, 10),
+        (89, 9),
+        (89, 8),
+        (88, 8),
+        (87, 8),
+        (86, 8),
+        (85, 8),
+        (84, 8),
+        (83, 8),
+        (82, 8),
+        (82, 9),
+        (82, 10),
+        # Towers Abgrund
+        (103, 13),
+        (103, 12),
+        (103, 11),
+        (103, 10),
+        (108, 13),
+        (108, 12),
+        (108, 11),
+        (108, 10),
+        # Next gem
+        (145, 9),
+        (147, 8),
+        (149, 7),
+        (151, 6),
+        # New Jesus Block
+        (175, 6),
+        (175, 7),
+        (175, 8),
+        # Trphy
+        (168, 12),
+        (169, 7),
+        (170, 2),
+        # Hippie Enemy
+        (190, 8),
+        (191, 8),
+        (192, 8),
+        (193, 8),
+        (194, 8),
+        (195, 8),
+        (196, 8),
+        (197, 8),
+        (198, 8),
+        (199, 8),
+        (200, 8),
         # Section 6 - Complex structure
         (250, 13),
         (251, 13),
@@ -123,158 +155,61 @@ level_config = {
     # Extended gem locations - more rewards throughout the longer level
     "gem_locations": [
         # Original gems
-        (20, 3),
-        (12, 6),
-        (26, 6),
-        (36, 13),
-        (65, 5),
-        # New gems in extended sections
-        (131, 5),  # Top of tower
-        (150, 7),  # End of staircase
-        (168, 6),  # High floating platform
-        (198, 12),  # Maze entrance
-        (218, 3),  # Highest platform
-        (256, 3),  # Top of complex structure
-        (276, 5),  # Moving platform area
-        (322, 6),  # Pyramid top
-        (388, 2),  # Final challenge peak
-        (415, 9),  # Boss area
+        (35, 0),
+        (151, 5),
+        (195, 13),
     ],
-    # Extended powerup locations - more strategic power-ups
     "powerup_locations": [
-        # Original powerups
-        {"x": 40, "y": 10, "type": 2},  # Power-up to make the player bigger
-        {"x": 60, "y": 8, "type": 1},  # Power-up to make the player faster
-        # New strategic powerups
-        # {"x": 100, "y": 12, "type": 2},  # Background changer (spraydose)
-        {"x": 150, "y": 7, "type": 0},  # Size boost before difficult section
-        {"x": 220, "y": 5, "type": 1},  # Speed boost for precision jumps
-        {"x": 280, "y": 7, "type": 0},  # Size boost for enemy encounters
-        {"x": 350, "y": 12, "type": 1},  # Speed boost for final challenges
-        {"x": 390, "y": 4, "type": 0},  # Final size boost before boss
+        {"x": 83, "y": 10, "type": 2},
+        {"x": 108, "y": 5, "type": 0},
     ],
-    # Extended enemy locations - progressively more challenging
     "enemy_locations": [
         # Original enemies
         {
-            "x": 30,
-            "y": 10,
+            "x": 140,
+            "y": 7,
             "image": "enemies/raver-trance-totem.png",
-            "speed": 2,
-            "patrol_range": 100,
-            "size_multiplier": 5,
+            "speed": 1,
+            "patrol_range": 20,
+            "size_multiplier": 4,
             "health": 15,
-            "damage": 10,
-            "shoot_range": 10,
+            "damage": 5,
+            "shoot_range": 0,
             "chase_range": 10,
-            "melee_damage": 5,
+            "melee_damage": 2,
         },
         {
-            "x": 80,
+            "x": 165,
             "y": 10,
             "image": "enemies/raver-jesus.png",
             "speed": 3,
             "patrol_range": 150,
-            "size_multiplier": 5,
+            "size_multiplier": 4,
             "health": 20,
             "damage": 15,
             "shoot_range": 30,
             "chase_range": 20,
             "melee_damage": 10,
         },
-        # New enemies with increasing difficulty
         {
-            "x": 155,
-            "y": 10,
+            "x": 195,
+            "y": 4,
             "image": "enemies/raver-hippie.png",
-            "speed": 3,
-            "patrol_range": 120,
-            "size_multiplier": 2.5,
-            "health": 10,
-            "damage": 18,
-            "shoot_range": 16,
-            "chase_range": 12,
-            "melee_damage": 7,
-        },
-        {
-            "x": 230,
-            "y": 13,
-            "image": "elon.png",
-            "speed": 4,
-            "patrol_range": 180,
-            "size_multiplier": 3,
+            "speed": 1,
+            "patrol_range": 30,
+            "size_multiplier": 4,
             "health": 20,
-            "damage": 30,
-            "shoot_range": 22,
-            "chase_range": 18,
-            "melee_damage": 12,
-        },
-        {
-            "x": 285,
-            "y": 11,
-            "image": "police.png",
-            "speed": 6,
-            "patrol_range": 200,
-            "size_multiplier": 1.5,
-            "health": 25,
-            "damage": 60,
-            "shoot_range": 25,
-            "chase_range": 20,
-            "melee_damage": 15,
-        },
-        {
-            "x": 340,
-            "y": 12,
-            "image": "trump.png",
-            "speed": 4,
-            "patrol_range": 150,
-            "size_multiplier": 3,
-            "health": 15,
-            "damage": 25,
-            "shoot_range": 18,
-            "chase_range": 15,
-            "melee_damage": 10,
-        },
-        {
-            "x": 375,
-            "y": 10,
-            "image": "elon.png",
-            "speed": 5,
-            "patrol_range": 220,
-            "size_multiplier": 4.5,
-            "health": 30,
-            "damage": 40,
-            "shoot_range": 28,
-            "chase_range": 25,
-            "melee_damage": 18,
-        },
-        # Boss enemy
-        {
-            "x": 415,
-            "y": 9,
-            "image": "police.png",
-            "speed": 7,
-            "patrol_range": 250,
-            "size_multiplier": 2,
-            "health": 50,
-            "damage": 80,
+            "damage": 15,
             "shoot_range": 30,
-            "chase_range": 25,
-            "melee_damage": 25,
+            "chase_range": 10,
+            "melee_damage": 10,
         },
     ],
     # Extended trophy locations - more collectibles
     "trophy_locations": [
         # Original trophies
-        (10, 5),
-        (26, 6),
-        (80, 8),
-        # New trophies in extended sections
-        (145, 11),  # Staircase area
-        (170, 6),  # Floating platforms
-        (255, 6),  # Complex structure
-        (325, 12),  # Pyramid base
-        (390, 12),  # Final area
+        (84, 2),
+        (175, 1),
     ],
     "trophy_image": "data/images/mushroom.png",  # Path to trophy image for UI display
     # Extended exit location - much further
