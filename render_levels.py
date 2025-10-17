@@ -82,6 +82,9 @@ COLORS = {
     "trophy": (255, 165, 0),  # Orange
     "exit": (0, 255, 0),  # Bright green
     "player_start": (0, 0, 255),  # Blue
+    "moving_platform": (100, 100, 200),  # Light blue
+    "weapon": (255, 215, 0),  # Gold
+    "moving_platform_path": (200, 200, 200, 100),  # Light gray, semi-transparent
 }
 
 
@@ -145,6 +148,34 @@ def calculate_level_bounds(level_config):
     for enemy in enemy_locations:
         all_x_coords.append(enemy["x"])
         all_y_coords.append(enemy["y"])
+
+    # Collect weapon locations
+    weapon_locations = level_config.get("weapon_locations", [])
+    for weapon in weapon_locations:
+        all_x_coords.append(weapon["x"])
+        all_y_coords.append(weapon["y"])
+
+    # Collect moving platform locations (including their movement range)
+    moving_platform_locations = level_config.get("moving_platform_locations", [])
+    for platform in moving_platform_locations:
+        x, y = platform["x"], platform["y"]
+        distance = platform.get("distance", 0)
+        direction = platform.get("direction", "horizontal")
+        movement_type = platform.get("movement_type", "linear")
+
+        all_x_coords.append(x)
+        all_y_coords.append(y)
+
+        # Add the endpoint of platform movement
+        if movement_type == "linear":
+            if direction == "horizontal":
+                all_x_coords.append(x + distance)
+            elif direction == "vertical":
+                all_y_coords.append(y + distance)
+        elif movement_type == "circular":
+            # For circular, add the radius in all directions
+            all_x_coords.extend([x - distance, x + distance])
+            all_y_coords.extend([y - distance, y + distance])
 
     # Collect exit location
     exit_location = level_config.get("exit_location")
@@ -226,17 +257,155 @@ def draw_powerups_with_sprites(draw, image, powerup_locations, min_x, min_y):
         img_x, img_y = world_to_image_coords(x, y, min_x, min_y)
 
         # Different sprites for different powerup types
-        if powerup_type == 0:  # Size powerup
-            sprite_name = "pulver.png"  # or whatever sprite you use for size powerup
-        elif powerup_type == 1:  # Speed powerup
-            sprite_name = "banana.png"  # or whatever sprite you use for size powerup
-        else:  # Speed powerup
-            sprite_name = "powerups/powerup-pill.png"  # or whatever sprite you use for speed powerup
+        if powerup_type == 0 or powerup_type == "bigger":  # Size powerup
+            sprite_name = "pulver.png"
+        elif powerup_type == 1 or powerup_type == "faster":  # Speed powerup
+            sprite_name = "banana.png"
+        elif powerup_type == 2:  # Another powerup type
+            sprite_name = "spraydose.png"
+        else:  # Generic powerup
+            sprite_name = "powerups/powerup-pill.png"
 
         powerup_image = load_sprite_image(sprite_name, (GRIDSIZE, GRIDSIZE))
         center_x = img_x + GRIDSIZE // 2 - GRIDSIZE // 2
         center_y = img_y + GRIDSIZE // 2 - GRIDSIZE // 2
         image.paste(powerup_image, (center_x, center_y), powerup_image)
+
+
+def draw_weapons_with_sprites(draw, image, weapon_locations, min_x, min_y):
+    """Draw weapon pickups using actual sprites."""
+    for weapon in weapon_locations:
+        x, y = weapon["x"], weapon["y"]
+        weapon_type = weapon.get("type", "wasserpistole")
+
+        img_x, img_y = world_to_image_coords(x, y, min_x, min_y)
+
+        # Map weapon types to their sprites
+        weapon_sprites = {
+            "wasserpistole": "weapons/wasserpistole.png",
+            "milchflasche": "weapons/milkbottle-closed.png",
+            "schwert": "weapons/baseball-bat.png",  # Using bat as placeholder
+            "gun": "weapons/wasserpistole.png",  # Fallback
+        }
+
+        sprite_name = weapon_sprites.get(weapon_type, "weapons/wasserpistole.png")
+
+        # Weapons are typically 2x size
+        weapon_size = int(GRIDSIZE * 2)
+        weapon_image = load_sprite_image(sprite_name, (weapon_size, weapon_size))
+
+        center_x = img_x + GRIDSIZE // 2 - weapon_size // 2
+        center_y = img_y + GRIDSIZE // 2 - weapon_size // 2
+        image.paste(weapon_image, (center_x, center_y), weapon_image)
+
+
+def draw_moving_platforms_with_sprites(draw, image, platform_locations, min_x, min_y):
+    """Draw moving platforms and their movement paths."""
+    for platform_config in platform_locations:
+        x, y = platform_config["x"], platform_config["y"]
+        platform_type = platform_config.get("platform_type", "grass")
+        movement_type = platform_config.get("movement_type", "linear")
+        distance = platform_config.get("distance", 0)
+        direction = platform_config.get("direction", "horizontal")
+
+        # Choose sprite based on platform type
+        if platform_type == "grass":
+            sprite_name = "grass_02.png"
+        else:
+            sprite_name = "block_00.png"
+
+        platform_image = load_sprite_image(sprite_name, (GRIDSIZE, GRIDSIZE))
+
+        # Draw the platform at start position
+        img_x, img_y = world_to_image_coords(x, y, min_x, min_y)
+        image.paste(platform_image, (img_x, img_y), platform_image)
+
+        # Draw movement path visualization
+        if movement_type == "linear":
+            start_x, start_y = img_x + GRIDSIZE // 2, img_y + GRIDSIZE // 2
+
+            if direction == "horizontal":
+                end_x = start_x + (distance * GRIDSIZE)
+                end_y = start_y
+                # Draw horizontal dashed line
+                for i in range(0, int(distance * GRIDSIZE), 10):
+                    draw.line(
+                        [(start_x + i, start_y), (start_x + i + 5, start_y)],
+                        fill=(150, 150, 255, 200),
+                        width=2,
+                    )
+                # Draw end position marker
+                draw.ellipse(
+                    [end_x - 3, end_y - 3, end_x + 3, end_y + 3],
+                    fill=COLORS["moving_platform"],
+                    outline=(0, 0, 0),
+                )
+            elif direction == "vertical":
+                end_x = start_x
+                end_y = start_y + (distance * GRIDSIZE)
+                # Draw vertical dashed line
+                for i in range(0, int(distance * GRIDSIZE), 10):
+                    draw.line(
+                        [(start_x, start_y + i), (start_x, start_y + i + 5)],
+                        fill=(150, 150, 255, 200),
+                        width=2,
+                    )
+                # Draw end position marker
+                draw.ellipse(
+                    [end_x - 3, end_y - 3, end_x + 3, end_y + 3],
+                    fill=COLORS["moving_platform"],
+                    outline=(0, 0, 0),
+                )
+
+        elif movement_type == "circular":
+            center_x = img_x + GRIDSIZE // 2
+            center_y = img_y + GRIDSIZE // 2
+            radius = distance * GRIDSIZE
+
+            # Draw circular path
+            draw.ellipse(
+                [
+                    center_x - radius,
+                    center_y - radius,
+                    center_x + radius,
+                    center_y + radius,
+                ],
+                outline=(150, 150, 255, 200),
+                width=2,
+            )
+
+        # Add arrow indicator for direction
+        center_x = img_x + GRIDSIZE // 2
+        center_y = img_y + GRIDSIZE // 2
+        arrow_size = 4
+
+        if movement_type == "linear" and direction == "horizontal":
+            # Right arrow
+            draw.polygon(
+                [
+                    (center_x + 2, center_y - arrow_size),
+                    (center_x + 2 + arrow_size, center_y),
+                    (center_x + 2, center_y + arrow_size),
+                ],
+                fill=(255, 255, 0),
+            )
+        elif movement_type == "linear" and direction == "vertical":
+            # Down arrow
+            draw.polygon(
+                [
+                    (center_x - arrow_size, center_y + 2),
+                    (center_x, center_y + 2 + arrow_size),
+                    (center_x + arrow_size, center_y + 2),
+                ],
+                fill=(255, 255, 0),
+            )
+        elif movement_type == "circular":
+            # Circular arrow indicator
+            draw.ellipse(
+                [center_x - 2, center_y - 2, center_x + 2, center_y + 2],
+                fill=(255, 255, 0),
+                outline=(0, 0, 0),
+            )
 
 
 def draw_enemies_with_sprites(draw, image, enemy_locations, min_x, min_y):
@@ -347,6 +516,16 @@ def render_level(level_config, output_path, show_grid=True):
         powerup_locations = level_config.get("powerup_locations", [])
         draw_powerups_with_sprites(draw, image, powerup_locations, min_x, min_y)
 
+        # Draw weapons using actual sprites
+        weapon_locations = level_config.get("weapon_locations", [])
+        draw_weapons_with_sprites(draw, image, weapon_locations, min_x, min_y)
+
+        # Draw moving platforms using actual sprites (draw these before enemies)
+        moving_platform_locations = level_config.get("moving_platform_locations", [])
+        draw_moving_platforms_with_sprites(
+            draw, image, moving_platform_locations, min_x, min_y
+        )
+
         # Draw enemies using actual sprites
         enemy_locations = level_config.get("enemy_locations", [])
         draw_enemies_with_sprites(draw, image, enemy_locations, min_x, min_y)
@@ -401,7 +580,9 @@ def draw_legend(draw, width, height):
         ("Gems", COLORS["gem"]),
         ("Trophies", COLORS["trophy"]),
         ("Powerups", COLORS["powerup"]),
+        ("Weapons", COLORS["weapon"]),
         ("Enemies", COLORS["enemy"]),
+        ("M.Platforms", COLORS["moving_platform"]),
         ("Exit", COLORS["exit"]),
         ("Player", COLORS["player_start"]),
     ]
@@ -410,7 +591,7 @@ def draw_legend(draw, width, height):
     legend_y = height - 20 - len(legend_items) * 15
 
     # Background for legend
-    legend_width = 100
+    legend_width = 110
     legend_height = len(legend_items) * 15 + 10
     draw.rectangle(
         [legend_x - 5, legend_y - 5, legend_x + legend_width, legend_y + legend_height],
@@ -433,16 +614,20 @@ def draw_level_info(draw, level_config, width):
     trophy_count = len(level_config.get("trophy_locations", []))
     enemy_count = len(level_config.get("enemy_locations", []))
     powerup_count = len(level_config.get("powerup_locations", []))
+    weapon_count = len(level_config.get("weapon_locations", []))
+    moving_platform_count = len(level_config.get("moving_platform_locations", []))
 
     info_lines = [
         f"Gems: {gem_count}",
         f"Trophies: {trophy_count}",
         f"Enemies: {enemy_count}",
         f"Powerups: {powerup_count}",
+        f"Weapons: {weapon_count}",
+        f"M.Platforms: {moving_platform_count}",
     ]
 
     # Position in top-right
-    info_width = 120
+    info_width = 140
     info_height = len(info_lines) * 15 + 10
     info_x = width - info_width - 10
     info_y = 10
@@ -458,7 +643,14 @@ def draw_level_info(draw, level_config, width):
     for i, line in enumerate(info_lines):
         y = info_y + i * 15
         # Draw a small colored square to indicate the category
-        colors = [COLORS["gem"], COLORS["trophy"], COLORS["enemy"], COLORS["powerup"]]
+        colors = [
+            COLORS["gem"],
+            COLORS["trophy"],
+            COLORS["enemy"],
+            COLORS["powerup"],
+            COLORS["weapon"],
+            COLORS["moving_platform"],
+        ]
         if i < len(colors):
             draw.rectangle(
                 [info_x, y, info_x + 12, y + 12], fill=colors[i], outline=(0, 0, 0)
