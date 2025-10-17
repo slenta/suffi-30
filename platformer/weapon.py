@@ -16,7 +16,8 @@ class WeaponPickup(pg.sprite.Sprite):
         image_path = os.path.join(IMAGEPATH, weapon_data["image"])
 
         self.image = pg.transform.scale(
-            pg.image.load(image_path).convert_alpha(), (GRIDSIZE, GRIDSIZE)
+            pg.image.load(image_path).convert_alpha(),
+            (weapon_data["size"] * GRIDSIZE, weapon_data["size"] * GRIDSIZE),
         )
         print(f"Loaded weapon image for {weapon_name} from {image_path}")
 
