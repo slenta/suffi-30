@@ -1,6 +1,9 @@
 level_config = {
     "x_bounds": [-600, 3000],  # Gameworld width
     "y_bounds": [-200, 300],  # Gameworld height
+    # Player spawn point (optional) - x and y coordinates in grid units
+    # If not specified, defaults to PLAYER_START_X, PLAYER_START_Y from settings.py
+    # "player_spawn": (5, 1),  # Example: spawn at grid position (5, 1)
     "grass_locations": [(i, 14) for i in range(-20, 20)]
     + [(i, 14) for i in range(25, 59)]
     + [(i, 14) for i in range(70, 120)],  # Flattened list of tuples

@@ -121,7 +121,13 @@ class GameWorld:
             self.items.add(g)
             self.all_sprites.add(g)
 
-        self.player = Player(PLAYER_START_X, PLAYER_START_Y, world=self)
+        # Use level-specific player spawn point if defined, otherwise use default
+        player_spawn = self.level_config.get(
+            "player_spawn", (PLAYER_START_X, PLAYER_START_Y)
+        )
+        spawn_x, spawn_y = player_spawn
+
+        self.player = Player(spawn_x, spawn_y, world=self)
         self.player_sprite_group = pg.sprite.GroupSingle()
         self.player_sprite_group.add(self.player)
         self.all_sprites.add(self.player)
