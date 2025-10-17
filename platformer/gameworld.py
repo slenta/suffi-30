@@ -11,6 +11,7 @@ from .powerup import PowerUp  # Import the PowerUp class
 from .trophy import Exit, Trophy
 from .draw import *
 from .sound_manager import sound_manager  # Import the sound manager
+from .weapon import WeaponPickup
 import importlib
 
 
@@ -24,17 +25,36 @@ class GameWorld:
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
         self.keep_going = True
-        self.camera_offset_x = 0  # Horizontal camera offset
-        self.player_gems = 0
-        self.bullets = pg.sprite.Group()  # Group to manage bullets
-        self.enemies = pg.sprite.Group()  # Group to manage enemies
-        self.powerups = pg.sprite.Group()  # Group to manage power-ups
-        self.alternative_backgrounds = []  # List of alternative background images
-        self.current_background_index = 0  # Track which background is currently shown
-        self.alternative_music_tracks = []  # List of alternative music tracks
-        self.original_music_track = None  # Store the original music track
+        self.game_over_flag = False
+
+        # Sprite groups
+        self.all_sprites = pg.sprite.Group()
+        self.platforms = pg.sprite.Group()
+        self.gems = pg.sprite.Group()
+        self.enemies = pg.sprite.Group()
+        self.bullets = pg.sprite.Group()
+        self.powerups = pg.sprite.Group()
+        self.trophies = pg.sprite.Group()
+        self.weapon_pickups = pg.sprite.Group()
+
+        # Camera
+        self.camera_offset_x = 0
+
+        # Level bounds
+        self.x_bounds = [-600, 3000]
+        self.y_bounds = [-200, 300]
 
     def load_level(self, level_name):
+        # Clear all sprite groups
+        self.all_sprites.empty()
+        self.platforms.empty()
+        self.gems.empty()
+        self.enemies.empty()
+        self.bullets.empty()
+        self.powerups.empty()
+        self.trophies.empty()
+        self.weapon_pickups.empty()
+
         # Dynamically import the level configuration
         self.level_module = importlib.import_module(f"platformer.levels.{level_name}")
         self.level_config = self.level_module.level_config
@@ -128,6 +148,16 @@ class GameWorld:
         self.exit = Exit(exit_x * GRIDSIZE, exit_y * GRIDSIZE)
         self.all_sprites.add(self.exit)
 
+        # Load weapon pickups
+        for weapon_data in self.level_config.get("weapon_locations", []):
+            weapon = WeaponPickup(
+                weapon_data["x"] * GRIDSIZE,
+                weapon_data["y"] * GRIDSIZE,
+                weapon_data["type"],
+            )
+            self.weapon_pickups.add(weapon)
+            self.all_sprites.add(weapon)
+
         # Load level-specific background music
         self.original_music_track = None
         self.alternative_music_tracks = []
@@ -199,6 +229,16 @@ class GameWorld:
             self.items.add(item)
             self.all_sprites.add(item)
 
+        # Load weapon pickups
+        for weapon_data in self.level_config.get("weapon_locations", []):
+            weapon = WeaponPickup(
+                weapon_data["x"] * GRIDSIZE,
+                weapon_data["y"] * GRIDSIZE,
+                weapon_data["type"],
+            )
+            self.weapon_pickups.add(weapon)
+            self.all_sprites.add(weapon)
+
         # Load enemies
         for enemy in self.enemies:
             enemy.reset_position()
@@ -209,6 +249,9 @@ class GameWorld:
 
         for trophy in self.trophies:
             self.all_sprites.add(trophy)
+
+        for weapon in self.weapon_pickups:
+            self.all_sprites.add(weapon)
 
         self.all_sprites.add(self.exit)
 
@@ -225,15 +268,17 @@ class GameWorld:
 
     def events(self):
         for event in pg.event.get():
-            if (event.type == pg.QUIT) or (
-                event.type == pg.KEYDOWN and event.key == KEYBINDINGS.get("quit")
+            if event.type == pg.QUIT or (
+                event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE
             ):
                 self.keep_going = False
-                self.game_over()
-            elif event.type == pg.KEYDOWN and event.key == KEYBINDINGS.get("shoot"):
-                self.player.shoot_bullet()
-            elif event.type == pg.KEYDOWN and event.key == KEYBINDINGS.get("throw"):
-                self.player.throw_exploding_object()
+            elif event.type == pg.KEYDOWN:
+                if event.key == pg.K_f:  # Shoot
+                    self.player.shoot_bullet()
+                elif event.key == pg.K_g:  # Melee attack
+                    self.player.melee_attack()
+                elif event.key == pg.K_e:
+                    self.player.throw_exploding_object()
 
     def level_complete(self):
         fade_to_black(
@@ -290,33 +335,22 @@ class GameWorld:
 
         # Draw all sprites with the camera offset
         for sprite in self.all_sprites:
-            offset_rect = sprite.rect.move(-self.camera_offset_x, 0)
-            self.screen.blit(sprite.image, offset_rect)
+            if sprite != self.player:
+                offset_rect = sprite.rect.move(-self.camera_offset_x, 0)
+                self.screen.blit(sprite.image, offset_rect)
 
-        # Draw health bars for enemies
+        # Draw player with weapon
+        self.player.draw(self.screen, self.camera_offset_x)
+
+        # Draw enemy health bars
         for enemy in self.enemies:
             enemy.draw_health_bar(self.screen, self.camera_offset_x)
 
-        # Draw the player's gems (lives) at the top left corner
-        draw_gems(screen=self.screen, player=self.player)
-        trophy_image_path = self.level_config.get(
-            "trophy_image", "data/images/trophy.png"
-        )
-        draw_trophies(
-            screen=self.screen,
-            player=self.player,
-            total_trophies=self.total_trophies,
-            trophy_image_path=trophy_image_path,
-        )
-        draw_health_bar(
-            screen=self.screen,
-            player=self.player,
-            width=200,
-            height=15,
-            max_health=self.player.max_health,
-        )
+        # Draw HUD
+        draw_gems(self.screen, self.player)
+        draw_trophies(self.screen, self.player, self.total_trophies)
+        draw_health_bar(self.screen, self.player, 200, 20, self.player.max_health)
 
-        # Update the display
         pg.display.flip()
 
     def draw_background(self):
