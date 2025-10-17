@@ -184,7 +184,10 @@ class Player(pg.sprite.Sprite):
         image_path = os.path.join(IMAGEPATH, weapon_data["image"])
         loaded_image = pg.image.load(image_path).convert_alpha()
         # Scale weapon to be smaller (1/3 of player size)
-        weapon_size = (GRIDSIZE // 2, GRIDSIZE // 2)
+        weapon_size = (
+            weapon_data["size"] * GRIDSIZE // 2,
+            weapon_data["size"] * GRIDSIZE // 2,
+        )
         self.weapon_image = pg.transform.scale(loaded_image, weapon_size)
 
     def has_weapon(self, weapon_name):

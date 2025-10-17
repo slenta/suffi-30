@@ -23,7 +23,8 @@ WEAPON_CONFIG = {
         "bullet_image": "water_bullet.png",
         "bullet_size": (10, 8),
         "bullet_color": (255, 255, 0),
-        "image": "weapons/wasserpistole.jpeg",
+        "image": "weapons/wasserpistole.png",
+        "size": 2,
     },
     "gun": {
         "type": "shooting",

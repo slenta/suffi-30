@@ -222,6 +222,9 @@ level_config = {
         },
     ],
     # Extended trophy locations - more collectibles
+    "weapon_locations": [
+        {"x": 50, "y": 13, "type": "wasserpistole"},  # Erste Waffe
+    ],
     "trophy_locations": [
         # Original trophies
         (84, 2),
