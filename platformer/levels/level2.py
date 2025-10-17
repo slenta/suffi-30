@@ -155,6 +155,9 @@ level_config = {
     # Extended gem locations - more rewards throughout the longer level
     "gem_locations": [
         # Original gems
+        (12, 12),
+        (13, 12),
+        (14, 12),
         (35, 0),
         (151, 5),
         (195, 13),
@@ -168,7 +171,7 @@ level_config = {
         {
             "x": 140,
             "y": 7,
-            "image": "enemies/raver-trance-totem.png",
+            "image": "enemies/trance-totem.png",
             "speed": 1,
             "patrol_range": 20,
             "size_multiplier": 4,
@@ -181,7 +184,7 @@ level_config = {
         {
             "x": 165,
             "y": 10,
-            "image": "enemies/raver-jesus.png",
+            "image": "enemies/trance-jesus.png",
             "speed": 3,
             "patrol_range": 150,
             "size_multiplier": 4,
@@ -194,7 +197,20 @@ level_config = {
         {
             "x": 195,
             "y": 4,
-            "image": "enemies/raver-hippie.png",
+            "image": "enemies/trance-hippie.png",
+            "speed": 1,
+            "patrol_range": 30,
+            "size_multiplier": 4,
+            "health": 20,
+            "damage": 15,
+            "shoot_range": 30,
+            "chase_range": 10,
+            "melee_damage": 10,
+        },
+        {
+            "x": 240,
+            "y": 10,
+            "image": "enemies/trance-okf.png",
             "speed": 1,
             "patrol_range": 30,
             "size_multiplier": 4,
