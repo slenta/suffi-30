@@ -1,4 +1,7 @@
 import pygame as pg
+import os
+from .settings import IMAGEPATH, GRIDSIZE
+from .weapon_stats import WEAPON_CONFIG
 
 
 def draw_gems(screen, player):
@@ -13,18 +16,20 @@ def draw_gems(screen, player):
         text = font.render(f"Lives: {player.gems}", True, (255, 255, 255))
         screen.blit(text, (10, 10))
         return
-    
+
     # Draw hearts for each life
     heart_spacing = 35  # Space between hearts
     start_x = 10
     start_y = 10
-    
+
     for i in range(player.gems):
         x_pos = start_x + (i * heart_spacing)
         screen.blit(heart_image, (x_pos, start_y))
 
 
-def draw_trophies(screen, player, total_trophies, trophy_image_path="data/images/trophy.png"):
+def draw_trophies(
+    screen, player, total_trophies, trophy_image_path="data/images/trophy.png"
+):
     # Load the trophy image
     try:
         trophy_image = pg.image.load(f"platformer/{trophy_image_path}")
@@ -40,17 +45,17 @@ def draw_trophies(screen, player, total_trophies, trophy_image_path="data/images
         )
         screen.blit(text, (10, 50))
         return
-    
+
     # Draw trophies
     trophy_spacing = 30  # Space between trophies
     start_x = 10
     start_y = 50
-    
+
     # Draw collected trophies (full color)
     for i in range(player.trophies_collected):
         x_pos = start_x + (i * trophy_spacing)
         screen.blit(trophy_image, (x_pos, start_y))
-    
+
     # Draw uncollected trophies (grayed out)
     for i in range(player.trophies_collected, total_trophies):
         x_pos = start_x + (i * trophy_spacing)
@@ -72,12 +77,10 @@ def draw_health_bar(screen, player, width, height, max_health):
 
 
 def fade_to_black(screen, draw_callback, width, height, duration=60):
-    """Fade the screen to black from the center outward over 'duration' frames.
-    draw_callback: function to draw the current game frame (e.g. GameWorld.draw)
-    """
+    """Fade the screen to black from the center outward over 'duration' frames."""
     clock = pg.time.Clock()
     for frame in range(duration):
-        draw_callback()  # Draw the current frame
+        draw_callback()
         max_radius = int((width**2 + height**2) ** 0.5 // 2)
         radius = int((frame / duration) * max_radius)
         fade_surface = pg.Surface((width, height), pg.SRCALPHA)
@@ -95,3 +98,14 @@ def show_level_complete_text(screen, width, height):
     text_rect = text.get_rect(center=(width // 2, height // 2))
     screen.blit(text, text_rect)
     pg.display.flip()
+
+    # Wait until user closes window or presses any key
+    import sys
+
+    waiting = True
+    while waiting:
+        for event in pg.event.get():
+            if event.type == pg.QUIT or (event.type == pg.KEYDOWN):
+                waiting = False
+    pg.quit()
+    sys.exit()

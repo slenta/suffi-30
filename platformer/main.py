@@ -10,30 +10,31 @@ from .settings import FPS, KEYBINDINGS, WIDTH, HEIGHT
 def get_level_to_load():
     """Get the level to load from environment variable or show level selection."""
     # Check if level was specified via command line (for backwards compatibility)
-    level_name = os.environ.get('PLATFORMER_LEVEL')
+    level_name = os.environ.get("PLATFORMER_LEVEL")
     if level_name:
         print(f"🎯 Loading level from command line: {level_name}")
         return level_name
-    
+
     # Show level selection screen
     print("🎮 Starting level selection screen...")
     pg.init()
     screen = pg.display.set_mode((WIDTH, HEIGHT))
     pg.display.set_caption("Level Selection - Suffi Platformer")
-    
+
     # Load menu sound effects
     from .sound_manager import sound_manager
+
     sound_manager.load_sound_effect("menu_move", "sounds/menu_move.wav")
     sound_manager.load_sound_effect("menu_select", "sounds/menu_select.wav")
-    
+
     level_selection = LevelSelectionScreen(screen)
     selected_level = level_selection.run()
-    
+
     if selected_level == "QUIT":
         print("👋 Player quit from level selection")
         pg.quit()
         sys.exit()
-    
+
     print(f"🎯 Selected level: {selected_level}")
     return selected_level
 
