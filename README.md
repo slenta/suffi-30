@@ -11,6 +11,9 @@ python launcher.py level1-advanced
 ## List all available levels
 python launcher.py --list-levels
 
+# todo liste neu
+- gameworld etwas höher gestalten
+
 # Next ToDos
 - change player image to suffi
 - modify player image, strength, speed to level
