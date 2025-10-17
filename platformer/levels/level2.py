@@ -1,5 +1,5 @@
 level_config = {
-    "x_bounds": [-600, 600],  # Extended gameworld width (doubled)
+    "x_bounds": [-600, 6000],  # Extended gameworld width (doubled)
     "y_bounds": [-400, 400],  # Increased gameworld height for more vertical space
     
     # Extended grass locations - keeping original and adding more sections
