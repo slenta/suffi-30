@@ -31,6 +31,8 @@ class GameWorld:
         self.powerups = pg.sprite.Group()  # Group to manage power-ups
         self.alternative_backgrounds = []  # List of alternative background images
         self.current_background_index = 0  # Track which background is currently shown
+        self.alternative_music_tracks = []  # List of alternative music tracks
+        self.original_music_track = None  # Store the original music track
 
     def load_level(self, level_name):
         # Dynamically import the level configuration
@@ -127,6 +129,9 @@ class GameWorld:
         self.all_sprites.add(self.exit)
 
         # Load level-specific background music
+        self.original_music_track = None
+        self.alternative_music_tracks = []
+
         if (
             "background_music" in self.level_config
             and self.level_config["background_music"]
@@ -138,7 +143,24 @@ class GameWorld:
                 music_path = os.path.join(
                     os.path.dirname(os.path.dirname(__file__)), music_path
                 )
+            self.original_music_track = music_path
             sound_manager.play_background_music(music_path)
+
+        # Load alternative music tracks if specified
+        if "alternative_music_tracks" in self.level_config:
+            for alt_music_path in self.level_config["alternative_music_tracks"]:
+                if not os.path.isabs(alt_music_path):
+                    alt_music_path = os.path.join(
+                        os.path.dirname(os.path.dirname(__file__)), alt_music_path
+                    )
+
+                if os.path.exists(alt_music_path):
+                    self.alternative_music_tracks.append(alt_music_path)
+                    print(
+                        f"🎵 Loaded alternative music: {os.path.basename(alt_music_path)}"
+                    )
+                else:
+                    print(f"❌ Alternative music not found: {alt_music_path}")
 
         # Load background image
         self.load_background_image()
@@ -413,7 +435,7 @@ class GameWorld:
                     print(f"❌ Alternative background not found: {alt_bg_path}")
 
     def change_background(self):
-        """Change to the next alternative background (used by power-up)."""
+        """Change to the next alternative background and music (used by power-up)."""
         if self.alternative_backgrounds:
             # Cycle through alternative backgrounds
             self.current_background_index = (self.current_background_index + 1) % (
@@ -423,15 +445,32 @@ class GameWorld:
             if self.current_background_index == 0:
                 # Back to original background
                 self.load_background_image()
-                print("🎨 Switched to original background")
+                # Restore original music
+                if self.original_music_track:
+                    sound_manager.play_background_music(self.original_music_track)
+                    print("🎨 Switched to original background and music")
+                else:
+                    print("🎨 Switched to original background")
             else:
                 # Switch to alternative background
                 self.background_image = self.alternative_backgrounds[
                     self.current_background_index - 1
                 ]
-                print(
-                    f"🎨 Switched to alternative background {self.current_background_index}"
-                )
+                # Switch to alternative music if available
+                if self.alternative_music_tracks and (
+                    self.current_background_index - 1
+                ) < len(self.alternative_music_tracks):
+                    alt_music = self.alternative_music_tracks[
+                        self.current_background_index - 1
+                    ]
+                    sound_manager.play_background_music(alt_music)
+                    print(
+                        f"🎨 Switched to alternative background {self.current_background_index} with music: {os.path.basename(alt_music)}"
+                    )
+                else:
+                    print(
+                        f"🎨 Switched to alternative background {self.current_background_index}"
+                    )
         else:
             print("⚠️ No alternative backgrounds available")
 
