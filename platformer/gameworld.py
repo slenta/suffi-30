@@ -29,6 +29,8 @@ class GameWorld:
         self.bullets = pg.sprite.Group()  # Group to manage bullets
         self.enemies = pg.sprite.Group()  # Group to manage enemies
         self.powerups = pg.sprite.Group()  # Group to manage power-ups
+        self.alternative_backgrounds = []  # List of alternative background images
+        self.current_background_index = 0  # Track which background is currently shown
 
     def load_level(self, level_name):
         # Dynamically import the level configuration
@@ -109,7 +111,9 @@ class GameWorld:
 
         # Load trophies and exits
         self.trophies = pg.sprite.Group()
-        trophy_image_path = self.level_config.get("trophy_image", "data/images/trophy.png")
+        trophy_image_path = self.level_config.get(
+            "trophy_image", "data/images/trophy.png"
+        )
         # Extract just the filename from the path for the Trophy class
         trophy_filename = os.path.basename(trophy_image_path)
         for x, y in self.level_config["trophy_locations"]:
@@ -123,12 +127,17 @@ class GameWorld:
         self.all_sprites.add(self.exit)
 
         # Load level-specific background music
-        if "background_music" in self.level_config and self.level_config["background_music"]:
+        if (
+            "background_music" in self.level_config
+            and self.level_config["background_music"]
+        ):
             music_path = self.level_config["background_music"]
             # Check if it's an absolute path or relative to game directory
             if not os.path.isabs(music_path):
                 # Try relative to game root directory first
-                music_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), music_path)
+                music_path = os.path.join(
+                    os.path.dirname(os.path.dirname(__file__)), music_path
+                )
             sound_manager.play_background_music(music_path)
 
         # Load background image
@@ -268,12 +277,14 @@ class GameWorld:
 
         # Draw the player's gems (lives) at the top left corner
         draw_gems(screen=self.screen, player=self.player)
-        trophy_image_path = self.level_config.get("trophy_image", "data/images/trophy.png")
+        trophy_image_path = self.level_config.get(
+            "trophy_image", "data/images/trophy.png"
+        )
         draw_trophies(
-            screen=self.screen, 
-            player=self.player, 
+            screen=self.screen,
+            player=self.player,
             total_trophies=self.total_trophies,
-            trophy_image_path=trophy_image_path
+            trophy_image_path=trophy_image_path,
         )
         draw_health_bar(
             screen=self.screen,
@@ -291,23 +302,25 @@ class GameWorld:
         if self.background_image:
             # Calculate parallax scrolling offset
             bg_offset = int(self.camera_offset_x * self.background_scroll_speed)
-            
+
             # Get background and screen dimensions
             bg_width = self.background_image.get_width()
             bg_height = self.background_image.get_height()
             screen_width = self.screen.get_width()
             screen_height = self.screen.get_height()
-            
+
             # Scale background to fit screen height if needed
             if bg_height != screen_height:
                 scale_factor = screen_height / bg_height
                 scaled_width = int(bg_width * scale_factor)
-                self.background_image = pg.transform.scale(self.background_image, (scaled_width, screen_height))
+                self.background_image = pg.transform.scale(
+                    self.background_image, (scaled_width, screen_height)
+                )
                 bg_width = scaled_width
-            
+
             # Tile the background horizontally to cover the entire screen width
             start_x = -(bg_offset % bg_width)
-            
+
             # Draw background tiles
             x = start_x
             while x < screen_width:
@@ -324,7 +337,7 @@ class GameWorld:
         # Define common sound effects with their file paths
         sound_effects = {
             "jump": "sounds/jump.wav",
-            "gem_collect": "sounds/gem_collect.wav", 
+            "gem_collect": "sounds/gem_collect.wav",
             "enemy_hit": "sounds/enemy_hit.wav",
             "player_hurt": "sounds/player_hurt.wav",
             "player_death": "sounds/player_death.wav",  # Player death/fall sound
@@ -333,9 +346,9 @@ class GameWorld:
             "level_complete": "sounds/level_complete.wav",
             "explode": "sounds/explode.wav",
             "menu_move": "sounds/menu_move.wav",  # Menu cursor movement
-            "menu_select": "sounds/menu_select.wav"  # Menu selection
+            "menu_select": "sounds/menu_select.wav",  # Menu selection
         }
-        
+
         # Load each sound effect (silently ignore missing files)
         for name, path in sound_effects.items():
             full_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), path)
@@ -345,30 +358,82 @@ class GameWorld:
         """Load level-specific background image."""
         self.background_image = None
         self.background_scroll_speed = 0.5  # Default parallax scroll speed
-        
-        if "background_image" in self.level_config and self.level_config["background_image"]:
+        self.alternative_backgrounds = []  # Reset alternative backgrounds
+        self.current_background_index = 0
+
+        if (
+            "background_image" in self.level_config
+            and self.level_config["background_image"]
+        ):
             bg_path = self.level_config["background_image"]
-            
+
             # Check if it's an absolute path or relative to game directory
             if not os.path.isabs(bg_path):
                 # Try relative to game root directory first
-                bg_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), bg_path)
-            
+                bg_path = os.path.join(
+                    os.path.dirname(os.path.dirname(__file__)), bg_path
+                )
+
             # Load background image
             if os.path.exists(bg_path):
                 try:
                     self.background_image = pg.image.load(bg_path).convert()
                     print(f"🖼️ Loaded background image: {os.path.basename(bg_path)}")
-                    
+
                     # Get optional background settings
                     if "background_scroll_speed" in self.level_config:
-                        self.background_scroll_speed = self.level_config["background_scroll_speed"]
-                        
+                        self.background_scroll_speed = self.level_config[
+                            "background_scroll_speed"
+                        ]
+
                 except pg.error as e:
                     print(f"❌ Error loading background image: {e}")
                     self.background_image = None
             else:
                 print(f"❌ Background image not found: {bg_path}")
+
+        # Load alternative backgrounds if specified
+        if "alternative_backgrounds" in self.level_config:
+            for alt_bg_path in self.level_config["alternative_backgrounds"]:
+                if not os.path.isabs(alt_bg_path):
+                    alt_bg_path = os.path.join(
+                        os.path.dirname(os.path.dirname(__file__)), alt_bg_path
+                    )
+
+                if os.path.exists(alt_bg_path):
+                    try:
+                        alt_bg = pg.image.load(alt_bg_path).convert()
+                        self.alternative_backgrounds.append(alt_bg)
+                        print(
+                            f"🖼️ Loaded alternative background: {os.path.basename(alt_bg_path)}"
+                        )
+                    except pg.error as e:
+                        print(f"❌ Error loading alternative background: {e}")
+                else:
+                    print(f"❌ Alternative background not found: {alt_bg_path}")
+
+    def change_background(self):
+        """Change to the next alternative background (used by power-up)."""
+        if self.alternative_backgrounds:
+            # Cycle through alternative backgrounds
+            self.current_background_index = (self.current_background_index + 1) % (
+                len(self.alternative_backgrounds) + 1
+            )
+
+            if self.current_background_index == 0:
+                # Back to original background
+                self.load_background_image()
+                print("🎨 Switched to original background")
+            else:
+                # Switch to alternative background
+                self.background_image = self.alternative_backgrounds[
+                    self.current_background_index - 1
+                ]
+                print(
+                    f"🎨 Switched to alternative background {self.current_background_index}"
+                )
+        else:
+            print("⚠️ No alternative backgrounds available")
 
     def start_screen(self):
         pass
