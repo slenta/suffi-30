@@ -186,7 +186,7 @@ level_config = {
         {
             "x": 155,
             "y": 10,
-            "image": "trump.png",
+            "image": "enemies/raver-hippie.png",
             "speed": 3,
             "patrol_range": 120,
             "size_multiplier": 2.5,
@@ -279,11 +279,15 @@ level_config = {
     "trophy_image": "data/images/mushroom.png",  # Path to trophy image for UI display
     # Extended exit location - much further
     "exit_location": (420, 13),
-    "background_music": "music/level2.mp3",  # Path relative to game root, or use absolute path
+    "background_music": "music/level1.mp3",  # Path relative to game root, or use absolute path
     # "background_image": "backgrounds/level2.png",  # Path to background image
     "background_scroll_speed": 0.2,  # Slower parallax for advanced level
     # Alternative backgrounds for type 2 power-up
     "alternative_backgrounds": [
         "backgrounds/level2.png",  # You can add more background images here to cycle through
+    ],
+    # Alternative music tracks for type 2 power-up
+    "alternative_music_tracks": [
+        "music/level2.mp3",  # Plays when switching to first alternative background
     ],
 }
