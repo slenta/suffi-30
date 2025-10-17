@@ -1,49 +1,61 @@
 import pygame as pg
+import os
 from .settings import *
+from .weapon_stats import WEAPON_CONFIG
 from .sound_manager import sound_manager  # Import the sound manager
 import math
 
 
 class Bullet(pg.sprite.Sprite):
-    def __init__(self, x, y, direction_x, direction_y, damage, world, from_enemy=False):
-        super().__init__()
-        self.image = pg.Surface((20, 9))  # Bullet size
-        self.image.fill(
-            (255, 0, 0) if from_enemy else (0, 255, 0)
-        )  # Red for enemy bullets, green for player bullets
+    def __init__(
+        self,
+        x,
+        y,
+        direction_x,
+        direction_y,
+        weapon_name,
+        world,
+        from_enemy=False,
+        *groups
+    ):
+        super().__init__(*groups)
+        self.world = world
+        self.from_enemy = from_enemy
+        self.weapon_name = weapon_name
+
+        # Get weapon stats
+        weapon_data = WEAPON_CONFIG.get(weapon_name, WEAPON_CONFIG["gun"])
+        self.damage = weapon_data["damage"]
+        self.speed = weapon_data["bullet_speed"]
+
+        # Load bullet image or create colored surface
+        bullet_image_path = os.path.join(IMAGEPATH, weapon_data.get("bullet_image", ""))
+        try:
+            self.image = pg.image.load(bullet_image_path).convert_alpha()
+            self.image = pg.transform.scale(self.image, weapon_data["bullet_size"])
+        except:
+            self.image = pg.Surface(weapon_data["bullet_size"])
+            self.image.fill(weapon_data["bullet_color"])
+
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
-        self.direction_x = direction_x  # X direction of the bullet
-        self.direction_y = direction_y  # Y direction of the bullet
-        self.speed = BULLET_SPEED
-        self.damage = damage  # Damage dealt by the bullet
-        self.world = world
-        self.from_enemy = from_enemy  # Flag to indicate if the bullet is from an enemy
+        self.direction_x = direction_x
+        self.direction_y = direction_y
 
     def update(self):
-        # Move the bullet
         self.rect.x += self.direction_x * self.speed
         self.rect.y += self.direction_y * self.speed
 
-        # Remove the bullet if it goes off-screen
-        if (
-            self.rect.right < self.world.ground_start
-            or self.rect.left > self.world.ground_end
-        ):
-            self.kill()
-
-        # Check for collisions with platforms (blocks)
+        # Check for collisions with platforms
         if pg.sprite.spritecollideany(self, self.world.platforms):
             self.kill()
 
         # Check for collisions
         if self.from_enemy:
-            # Enemy bullets can hit the player
             if pg.sprite.collide_rect(self, self.world.player):
                 self.world.player.take_damage(self.damage)
                 self.kill()
         else:
-            # Player bullets can hit enemies
             hit_enemy = pg.sprite.spritecollideany(self, self.world.enemies)
             if hit_enemy:
                 hit_enemy.take_damage(self.damage)
@@ -51,8 +63,8 @@ class Bullet(pg.sprite.Sprite):
 
 
 class ExplodingObject(pg.sprite.Sprite):
-    def __init__(self, x, y, direction_x, direction_y, damage, world):
-        super().__init__()
+    def __init__(self, x, y, direction_x, direction_y, damage, world, *groups):
+        super().__init__(*groups)
         self.image = pg.Surface((15, 15))  # Size of the exploding object
         self.image.fill((255, 165, 0))  # Orange color for the object
         self.rect = self.image.get_rect()
