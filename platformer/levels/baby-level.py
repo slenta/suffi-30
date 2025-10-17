@@ -28,7 +28,7 @@ level_config = {
         {
             "x": 45,
             "y": 13,
-            "image": "erzieherin.png",  # Boss
+            "image": "enemies/baby-erzieherin.png",  # Boss
             "speed": 1,
             "patrol_range": 100,
             "size_multiplier": 3,
