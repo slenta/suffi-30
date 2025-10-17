@@ -11,6 +11,25 @@ python launcher.py level1-advanced
 ## List all available levels
 python launcher.py --list-levels
 
+# Project Structure
+```
+suffi-30/
+├── assets/                    # Centralized asset directory
+│   ├── images/               # All game sprites and images
+│   ├── backgrounds/          # Level background images
+│   ├── music/                # Background music files (MP3, OGG)
+│   ├── sounds/               # Sound effects (WAV, OGG)
+│   ├── design/              # Source design files (piskel, afdesign)
+│   └── renders/             # Rendered level previews
+├── platformer/              # Game engine code
+│   ├── levels/              # Level definitions
+│   └── ...                  # Game modules
+├── archive/                 # Archived old files
+├── launcher.py              # Main game launcher
+├── render_levels.py         # Level rendering utility
+└── test_sound_system.py     # Sound system tester
+```
+
 # todo liste neu
 - gameworld etwas höher gestalten
 
@@ -34,17 +53,17 @@ The game now supports background music and sound effects!
 
 ## How to Add Music
 1. Create MP3 files for your levels
-2. Place them in the `music/` directory:
-   - `music/level1.mp3` - for level1
-   - `music/level1-advanced.mp3` - for level1-advanced
-3. Or use absolute paths in your level configuration
+2. Place them in the `assets/music/` directory:
+   - `assets/music/level1.mp3` - for level1
+   - `assets/music/level1-advanced.mp3` - for level1-advanced
+3. Reference them in your level configuration
 
 ## How to Add Sound Effects
-1. Place sound effect files in the `sounds/` directory:
-   - `sounds/jump.wav` - player jump sound
-   - `sounds/gem_collect.wav` - gem collection sound
-   - `sounds/enemy_hit.wav` - enemy hit sound
-   - And more (see sounds/README.md for full list)
+1. Place sound effect files in the `assets/sounds/` directory:
+   - `assets/sounds/jump.wav` - player jump sound
+   - `assets/sounds/gem_collect.wav` - gem collection sound
+   - `assets/sounds/enemy_hit.wav` - enemy hit sound
+   - And more (see assets/sounds/README.md for full list)
 
 ## Supported Audio Formats
 - **Music**: MP3, OGG Vorbis, WAV
@@ -60,6 +79,6 @@ To add music to a new level, add this to your level configuration:
 ```python
 level_config = {
     # ... your level data ...
-    "background_music": "music/your_level_music.mp3",  # or absolute path
+    "background_music": "assets/music/your_level_music.mp3",
 }
 ``` 

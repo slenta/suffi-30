@@ -133,9 +133,7 @@ class GameWorld:
 
         # Load trophies and exits
         self.trophies = pg.sprite.Group()
-        trophy_image_path = self.level_config.get(
-            "trophy_image", "data/images/trophy.png"
-        )
+        trophy_image_path = self.level_config.get("trophy_image", "trophy.png")
         # Extract just the filename from the path for the Trophy class
         trophy_filename = os.path.basename(trophy_image_path)
         for x, y in self.level_config["trophy_locations"]:
@@ -392,17 +390,17 @@ class GameWorld:
         """Load common sound effects for the game."""
         # Define common sound effects with their file paths
         sound_effects = {
-            "jump": "sounds/jump.wav",
-            "gem_collect": "sounds/gem_collect.wav",
-            "enemy_hit": "sounds/enemy_hit.wav",
-            "player_hurt": "sounds/player_hurt.wav",
-            "player_death": "sounds/player_death.wav",  # Player death/fall sound
-            "powerup_collect": "sounds/powerup_collect.wav",
-            "trophy_collect": "sounds/trophy_collect.wav",
-            "level_complete": "sounds/level_complete.wav",
-            "explode": "sounds/explode.wav",
-            "menu_move": "sounds/menu_move.wav",  # Menu cursor movement
-            "menu_select": "sounds/menu_select.wav",  # Menu selection
+            "jump": "assets/sounds/jump.wav",
+            "gem_collect": "assets/sounds/gem_collect.wav",
+            "enemy_hit": "assets/sounds/enemy_hit.wav",
+            "player_hurt": "assets/sounds/player_hurt.wav",
+            "player_death": "assets/sounds/player_death.wav",  # Player death/fall sound
+            "powerup_collect": "assets/sounds/powerup_collect.wav",
+            "trophy_collect": "assets/sounds/trophy_collect.wav",
+            "level_complete": "assets/sounds/level_complete.wav",
+            "explode": "assets/sounds/explode.wav",
+            "menu_move": "assets/sounds/menu_move.wav",  # Menu cursor movement
+            "menu_select": "assets/sounds/menu_select.wav",  # Menu selection
         }
 
         # Load each sound effect (silently ignore missing files)

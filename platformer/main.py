@@ -24,8 +24,8 @@ def get_level_to_load():
     # Load menu sound effects
     from .sound_manager import sound_manager
 
-    sound_manager.load_sound_effect("menu_move", "sounds/menu_move.wav")
-    sound_manager.load_sound_effect("menu_select", "sounds/menu_select.wav")
+    sound_manager.load_sound_effect("menu_move", "assets/sounds/menu_move.wav")
+    sound_manager.load_sound_effect("menu_select", "assets/sounds/menu_select.wav")
 
     level_selection = LevelSelectionScreen(screen)
     selected_level = level_selection.run()

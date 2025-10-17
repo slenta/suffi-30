@@ -18,8 +18,8 @@ class PowerUp(pg.sprite.Sprite):
 
     2. Add alternative backgrounds in your level config:
        "alternative_backgrounds": [
-           "backgrounds/level2.png",
-           "backgrounds/level3.png"
+           "assets/backgrounds/level2.png",
+           "assets/backgrounds/level3.png"
        ]
 
     The power-up will cycle through all alternative backgrounds and back to the original.
