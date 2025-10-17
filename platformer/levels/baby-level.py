@@ -1,6 +1,9 @@
 level_config = {
     "x_bounds": [-100, 1200],  # Kurzes Tutorial-Level
     "y_bounds": [-200, 300],
+    # Player spawn point (optional) - x and y coordinates in grid units
+    # If not specified, defaults to PLAYER_START_X, PLAYER_START_Y from settings.py
+    # "player_spawn": (5, 1),  # Example: spawn at grid position (5, 1)
     # Einfache flache Plattform mit kleinem Loch zum Springen üben
     "grass_locations": [(i, 14) for i in range(-5, 15)]  # Start-Plattform
     + [(i, 14) for i in range(18, 50)],  # Haupt-Plattform (Loch bei 15-17)
