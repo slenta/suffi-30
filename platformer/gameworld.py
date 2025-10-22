@@ -13,6 +13,7 @@ from .trophy import Exit, Trophy
 from .draw import *
 from .sound_manager import sound_manager  # Import the sound manager
 from .weapon import WeaponPickup
+from .pipe import Pipe  # Import the Pipe class
 import importlib
 
 
@@ -43,6 +44,7 @@ class GameWorld:
         self.powerups = pg.sprite.Group()
         self.trophies = pg.sprite.Group()
         self.weapon_pickups = pg.sprite.Group()
+        self.pipes = pg.sprite.Group()
 
         # Camera
         self.camera_offset_x = 0
@@ -51,7 +53,21 @@ class GameWorld:
         self.x_bounds = [-600, 3000]
         self.y_bounds = [-200, 300]
 
-    def load_level(self, level_name):
+        # Level stack for sub-levels (stores tuples of level_name, player_state, return_position)
+        self.level_stack = []
+        self.current_level_name = None
+
+    def load_level(
+        self, level_name, player_spawn_override=None, preserve_player_state=None
+    ):
+        """
+        Load a level by name.
+
+        Args:
+            level_name: Name of the level to load
+            player_spawn_override: Optional (x, y) tuple to override spawn position
+            preserve_player_state: Optional dict with player state (gems, trophies, health, weapons)
+        """
         # Clear all sprite groups
         self.all_sprites.empty()
         self.platforms.empty()
@@ -62,6 +78,10 @@ class GameWorld:
         self.powerups.empty()
         self.trophies.empty()
         self.weapon_pickups.empty()
+        self.pipes.empty()
+
+        # Store current level name
+        self.current_level_name = level_name
 
         # Dynamically import the level configuration
         self.level_module = importlib.import_module(f"platformer.levels.{level_name}")
@@ -130,9 +150,30 @@ class GameWorld:
         player_spawn = self.level_config.get(
             "player_spawn", (PLAYER_START_X, PLAYER_START_Y)
         )
+
+        # Override spawn if provided (e.g., when returning from sub-level)
+        if player_spawn_override:
+            player_spawn = player_spawn_override
+
         spawn_x, spawn_y = player_spawn
 
-        self.player = Player(spawn_x, spawn_y, world=self)
+        # Create player with preserved state if provided
+        if preserve_player_state:
+            self.player = Player(
+                spawn_x,
+                spawn_y,
+                world=self,
+                start_gems=preserve_player_state.get("gems", 0),
+                trophies_collected=preserve_player_state.get("trophies", 0),
+                health=preserve_player_state.get("health", 100),
+            )
+            # Restore weapons
+            if "weapons" in preserve_player_state:
+                self.player.weapons = preserve_player_state["weapons"].copy()
+                self.player.active_weapon = preserve_player_state.get("active_weapon")
+        else:
+            self.player = Player(spawn_x, spawn_y, world=self)
+
         self.player_sprite_group = pg.sprite.GroupSingle()
         self.player_sprite_group.add(self.player)
         self.all_sprites.add(self.player)
@@ -191,6 +232,20 @@ class GameWorld:
             )
             self.weapon_pickups.add(weapon)
             self.all_sprites.add(weapon)
+
+        # Load pipes (for sub-levels)
+        for pipe_data in self.level_config.get("pipe_locations", []):
+            pipe = Pipe(
+                pipe_data["x"] * GRIDSIZE,
+                pipe_data["y"] * GRIDSIZE,
+                pipe_data["sub_level"],
+                pipe_data.get("return_x"),
+                pipe_data.get("return_y"),
+                pipe_data.get("direction", "down"),
+            )
+            self.pipes.add(pipe)
+            self.platforms.add(pipe)  # Add to platforms so player can stand on it
+            self.all_sprites.add(pipe)
 
         # Load level-specific background music
         self.original_music_track = None
@@ -341,9 +396,6 @@ class GameWorld:
                     if len(self.cheat_buffer) > max_buffer_size:
                         self.cheat_buffer = self.cheat_buffer[-max_buffer_size:]
 
-                    # Debug: Show what's being typed (optional - comment out if too verbose)
-                    print(f"🔤 Cheat buffer: '{self.cheat_buffer}'")
-
                     # Check if cheat code has been typed
                     if CHEAT_CODE in self.cheat_buffer:
                         self.marvin_mode = not self.marvin_mode  # Toggle Marvin mode
@@ -363,6 +415,13 @@ class GameWorld:
                     self.player.throw_exploding_object()
 
     def level_complete(self):
+        # Check if we're in a sub-level
+        if self.level_stack:
+            # Return to parent level
+            self.exit_sub_level()
+            return
+
+        # Otherwise, normal level completion
         fade_to_black(
             screen=self.screen,
             draw_callback=self.draw,
@@ -381,6 +440,78 @@ class GameWorld:
         sys.exit()
 
         # Implement your transition logic here (e.g., load next level or quit)
+
+    def enter_sub_level(self, pipe):
+        """Enter a sub-level through a pipe."""
+        print(f"🚪 Entering sub-level: {pipe.sub_level_name}")
+
+        # Save current level state
+        player_state = {
+            "gems": self.player.gems,
+            "trophies": self.player.trophies_collected,
+            "health": self.player.health,
+            "weapons": (
+                self.player.weapons.copy() if hasattr(self.player, "weapons") else {}
+            ),
+            "active_weapon": getattr(self.player, "active_weapon", None),
+        }
+
+        # Determine return position (use pipe's return position or player's current position)
+        if pipe.return_x is not None and pipe.return_y is not None:
+            return_position = (pipe.return_x, pipe.return_y)
+        else:
+            # Convert player's pixel position to grid position
+            return_position = (
+                self.player.rect.centerx // GRIDSIZE,
+                self.player.rect.bottom // GRIDSIZE,
+            )
+
+        # Push current level onto stack
+        self.level_stack.append(
+            {
+                "level_name": self.current_level_name,
+                "player_state": player_state,
+                "return_position": return_position,
+            }
+        )
+
+        # Load the sub-level (preserve player state)
+        self.load_level(pipe.sub_level_name, preserve_player_state=player_state)
+
+        # Play a sound effect (optional)
+        sound_manager.play_sound_effect("jump")
+
+    def exit_sub_level(self):
+        """Exit current sub-level and return to parent level."""
+        if not self.level_stack:
+            print("⚠️ No parent level to return to!")
+            return
+
+        print("🚪 Exiting sub-level...")
+
+        # Pop parent level from stack
+        parent_level = self.level_stack.pop()
+
+        # Get updated player state (preserve items collected in sub-level)
+        current_state = {
+            "gems": self.player.gems,
+            "trophies": self.player.trophies_collected,
+            "health": self.player.health,
+            "weapons": (
+                self.player.weapons.copy() if hasattr(self.player, "weapons") else {}
+            ),
+            "active_weapon": getattr(self.player, "active_weapon", None),
+        }
+
+        # Load parent level with return position and updated state
+        self.load_level(
+            parent_level["level_name"],
+            player_spawn_override=parent_level["return_position"],
+            preserve_player_state=current_state,
+        )
+
+        # Play a sound effect (optional)
+        sound_manager.play_sound_effect("jump")
 
     def update_camera(self):
         # Define the free movement range dynamically based on the camera offset
@@ -411,6 +542,10 @@ class GameWorld:
         # Update bullets
         for bullet in self.bullets:
             bullet.update()
+
+        # Update pipes
+        for pipe in self.pipes:
+            pipe.update()
 
         # Update the camera
         self.update_camera()

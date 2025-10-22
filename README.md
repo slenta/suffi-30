@@ -20,6 +20,7 @@ python launcher.py --list-levels
     - im kindergarten
     - im schule
     - pubertät --> ziel an mama und papa vorbeizuschleichen
+    - krankenhaus
 - Highscore wäre nice
 - check web deployment
 - python files aufräumen
@@ -29,3 +30,8 @@ python launcher.py --list-levels
 - third level?
 - schalter
 - spikes in blocks
+- haunted house ghosts police lights
+- mehrere ebenen und display bewegt sich mit
+- durchn tisch treten als pipes mit animation
+- launcher screen mit level auswahl nicht nur mit pfeiltasten
+- graffiti malen
