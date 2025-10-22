@@ -27,9 +27,7 @@ python launcher.py --list-levels
 - consistent assets management (filepaths, clean up file system)
 - more enemy mechanics (police with light)
 - spray can paint the walls with a score?
-- third level?
 - schalter
-- spikes in blocks
 - haunted house ghosts police lights
 - mehrere ebenen und display bewegt sich mit
 - durchn tisch treten als pipes mit animation

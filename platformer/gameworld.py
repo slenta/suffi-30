@@ -30,6 +30,7 @@ class GameWorld:
         self.keep_going = True
         self.game_over_flag = False
         self.current_fps = FPS  # Track current FPS for powerup effects
+        self.return_to_level_selection = False  # Flag to return to level selection
 
         # Cheat code tracking
         self.cheat_buffer = ""  # Buffer to store typed characters
@@ -454,12 +455,22 @@ class GameWorld:
         show_level_complete_text(screen=self.screen, width=WIDTH, height=HEIGHT)
         # Wait until the user closes the window or presses any key
         waiting = True
+        user_quit = False
         while waiting:
             for event in pg.event.get():
-                if event.type == pg.QUIT or (event.type == pg.KEYDOWN):
+                if event.type == pg.QUIT:
                     waiting = False
-        pg.quit()
-        sys.exit()
+                    user_quit = True
+                elif event.type == pg.KEYDOWN:
+                    waiting = False
+
+        # Set flags based on how user exited the completion screen
+        self.keep_going = False
+        if not user_quit:
+            self.return_to_level_selection = True
+            print("🏁 Level completed! Returning to level selection...")
+        else:
+            print("👋 User quit from level completion screen")
 
         # Implement your transition logic here (e.g., load next level or quit)
 

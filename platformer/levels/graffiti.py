@@ -30,17 +30,17 @@ level_config = {
     "powerup_locations": [],
     # A simple enemy
     "enemy_locations": [
-        {
-            "x": 50,
-            "y": 13,
-            "image": "trump.png",
-            "speed": 1,
-            "patrol_range": 100,
-            "size_multiplier": 1,
-            "health": 2,
-            "damage": 1,
-            "shoot_range": 0,
-        },
+        # {
+        #     "x": 50,
+        #     "y": 13,
+        #     "image": "trump.png",
+        #     "speed": 1,
+        #     "patrol_range": 100,
+        #     "size_multiplier": 1,
+        #     "health": 2,
+        #     "damage": 1,
+        #     "shoot_range": 0,
+        # },
     ],
     # No weapons
     "weapon_locations": [],
@@ -48,11 +48,11 @@ level_config = {
     "moving_platform_locations": [],
     # Trophy to collect
     "trophy_locations": [
-        (80, 12),
+        (45, 12),
     ],
     "trophy_image": "trophy.png",
     # Exit at the end
-    "exit_location": (95, 13),
+    "exit_location": (50, 13),
     # Pipe configuration - this is the important part!
     "pipe_locations": [
         {
