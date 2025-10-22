@@ -14,6 +14,7 @@ from .draw import *
 from .sound_manager import sound_manager  # Import the sound manager
 from .weapon import WeaponPickup
 from .pipe import Pipe  # Import the Pipe class
+from .spike import Spike  # Import the Spike class
 import importlib
 
 
@@ -45,6 +46,7 @@ class GameWorld:
         self.trophies = pg.sprite.Group()
         self.weapon_pickups = pg.sprite.Group()
         self.pipes = pg.sprite.Group()
+        self.spikes = pg.sprite.Group()
 
         # Camera
         self.camera_offset_x = 0
@@ -79,6 +81,7 @@ class GameWorld:
         self.trophies.empty()
         self.weapon_pickups.empty()
         self.pipes.empty()
+        self.spikes.empty()
 
         # Store current level name
         self.current_level_name = level_name
@@ -247,6 +250,17 @@ class GameWorld:
             self.platforms.add(pipe)  # Add to platforms so player can stand on it
             self.all_sprites.add(pipe)
 
+        # Load spikes
+        for spike_data in self.level_config.get("spike_locations", []):
+            spike = Spike(
+                spike_data["x"],
+                spike_data["y"],
+                spike_data.get("direction", "up"),
+                spike_data.get("damage", 10),
+            )
+            self.spikes.add(spike)
+            self.all_sprites.add(spike)
+
         # Load level-specific background music
         self.original_music_track = None
         self.alternative_music_tracks = []
@@ -364,6 +378,14 @@ class GameWorld:
 
         for weapon in self.weapon_pickups:
             self.all_sprites.add(weapon)
+
+        # Re-add pipes
+        for pipe in self.pipes:
+            self.all_sprites.add(pipe)
+
+        # Re-add spikes
+        for spike in self.spikes:
+            self.all_sprites.add(spike)
 
         self.all_sprites.add(self.exit)
 
