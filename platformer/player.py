@@ -39,6 +39,7 @@ class Player(pg.sprite.Sprite):
         self.weapon_image = None
         self.weapon_rect = None
         self.controls_reversed = False  # Flag for reversed controls powerup
+        self.spike_damage_cooldown = 0  # Cooldown to prevent repeated spike damage
 
     def jump(self):
         self.rect.y += 2
@@ -154,6 +155,46 @@ class Player(pg.sprite.Sprite):
                 # Enter the sub-level
                 self.world.enter_sub_level(pipe)
                 break
+
+    def check_spikes(self):
+        """Check if player collides with spikes and take damage."""
+        # Decrease spike damage cooldown
+        if self.spike_damage_cooldown > 0:
+            self.spike_damage_cooldown -= 1
+            return
+
+        for spike in self.world.spikes:
+            if spike.check_collision(self):
+                # Take damage from the spike
+                self.take_damage(spike.damage)
+                # Apply knockback away from the spike
+                self.apply_spike_knockback(spike)
+                # Set cooldown to prevent repeated damage
+                self.spike_damage_cooldown = 30  # ~0.5 seconds at 60 FPS
+                break  # Only process one spike hit per frame
+
+    def apply_spike_knockback(self, spike):
+        """Apply knockback effect when hit by spikes - push player back 2-3 blocks."""
+        if not self.is_knocked_back:
+            self.is_knocked_back = True
+            self.knockback_timer = 20  # Brief invulnerability period
+
+            # Knockback distance (2.5 blocks)
+            knockback_distance = GRIDSIZE * 2.5
+
+            # Push player in opposite direction of spike
+            if spike.direction == "up":
+                # Spikes point up, push player up
+                self.rect.y -= knockback_distance
+            elif spike.direction == "down":
+                # Spikes point down, push player down
+                self.rect.y += knockback_distance
+            elif spike.direction == "left":
+                # Spikes point left, push player left
+                self.rect.x -= knockback_distance
+            elif spike.direction == "right":
+                # Spikes point right, push player right
+                self.rect.x += knockback_distance
 
     def handle_powerup_timers(self):
         expired = []
@@ -284,6 +325,7 @@ class Player(pg.sprite.Sprite):
             self.check_exit()
             self.check_weapons()
             self.check_pipes()
+            self.check_spikes()
 
             # Check for collisions with enemies
             enemy_hit = pg.sprite.spritecollideany(self, self.world.enemies)
