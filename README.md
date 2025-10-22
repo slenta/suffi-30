@@ -21,3 +21,11 @@ python launcher.py --list-levels
     - im schule
     - pubertät --> ziel an mama und papa vorbeizuschleichen
 - Highscore wäre nice
+- check web deployment
+- python files aufräumen
+- consistent assets management (filepaths, clean up file system)
+- more enemy mechanics (police with light)
+- spray can paint the walls with a score?
+- third level?
+- schalter
+- spikes in blocks

@@ -27,6 +27,11 @@ class GameWorld:
         self.clock = pg.time.Clock()
         self.keep_going = True
         self.game_over_flag = False
+        self.current_fps = FPS  # Track current FPS for powerup effects
+
+        # Cheat code tracking
+        self.cheat_buffer = ""  # Buffer to store typed characters
+        self.marvin_mode = False  # Marvin mode state
 
         # Sprite groups
         self.all_sprites = pg.sprite.Group()
@@ -325,6 +330,31 @@ class GameWorld:
             ):
                 self.keep_going = False
             elif event.type == pg.KEYDOWN:
+                # Track typed characters for cheat code detection
+                # Check if the key press has a unicode character that is alphabetic
+                if event.unicode and event.unicode.isalpha():
+                    char = event.unicode.lower()
+                    self.cheat_buffer += char
+
+                    # Keep buffer size reasonable (increase to 20 for reliability)
+                    max_buffer_size = 20
+                    if len(self.cheat_buffer) > max_buffer_size:
+                        self.cheat_buffer = self.cheat_buffer[-max_buffer_size:]
+
+                    # Debug: Show what's being typed (optional - comment out if too verbose)
+                    print(f"🔤 Cheat buffer: '{self.cheat_buffer}'")
+
+                    # Check if cheat code has been typed
+                    if CHEAT_CODE in self.cheat_buffer:
+                        self.marvin_mode = not self.marvin_mode  # Toggle Marvin mode
+                        self.cheat_buffer = ""  # Clear buffer after activation
+                        if self.marvin_mode:
+                            print("🎮 MARVIN MODE ACTIVATED! 🎮")
+                            sound_manager.play_sound_effect("powerup_collect")
+                        else:
+                            print("🎮 Marvin Mode deactivated")
+
+                # Game controls
                 if event.key == pg.K_f:  # Shoot
                     self.player.shoot_bullet()
                 elif event.key == pg.K_g:  # Melee attack
@@ -406,6 +436,18 @@ class GameWorld:
         draw_gems(self.screen, self.player)
         draw_trophies(self.screen, self.player, self.total_trophies)
         draw_health_bar(self.screen, self.player, 200, 20, self.player.max_health)
+
+        # Draw Marvin Mode indicator
+        if self.marvin_mode:
+            font = pg.font.Font(None, 72)
+            marvin_text = font.render("MFG", True, (255, 215, 0))  # Gold color
+            text_rect = marvin_text.get_rect(center=(WIDTH // 2, 40))
+            # Add a semi-transparent black background for better readability
+            bg_rect = text_rect.inflate(20, 10)
+            bg_surface = pg.Surface((bg_rect.width, bg_rect.height), pg.SRCALPHA)
+            bg_surface.fill((0, 0, 0, 128))
+            self.screen.blit(bg_surface, bg_rect.topleft)
+            self.screen.blit(marvin_text, text_rect)
 
         pg.display.flip()
 
@@ -563,6 +605,16 @@ class GameWorld:
                     )
         else:
             print("⚠️ No alternative backgrounds available")
+
+    def set_fps(self, fps):
+        """Set the game FPS (used by power-up effects)."""
+        self.current_fps = fps
+        print(f"🕐 FPS changed to {fps}")
+
+    def reset_fps(self):
+        """Reset FPS to default value."""
+        self.current_fps = FPS
+        print(f"🕐 FPS reset to {FPS}")
 
     def start_screen(self):
         pass
