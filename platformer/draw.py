@@ -97,14 +97,3 @@ def show_level_complete_text(screen, width, height):
     text_rect = text.get_rect(center=(width // 2, height // 2))
     screen.blit(text, text_rect)
     pg.display.flip()
-
-    # Wait until user closes window or presses any key
-    import sys
-
-    waiting = True
-    while waiting:
-        for event in pg.event.get():
-            if event.type == pg.QUIT or (event.type == pg.KEYDOWN):
-                waiting = False
-    pg.quit()
-    sys.exit()

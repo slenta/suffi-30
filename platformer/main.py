@@ -13,6 +13,8 @@ def get_level_to_load():
     level_name = os.environ.get("PLATFORMER_LEVEL")
     if level_name:
         print(f"🎯 Loading level from command line: {level_name}")
+        # Clear the environment variable so next time we show level selection
+        del os.environ["PLATFORMER_LEVEL"]
         return level_name
 
     # Show level selection screen
@@ -39,21 +41,38 @@ def get_level_to_load():
     return selected_level
 
 
-# Initialize the game world
-world = GameWorld()
-world.load_level(get_level_to_load())  # Load selected level configuration
-world.start_screen()
-
-
 # Main game loop
 async def main():
-    running = True
-    while running and world.keep_going:
-        world.clock.tick(world.current_fps)
-        world.events()  # All event handling happens here
-        world.update()
-        world.draw()
-        await asyncio.sleep(0)  # Ensures smooth async operation
+    # Main game loop - allows returning to level selection after completing a level
+    while True:
+        # Initialize the game world
+        world = GameWorld()
+        world.load_level(get_level_to_load())  # Load selected level configuration
+        world.start_screen()
+
+        # Run the level
+        running = True
+        while running and world.keep_going:
+            world.clock.tick(world.current_fps)
+            world.events()  # All event handling happens here
+            world.update()
+            world.draw()
+            await asyncio.sleep(0)  # Ensures smooth async operation
+
+        # Check if we should return to level selection or quit
+        print(f"🔍 DEBUG: return_to_level_selection = {world.return_to_level_selection}")
+        print(f"🔍 DEBUG: keep_going = {world.keep_going}")
+        if world.return_to_level_selection:
+            print("🔄 Returning to level selection...")
+            continue  # Go back to level selection
+        else:
+            # Player quit the game
+            print("👋 Exiting game...")
+            break
+
+    # Clean up and exit
+    pg.quit()
+    sys.exit()
 
 
 # Run the game
