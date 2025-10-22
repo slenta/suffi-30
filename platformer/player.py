@@ -38,6 +38,7 @@ class Player(pg.sprite.Sprite):
         self.active_weapon = None
         self.weapon_image = None
         self.weapon_rect = None
+        self.controls_reversed = False  # Flag for reversed controls powerup
 
     def jump(self):
         self.rect.y += 2
@@ -55,10 +56,17 @@ class Player(pg.sprite.Sprite):
     def move(self):
         keys = pg.key.get_pressed()
 
-        # Handle horizontal movement
-        if keys[KEYBINDINGS.get("left")]:
+        # Handle horizontal movement (with potential reversal)
+        left_pressed = keys[KEYBINDINGS.get("left")]
+        right_pressed = keys[KEYBINDINGS.get("right")]
+
+        # Swap left/right if controls are reversed
+        if self.controls_reversed:
+            left_pressed, right_pressed = right_pressed, left_pressed
+
+        if left_pressed:
             self.vx = -1 * self.speed
-        elif keys[KEYBINDINGS.get("right")]:
+        elif right_pressed:
             self.vx = self.speed
         else:
             self.vx = 0
@@ -112,7 +120,9 @@ class Player(pg.sprite.Sprite):
         hits = pg.sprite.spritecollide(self, self.world.powerups, True)
         for powerup in hits:
             powerup.apply_effect(self)
-            self.active_powerups[powerup.power_type] = [300, powerup]
+            # Type 3 powerup lasts 8 seconds (480 frames at 60 FPS), others last 5 seconds (300 frames)
+            duration = 240 if powerup.power_type == 3 else 480
+            self.active_powerups[powerup.power_type] = [duration, powerup]
             sound_manager.play_sound_effect(
                 "powerup_collect"
             )  # Play powerup collection sound

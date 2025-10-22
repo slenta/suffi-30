@@ -192,6 +192,7 @@ level_config = {
     "powerup_locations": [
         {"x": 83, "y": 3, "type": 2},
         {"x": 108, "y": 5, "type": 0},
+        {"x": 10, "y": 10, "type": 3},
     ],
     "enemy_locations": [
         {

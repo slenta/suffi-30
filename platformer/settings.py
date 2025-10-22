@@ -39,3 +39,7 @@ KEYBINDINGS = {
     "throw": pg.K_e,  # throw exploding object (E)
     "quit": pg.K_ESCAPE,
 }
+
+# Cheat code settings
+CHEAT_CODE = "marvin"  # The cheat code to activate Marvin Mode
+MARVIN_MODE_ENABLED = False  # Will be toggled when cheat code is entered
