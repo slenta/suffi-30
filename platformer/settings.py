@@ -41,5 +41,5 @@ KEYBINDINGS = {
 }
 
 # Cheat code settings
-CHEAT_CODE = "marvin"  # The cheat code to activate Marvin Mode
+CHEAT_CODE = "mfg"  # The cheat code to activate Marvin Mode
 MARVIN_MODE_ENABLED = False  # Will be toggled when cheat code is entered

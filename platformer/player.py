@@ -145,6 +145,16 @@ class Player(pg.sprite.Sprite):
             )  # Play level complete sound
             self.world.level_complete()
 
+    def check_pipes(self):
+        """Check if player is trying to enter a pipe."""
+        keys = pg.key.get_pressed()
+
+        for pipe in self.world.pipes:
+            if pipe.can_enter(self, keys):
+                # Enter the sub-level
+                self.world.enter_sub_level(pipe)
+                break
+
     def handle_powerup_timers(self):
         expired = []
         for ptype in self.active_powerups:
@@ -273,6 +283,7 @@ class Player(pg.sprite.Sprite):
             self.check_trophies()
             self.check_exit()
             self.check_weapons()
+            self.check_pipes()
 
             # Check for collisions with enemies
             enemy_hit = pg.sprite.spritecollideany(self, self.world.enemies)
