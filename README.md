@@ -2,11 +2,14 @@
 level up through suffisuffzich's life by playing this simple jump n run game
 
 ## How to Play
+
+### Quick start (local development):
+```bash
+python play.py                    # Show level selection screen
+python play.py level2             # Play level2 directly
+python play.py --list-levels      # List all available levels
 ```
-python launcher.py
-python launcher.py level2
-python launcher.py --list-levels
-```
+
 
 # ToDo-Liste
 - gameworld etwas höher gestalten
