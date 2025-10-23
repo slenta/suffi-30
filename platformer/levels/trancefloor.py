@@ -312,10 +312,10 @@ level_config = {
     "background_scroll_speed": 0.2,  # Slower parallax for advanced level
     # Alternative backgrounds for type 2 power-up
     "alternative_backgrounds": [
-        "assets/backgrounds/level2.png",  # You can add more background images here to cycle through
+        "assets/backgrounds/trancefloor.png",  # You can add more background images here to cycle through
     ],
     # Alternative music tracks for type 2 power-up
     "alternative_music_tracks": [
-        "assets/music/level2.mp3",  # Plays when switching to first alternative background
+        "assets/music/trancefloor.mp3",  # Plays when switching to first alternative background
     ],
 }
