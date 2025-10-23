@@ -250,6 +250,9 @@ class GameWorld:
             self.pipes.add(pipe)
             self.platforms.add(pipe)  # Add to platforms so player can stand on it
             self.all_sprites.add(pipe)
+            print(
+                f"🚪 Created pipe at ({pipe_data['x']}, {pipe_data['y']}) -> grid ({pipe_data['x'] * GRIDSIZE}, {pipe_data['y'] * GRIDSIZE}) -> sub-level: {pipe_data['sub_level']}"
+            )
 
         # Load spikes
         for spike_data in self.level_config.get("spike_locations", []):
