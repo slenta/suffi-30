@@ -84,5 +84,7 @@ async def main():
     sys.exit()
 
 
-# Run the game
-asyncio.run(main())
+# Run the game only when executed directly (for local development)
+# Note: pygbag will call main() directly, so we don't want this to run during import
+if __name__ == "__main__":
+    asyncio.run(main())
