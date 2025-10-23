@@ -7,7 +7,7 @@ from .level_selection import LevelSelectionScreen
 from .settings import FPS, KEYBINDINGS, WIDTH, HEIGHT
 
 
-def get_level_to_load():
+async def get_level_to_load():
     """Get the level to load from environment variable or show level selection."""
     # Check if level was specified via command line (for backwards compatibility)
     level_name = os.environ.get("PLATFORMER_LEVEL")
@@ -37,7 +37,7 @@ def get_level_to_load():
     )
 
     level_selection = LevelSelectionScreen(screen)
-    selected_level = level_selection.run()
+    selected_level = await level_selection.run()  # Now async!
 
     if selected_level == "QUIT":
         print("👋 Player quit from level selection")
@@ -54,7 +54,8 @@ async def main():
     while True:
         # Initialize the game world
         world = GameWorld()
-        world.load_level(get_level_to_load())  # Load selected level configuration
+        selected_level = await get_level_to_load()  # Now async!
+        world.load_level(selected_level)  # Load selected level configuration
         world.start_screen()
 
         # Run the level
