@@ -4,6 +4,7 @@ Level Selection Screen
 Mario-style level selection screen where players can choose levels using arrow keys.
 """
 
+import asyncio
 import pygame as pg
 import os
 from .settings import *
@@ -149,8 +150,8 @@ class LevelSelectionScreen:
         # Update display
         pg.display.flip()
 
-    def run(self):
-        """Run the level selection screen loop."""
+    async def run(self):
+        """Run the level selection screen loop (async for web compatibility)."""
         clock = pg.time.Clock()
         running = True
 
@@ -169,5 +170,8 @@ class LevelSelectionScreen:
             # Update and draw
             self.update()
             self.draw()
+
+            # Yield control to allow async operations (critical for web)
+            await asyncio.sleep(0)
 
         return self.selected_level

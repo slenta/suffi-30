@@ -1,27 +1,28 @@
+# Python
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+.venv/
+venv/
+ENV/
 
-*.pyc
-*.pyc
-*.pyc
-*.pyc
-appleinvaders2/__pycache__/settings.cpython-37.pyc
-appleinvaders2/__pycache__/sprites.cpython-37.pyc
-*.pyc
-*.pyc
-*.pyc
-pgzero/pgzintro/images/.DS_Store
-*.pyc
-pizzaplane/.DS_Store
-pizzaplane/.DS_Store
+# Pygbag build files
+build/
+
+# macOS
 .DS_Store
-.DS_Store
-.DS_Store
-.DS_Store
-.DS_Store
-.DS_Store
-fonts/.DS_Store
-.DS_Store
-.DS_Store
-.DS_Store
-.DS_Store
-.DS_Store
-.DS_Store
+.AppleDouble
+.LSOverride
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
