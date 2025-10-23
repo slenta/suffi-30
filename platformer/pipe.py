@@ -27,7 +27,7 @@ class Pipe(pg.sprite.Sprite):
         super().__init__()
 
         # Load pipe image
-        pipe_image_path = os.path.join("assets", "images", "pipe", "pipe.png")
+        pipe_image_path = os.path.join(IMAGEPATH, "pipe", "pipe.png")
         try:
             pipe_image = pg.image.load(pipe_image_path).convert_alpha()
         except (pg.error, FileNotFoundError):

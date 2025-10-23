@@ -26,8 +26,15 @@ def get_level_to_load():
     # Load menu sound effects
     from .sound_manager import sound_manager
 
-    sound_manager.load_sound_effect("menu_move", "assets/sounds/menu_move.wav")
-    sound_manager.load_sound_effect("menu_select", "assets/sounds/menu_select.wav")
+    sounds_dir = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "assets", "sounds"
+    )
+    sound_manager.load_sound_effect(
+        "menu_move", os.path.join(sounds_dir, "menu_move.wav")
+    )
+    sound_manager.load_sound_effect(
+        "menu_select", os.path.join(sounds_dir, "menu_select.wav")
+    )
 
     level_selection = LevelSelectionScreen(screen)
     selected_level = level_selection.run()
@@ -60,7 +67,9 @@ async def main():
             await asyncio.sleep(0)  # Ensures smooth async operation
 
         # Check if we should return to level selection or quit
-        print(f"🔍 DEBUG: return_to_level_selection = {world.return_to_level_selection}")
+        print(
+            f"🔍 DEBUG: return_to_level_selection = {world.return_to_level_selection}"
+        )
         print(f"🔍 DEBUG: keep_going = {world.keep_going}")
         if world.return_to_level_selection:
             print("🔄 Returning to level selection...")
