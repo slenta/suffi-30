@@ -271,11 +271,11 @@ class GameWorld:
             and self.level_config["background_music"]
         ):
             music_path = self.level_config["background_music"]
-            # Check if it's an absolute path or relative to game directory
+            # Check if it's an absolute path or relative to platformer directory
             if not os.path.isabs(music_path):
-                # Try relative to game root directory first
+                # Try relative to platformer directory (where assets now lives)
                 music_path = os.path.join(
-                    os.path.dirname(os.path.dirname(__file__)), music_path
+                    os.path.dirname(os.path.abspath(__file__)), music_path
                 )
             self.original_music_track = music_path
             sound_manager.play_background_music(music_path)
@@ -285,7 +285,7 @@ class GameWorld:
             for alt_music_path in self.level_config["alternative_music_tracks"]:
                 if not os.path.isabs(alt_music_path):
                     alt_music_path = os.path.join(
-                        os.path.dirname(os.path.dirname(__file__)), alt_music_path
+                        os.path.dirname(os.path.abspath(__file__)), alt_music_path
                     )
 
                 if os.path.exists(alt_music_path):
@@ -658,22 +658,25 @@ class GameWorld:
         """Load common sound effects for the game."""
         # Define common sound effects with their file paths
         sound_effects = {
-            "jump": "assets/sounds/jump.wav",
-            "gem_collect": "assets/sounds/gem_collect.wav",
-            "enemy_hit": "assets/sounds/enemy_hit.wav",
-            "player_hurt": "assets/sounds/player_hurt.wav",
-            "player_death": "assets/sounds/player_death.wav",  # Player death/fall sound
-            "powerup_collect": "assets/sounds/powerup_collect.wav",
-            "trophy_collect": "assets/sounds/trophy_collect.wav",
-            "level_complete": "assets/sounds/level_complete.wav",
-            "explode": "assets/sounds/explode.wav",
-            "menu_move": "assets/sounds/menu_move.wav",  # Menu cursor movement
-            "menu_select": "assets/sounds/menu_select.wav",  # Menu selection
+            "jump": "jump.wav",
+            "gem_collect": "gem_collect.wav",
+            "enemy_hit": "enemy_hit.wav",
+            "player_hurt": "player_hurt.wav",
+            "player_death": "player_death.wav",  # Player death/fall sound
+            "powerup_collect": "powerup_collect.wav",
+            "trophy_collect": "trophy_collect.wav",
+            "level_complete": "level_complete.wav",
+            "explode": "explode.wav",
+            "menu_move": "menu_move.wav",  # Menu cursor movement
+            "menu_select": "menu_select.wav",  # Menu selection
         }
 
         # Load each sound effect (silently ignore missing files)
-        for name, path in sound_effects.items():
-            full_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), path)
+        sounds_dir = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "assets", "sounds"
+        )
+        for name, filename in sound_effects.items():
+            full_path = os.path.join(sounds_dir, filename)
             sound_manager.load_sound_effect(name, full_path)
 
     def load_background_image(self):
@@ -689,11 +692,11 @@ class GameWorld:
         ):
             bg_path = self.level_config["background_image"]
 
-            # Check if it's an absolute path or relative to game directory
+            # Check if it's an absolute path or relative to platformer directory
             if not os.path.isabs(bg_path):
-                # Try relative to game root directory first
+                # Try relative to platformer directory (where assets now lives)
                 bg_path = os.path.join(
-                    os.path.dirname(os.path.dirname(__file__)), bg_path
+                    os.path.dirname(os.path.abspath(__file__)), bg_path
                 )
 
             # Load background image
@@ -719,7 +722,7 @@ class GameWorld:
             for alt_bg_path in self.level_config["alternative_backgrounds"]:
                 if not os.path.isabs(alt_bg_path):
                     alt_bg_path = os.path.join(
-                        os.path.dirname(os.path.dirname(__file__)), alt_bg_path
+                        os.path.dirname(os.path.abspath(__file__)), alt_bg_path
                     )
 
                 if os.path.exists(alt_bg_path):

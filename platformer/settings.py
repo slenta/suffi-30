@@ -21,9 +21,7 @@ JUMP_POWER = 10
 
 ## Hier wird der Pfad zum Verzeichnis der Assets gesetzt
 # Updated to use centralized assets directory
-IMAGEPATH = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets/images"
-)
+IMAGEPATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets/images")
 
 ## Farben
 BG_COLOR = (65, 166, 246)  # Himmelblau
