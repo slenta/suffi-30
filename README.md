@@ -4,7 +4,7 @@ level up through suffisuffzich's life by playing this simple jump n run game
 # Quick start (local development):
 ```bash
 python play.py                    # Show level selection screen
-python play.py level2             # Play level2 directly
+python play.py trancefloor             # Play level trancefloor directly
 python play.py --list-levels      # List all available levels
 ```
 
