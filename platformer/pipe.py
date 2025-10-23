@@ -17,12 +17,11 @@ class Pipe(pg.sprite.Sprite):
         Initialize a pipe.
 
         Args:
-            x: X position in pixels
-            y: Y position in pixels
-            sub_level_name: Name of the sub-level to load (e.g., "sub-underwater")
-            return_x: X position (grid units) where player spawns when returning (optional)
-            return_y: Y position (grid units) where player spawns when returning (optional)
-            direction: Direction of pipe entrance ("down", "up", "left", "right")
+            x: X position of pipe (grid units)
+            y: Y position of pipe (pixels)
+            image: Pygame surface for the pipe
+            sub_level_name: Name of the sub-level to load (e.g., "underwater-sub")
+            return_x: X position to spawn player when returning from sub-level (grid units)
         """
         super().__init__()
 
@@ -39,7 +38,8 @@ class Pipe(pg.sprite.Sprite):
 
         self.image = pg.transform.scale(pipe_image, (2 * GRIDSIZE, 2 * GRIDSIZE))
         self.rect = self.image.get_rect()
-        self.rect.center = (x, y)
+        self.rect.x = x
+        self.rect.y = y
 
         self.sub_level_name = sub_level_name
         self.return_x = return_x
@@ -55,21 +55,54 @@ class Pipe(pg.sprite.Sprite):
         if not self.is_active or self.entry_cooldown > 0:
             return False
 
-        # Check if player is colliding with pipe
-        if not pg.sprite.collide_rect(player, self):
+        # Check if player is colliding with pipe OR standing on top of it
+        is_colliding = pg.sprite.collide_rect(player, self)
+
+        # Also check if player is standing on top of the pipe (for "down" direction)
+        is_on_top = False
+        if self.direction == "down":
+            # Check if player's bottom is near the pipe's top and they overlap horizontally
+            player_bottom = player.rect.bottom
+            pipe_top = self.rect.top
+            # Allow some tolerance (within 5 pixels)
+            if abs(player_bottom - pipe_top) <= 5:
+                # Check horizontal overlap
+                if (
+                    player.rect.right > self.rect.left
+                    and player.rect.left < self.rect.right
+                ):
+                    is_on_top = True
+
+        # Debug: Print positions when player is near
+        if abs(player.rect.x - self.rect.x) < 100:
+            print(
+                f"🔍 Player at ({player.rect.x}, {player.rect.y}), size: {player.rect.width}x{player.rect.height}"
+            )
+            print(
+                f"🔍 Pipe at ({self.rect.x}, {self.rect.y}), size: {self.rect.width}x{self.rect.height}"
+            )
+            print(f"🔍 Collision: {is_colliding}, On Top: {is_on_top}")
+
+        if not (is_colliding or is_on_top):
             return False
 
         # Check if correct key is pressed based on direction
+        key_pressed = False
         if self.direction == "down":
-            return keys[pg.K_DOWN] or keys[pg.K_s]
+            key_pressed = keys[pg.K_DOWN] or keys[pg.K_s]
         elif self.direction == "up":
-            return keys[pg.K_UP] or keys[pg.K_w]
+            key_pressed = keys[pg.K_UP] or keys[pg.K_w]
         elif self.direction == "left":
-            return keys[pg.K_LEFT] or keys[pg.K_a]
+            key_pressed = keys[pg.K_LEFT] or keys[pg.K_a]
         elif self.direction == "right":
-            return keys[pg.K_RIGHT] or keys[pg.K_d]
+            key_pressed = keys[pg.K_RIGHT] or keys[pg.K_d]
 
-        return False
+        if is_colliding or is_on_top:
+            print(
+                f"🚪 Player near pipe! Key pressed: {key_pressed}, Direction: {self.direction}"
+            )
+
+        return key_pressed
 
     def update(self):
         """Update pipe state."""

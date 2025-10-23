@@ -16,7 +16,6 @@ level_config = {
     + [(i, 14) for i in range(360, 420)],  # Final section
     # Extended block locations - original plus new challenging platforming sections
     "block_locations": [
-        # pyramid structure
         (15, 13),
         (16, 12),
         (17, 11),
@@ -28,6 +27,7 @@ level_config = {
         (23, 11),
         (24, 12),
         (25, 13),
+        # pyramid structure
         # abgrund
         (33, 10),
         (34, 10),
@@ -301,21 +301,17 @@ level_config = {
         # },
     ],
     "trophy_locations": [
-        # Original trophies
         (84, 0),
     ],
-    "trophy_image": "mushroom.png",  # Path to trophy image (relative to assets/images)
-    # Extended exit location - much further
+    "trophy_image": "mushroom.png",
     "exit_location": (420, 13),
-    "background_music": "assets/music/default.mp3",  # Path relative to game root
-    # "background_image": "assets/backgrounds/level2.png",  # Path to background image
-    "background_scroll_speed": 0.2,  # Slower parallax for advanced level
-    # Alternative backgrounds for type 2 power-up
+    "background_music": "assets/music/default.mp3",
+    # "background_image": "assets/backgrounds/level2.png",
+    "background_scroll_speed": 0.2,
     "alternative_backgrounds": [
-        "assets/backgrounds/trancefloor.png",  # You can add more background images here to cycle through
+        "assets/backgrounds/trancefloor.png",
     ],
-    # Alternative music tracks for type 2 power-up
     "alternative_music_tracks": [
-        "assets/music/trancefloor.mp3",  # Plays when switching to first alternative background
+        "assets/music/trancefloor.mp3",
     ],
 }

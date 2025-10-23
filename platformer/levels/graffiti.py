@@ -57,8 +57,8 @@ level_config = {
     "pipe_locations": [
         {
             "x": 30,  # X position in grid units (where the pipe appears)
-            "y": 13,  # Y position in pixels (usually on the ground: grid_y * 32)
-            "sub_level": "sub-graffiti-yard",  # Name of the sub-level file (without .py extension)
+            "y": 12,  # Y position in grid units (top of the pipe - pipe is 2 units tall, so bottom will be at y=14)
+            "sub_level": "graffiti-sub",  # Name of the sub-level file (without .py extension)
             "return_x": 32,  # Where player spawns when returning (grid units)
             "return_y": 13,  # Y position when returning (grid units)
             "direction": "down",  # Direction to press: "down", "up", "left", or "right"
@@ -67,7 +67,7 @@ level_config = {
         # {
         #     "x": 70,
         #     "y": 13 * 32,
-        #     "sub_level": "sub-underwater",
+        #     "sub_level": "underwater-sub",
         #     "return_x": 72,
         #     "return_y": 13,
         #     "direction": "down"

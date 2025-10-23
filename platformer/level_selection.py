@@ -51,8 +51,8 @@ class LevelSelectionScreen:
             for file in os.listdir(levels_dir):
                 if file.endswith(".py") and file != "__init__.py":
                     level_name = file[:-3]  # Remove .py extension
-                    # Skip sub-levels (those starting with "sub-")
-                    if not level_name.startswith("sub-"):
+                    # Skip sub-levels (those ending with "-sub")
+                    if not level_name.endswith("-sub"):
                         available_levels.append(level_name)
         except FileNotFoundError:
             print("❌ Levels directory not found")
