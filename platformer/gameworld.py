@@ -60,6 +60,14 @@ class GameWorld:
         self.level_stack = []
         self.current_level_name = None
 
+        # Timer system
+        self.level_time_limit = None  # Time limit in seconds (None = no limit)
+        self.time_remaining = None  # Current time remaining in seconds
+        self.timer_start_ticks = None  # Pygame ticks when timer started
+        self.parent_time_remaining = (
+            None  # Store parent level's time when entering sub-level
+        )
+
     def load_level(
         self, level_name, player_spawn_override=None, preserve_player_state=None
     ):
@@ -96,6 +104,28 @@ class GameWorld:
         self.ground_end = self.level_config["x_bounds"][1]
         self.bottom = self.level_config["y_bounds"][0]
         self.top = self.level_config["y_bounds"][1]
+
+        # Initialize timer system
+        # If we're in a sub-level, continue the parent's timer
+        if self.level_stack:
+            # Sub-level: inherit parent's remaining time
+            if self.parent_time_remaining is not None:
+                self.time_remaining = self.parent_time_remaining
+                self.timer_start_ticks = pg.time.get_ticks()
+                self.level_time_limit = None  # Sub-level doesn't have its own limit
+                print(
+                    f"⏱️ Sub-level continuing timer: {self.time_remaining:.1f}s remaining"
+                )
+        else:
+            # Main level: initialize timer from level config
+            self.level_time_limit = self.level_config.get("level_time", None)
+            if self.level_time_limit is not None:
+                self.time_remaining = float(self.level_time_limit)
+                self.timer_start_ticks = pg.time.get_ticks()
+                print(f"⏱️ Level timer started: {self.level_time_limit}s")
+            else:
+                self.time_remaining = None
+                self.timer_start_ticks = None
 
         # Load sprites
         grass_image = pg.image.load(
@@ -481,6 +511,11 @@ class GameWorld:
         """Enter a sub-level through a pipe."""
         print(f"🚪 Entering sub-level: {pipe.sub_level_name}")
 
+        # Save current timer state
+        if self.time_remaining is not None:
+            self.parent_time_remaining = self.time_remaining
+            print(f"⏱️ Saving parent timer state: {self.time_remaining:.1f}s")
+
         # Save current level state
         player_state = {
             "gems": self.player.gems,
@@ -525,6 +560,9 @@ class GameWorld:
 
         print("🚪 Exiting sub-level...")
 
+        # Save the current time remaining (it was counting down in the sub-level)
+        current_time = self.time_remaining
+
         # Pop parent level from stack
         parent_level = self.level_stack.pop()
 
@@ -546,6 +584,11 @@ class GameWorld:
             preserve_player_state=current_state,
         )
 
+        # Restore the timer that was counting down
+        if current_time is not None:
+            self.parent_time_remaining = current_time
+            print(f"⏱️ Restoring parent timer: {current_time:.1f}s")
+
         # Play a sound effect (optional)
         sound_manager.play_sound_effect("jump")
 
@@ -562,6 +605,16 @@ class GameWorld:
             self.camera_offset_x += player_center_x - free_range_right
 
     def update(self):
+        # Update timer
+        if self.time_remaining is not None and self.timer_start_ticks is not None:
+            elapsed_seconds = (pg.time.get_ticks() - self.timer_start_ticks) / 1000.0
+            self.time_remaining = max(0, self.time_remaining - elapsed_seconds)
+            self.timer_start_ticks = pg.time.get_ticks()  # Reset for next frame
+
+            # Check if time has run out
+            if self.time_remaining <= 0:
+                self.on_timer_expired()
+
         # Update moving platforms first
         for moving_platform in self.moving_platforms:
             moving_platform.update()
@@ -607,6 +660,10 @@ class GameWorld:
         draw_gems(self.screen, self.player)
         draw_trophies(self.screen, self.player, self.total_trophies)
         draw_health_bar(self.screen, self.player, 200, 20, self.player.max_health)
+
+        # Draw timer (top right corner)
+        if self.time_remaining is not None:
+            self.draw_timer()
 
         # Draw Marvin Mode indicator
         if self.marvin_mode:
@@ -654,6 +711,41 @@ class GameWorld:
         else:
             # Fall back to solid color background
             self.screen.fill(BG_COLOR)
+
+    def draw_timer(self):
+        """Draw the countdown timer in the top right corner."""
+        if self.time_remaining is None:
+            return
+
+        # Format time as MM:SS
+        minutes = int(self.time_remaining // 60)
+        seconds = int(self.time_remaining % 60)
+        time_text = f"{minutes:02d}:{seconds:02d}"
+
+        # Choose color based on remaining time
+        if self.time_remaining <= 10:
+            color = (255, 0, 0)  # Red when less than 10 seconds
+        elif self.time_remaining <= 30:
+            color = (255, 165, 0)  # Orange when less than 30 seconds
+        else:
+            color = (255, 255, 255)  # White otherwise
+
+        # Render the timer text
+        font = pg.font.Font(None, 48)
+        timer_surface = font.render(time_text, True, color)
+
+        # Position in top right corner with some padding
+        timer_rect = timer_surface.get_rect()
+        timer_rect.topright = (WIDTH - 20, 10)
+
+        # Draw semi-transparent background for better readability
+        bg_rect = timer_rect.inflate(20, 10)
+        bg_surface = pg.Surface((bg_rect.width, bg_rect.height), pg.SRCALPHA)
+        bg_surface.fill((0, 0, 0, 128))
+        self.screen.blit(bg_surface, bg_rect.topleft)
+
+        # Draw the timer
+        self.screen.blit(timer_surface, timer_rect)
 
     pass
 
@@ -789,6 +881,12 @@ class GameWorld:
         """Reset FPS to default value."""
         self.current_fps = FPS
         print(f"🕐 FPS reset to {FPS}")
+
+    def on_timer_expired(self):
+        """Called when the level timer reaches zero. Currently a placeholder."""
+        # TODO: Implement timer expiration logic (e.g., lose life, restart level, etc.)
+        print("⏱️ Timer expired! (placeholder function)")
+        pass
 
     def start_screen(self):
         pass
