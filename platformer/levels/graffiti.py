@@ -8,6 +8,7 @@ similar to the green pipes in Mario games.
 level_config = {
     "x_bounds": [-600, 3000],
     "y_bounds": [-200, 300],
+    "level_time": 240,  # Time limit in seconds (4 minutes)
     # Basic floor
     "grass_locations": [(i, 14) for i in range(-20, 100)],
     # Some platforms and blocks

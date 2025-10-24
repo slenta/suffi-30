@@ -1,6 +1,7 @@
 level_config = {
     "x_bounds": [-100, 1200],  # Kurzes Tutorial-Level
     "y_bounds": [-200, 300],
+    "level_time": 60,  # Time limit in seconds (1 minute - it's a short tutorial)
     # Player spawn point (optional) - x and y coordinates in grid units
     # If not specified, defaults to PLAYER_START_X, PLAYER_START_Y from settings.py
     # "player_spawn": (5, 1),  # Example: spawn at grid position (5, 1)

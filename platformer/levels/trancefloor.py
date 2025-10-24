@@ -1,6 +1,7 @@
 level_config = {
     "x_bounds": [-300, 9000],  # Extended gameworld width (doubled)
     "y_bounds": [-400, 400],  # Increased gameworld height for more vertical space
+    "level_time": 300,  # Time limit in seconds (5 minutes)
     # Player spawn point (optional) - x and y coordinates in grid units
     # If not specified, defaults to PLAYER_START_X, PLAYER_START_Y from settings.py
     # "player_spawn": (160, 1),  # Example: spawn at grid position (5, 1)
