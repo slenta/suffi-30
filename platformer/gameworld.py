@@ -235,6 +235,9 @@ class GameWorld:
                 enemy_data.get(
                     "is_minion", False
                 ),  # Default to False for regular enemies
+                enemy_data.get(
+                    "can_summon_minions", False
+                ),  # Default to False - must be explicitly enabled
             )
             self.enemies.add(enemy)
             self.all_sprites.add(enemy)

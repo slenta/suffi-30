@@ -24,6 +24,7 @@ class Enemy(pg.sprite.Sprite):
         melee_damage=5,
         can_throw_explosives=True,  # Default to True for regular enemies
         is_minion=False,  # Default to False for regular enemies
+        can_summon_minions=False,  # Default to False - must be explicitly enabled in level config
     ):
         super().__init__()
         # Store the image path
@@ -57,6 +58,7 @@ class Enemy(pg.sprite.Sprite):
         self.shoot_timer = 0
         self.can_throw_explosives = can_throw_explosives  # Add this flag
         self.is_minion = is_minion  # Store minion status
+        self.can_summon_minions = can_summon_minions  # Store minion summoning ability
 
         # Add gravity-related attributes
         self.vy = 0  # Vertical velocity
@@ -245,6 +247,10 @@ class Enemy(pg.sprite.Sprite):
         pg.draw.rect(screen, (255, 255, 255), (bar_x, bar_y, bar_width, bar_height), 1)
 
     def summon_minion(self, player):
+        # Only summon minions if this enemy has the ability enabled
+        if not self.can_summon_minions:
+            return
+
         # Check if the enemy is alive and the player is within one game width
         distance_to_player = abs(player.rect.centerx - self.rect.centerx)
 
