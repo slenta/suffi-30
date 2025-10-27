@@ -306,13 +306,13 @@ level_config = {
     ],
     "trophy_image": "mushroom.png",
     "exit_location": (420, 13),
-    "background_music": "assets/music/default.mp3",
+    "background_music": "assets/music/default.ogg",
     # "background_image": "assets/backgrounds/level2.png",
     "background_scroll_speed": 0.2,
     "alternative_backgrounds": [
         "assets/backgrounds/trancefloor.png",
     ],
     "alternative_music_tracks": [
-        "assets/music/trancefloor.mp3",
+        "assets/music/trancefloor.ogg",
     ],
 }
