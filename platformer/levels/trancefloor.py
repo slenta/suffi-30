@@ -197,6 +197,20 @@ level_config = {
     ],
     "enemy_locations": [
         {
+            "x": 40,
+            "y": 7,
+            "image": "enemies/trance-totem.png",
+            "speed": 1,
+            "patrol_range": 20,
+            "size_multiplier": 4,
+            "health": 15,
+            "damage": 5,
+            "shoot_range": 0,
+            "chase_range": 10,
+            "melee_damage": 2,
+            "can_throw_explosives": False,
+        },
+        {
             "x": 140,
             "y": 7,
             "image": "enemies/trance-totem.png",

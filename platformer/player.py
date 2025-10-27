@@ -378,6 +378,33 @@ class Player(pg.sprite.Sprite):
             screen.blit(self.weapon_image, weapon_offset_rect)
 
     def handle_enemy_collision(self):
+        # Get the enemy that was collided with
+        enemy_hit = pg.sprite.spritecollideany(self, self.world.enemies)
+
+        if not enemy_hit:
+            return
+
+        # Check if enemy is already dying
+        if hasattr(enemy_hit, "is_dying") and enemy_hit.is_dying:
+            return
+
+        # Check if player is jumping on the enemy (from above)
+        # Player must be falling (vy > 0) and player's bottom must be above enemy's center
+        if self.vy > 0 and self.rect.bottom <= enemy_hit.rect.centery:
+            # Stomp on enemy
+            if hasattr(enemy_hit, "is_minion") and enemy_hit.is_minion:
+                # Minion: instant kill
+                enemy_hit.take_damage(enemy_hit.health)
+            else:
+                # Regular enemy: deal 10 damage
+                enemy_hit.take_damage(10)
+
+            # Bounce the player up
+            self.vy = -10
+            sound_manager.play_sound_effect("jump")  # Play bounce sound
+            return
+
+        # Otherwise, take damage from collision
         if not self.is_knocked_back:  # Prevent repeated knockback during incapacitation
             # Take damage
             self.take_damage(1)
@@ -449,7 +476,7 @@ class Player(pg.sprite.Sprite):
         # Determine the direction of the throw based on the player's facing direction
         direction_x = 1 if self.vx >= 0 else -1
         direction_y = 0  # Exploding objects are thrown horizontally
-        damage = 20  # Set the damage dealt by the exploding object
+        damage = 5  # Set the damage dealt by the exploding object
 
         # Create the exploding object
         exploding_object = ExplodingObject(

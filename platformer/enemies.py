@@ -23,6 +23,7 @@ class Enemy(pg.sprite.Sprite):
         chase_range=10,
         melee_damage=5,
         can_throw_explosives=True,  # Default to True for regular enemies
+        is_minion=False,  # Default to False for regular enemies
     ):
         super().__init__()
         # Store the image path
@@ -55,12 +56,26 @@ class Enemy(pg.sprite.Sprite):
         self.world = world
         self.shoot_timer = 0
         self.can_throw_explosives = can_throw_explosives  # Add this flag
+        self.is_minion = is_minion  # Store minion status
 
         # Add gravity-related attributes
         self.vy = 0  # Vertical velocity
         self.on_ground = False  # Flag to check if the enemy is on the ground
 
+        # Death animation attributes
+        self.is_dying = False
+        self.death_rotation = 0  # Rotation angle for tumbling effect
+        self.death_rotation_speed = 15  # Degrees per frame
+        self.death_horizontal_velocity = 3  # Horizontal movement when tumbling
+        self.death_timer = 0  # Timer to remove enemy after falling off screen
+        self.original_image = self.image.copy()  # Store original image for rotation
+
     def update(self, player):
+        # If enemy is dying, only handle death animation
+        if self.is_dying:
+            self.update_death_animation()
+            return
+
         # Apply gravity
         self.vy += GRAVITY
         if self.vy > MAX_VELOCITY:
@@ -102,15 +117,33 @@ class Enemy(pg.sprite.Sprite):
             self.throw_exploding_object(player)  # Attempt to throw an exploding object
 
     def chase_player(self, player):
-        # Check for holes in the ground
-        if self.detect_hole():
-            return  # Stop moving if a hole is detected
+        # Determine which direction we want to move
+        move_right = player.rect.centerx > self.rect.centerx
+        move_left = player.rect.centerx < self.rect.centerx
+
+        # Temporarily set direction for hole detection
+        if move_right:
+            old_direction = self.direction
+            self.direction = 1
+            if self.detect_hole():
+                self.direction = old_direction
+                return  # Stop moving if a hole is detected
+            self.direction = old_direction
+        elif move_left:
+            old_direction = self.direction
+            self.direction = -1
+            if self.detect_hole():
+                self.direction = old_direction
+                return  # Stop moving if a hole is detected
+            self.direction = old_direction
 
         # Move toward the player horizontally
-        if player.rect.centerx > self.rect.centerx:
+        if move_right:
             self.rect.x += self.speed
-        elif player.rect.centerx < self.rect.centerx:
+            self.direction = 1
+        elif move_left:
             self.rect.x -= self.speed
+            self.direction = -1
 
         # Check for horizontal collisions with platforms
         hits = pg.sprite.spritecollide(self, self.world.platforms, False)
@@ -151,6 +184,9 @@ class Enemy(pg.sprite.Sprite):
             self.shoot_timer -= 1
 
     def melee_attack(self, player):
+        # Don't attack if dying
+        if self.is_dying:
+            return
         # Deal melee damage to the player
         player.take_damage(self.melee_damage)
 
@@ -158,7 +194,7 @@ class Enemy(pg.sprite.Sprite):
         sound_manager.play_sound_effect("enemy_hit")  # Play enemy hit sound
         self.health -= damage
         if self.health <= 0:
-            self.kill()
+            self.start_death_animation()
 
     def patrol(self):
         # Check for holes in the ground
@@ -260,13 +296,58 @@ class Enemy(pg.sprite.Sprite):
 
     def detect_hole(self):
         # Check the tile in front of the enemy based on its direction
-        next_x = self.rect.centerx + (self.direction * GRIDSIZE)
-        next_y = self.rect.bottom + 1  # Check just below the bottom of the enemy
+        # Check slightly ahead of the enemy's edge to detect holes before walking off
+        if self.direction > 0:  # Moving right
+            check_x = self.rect.right + 5  # Check a bit ahead of the right edge
+        else:  # Moving left
+            check_x = self.rect.left - 5  # Check a bit ahead of the left edge
 
-        # Create a temporary rect to check for platforms
-        temp_rect = pg.Rect(next_x, next_y, GRIDSIZE, 1)
+        check_y = self.rect.bottom + 5  # Check just below the bottom of the enemy
+
+        # Create a small rect to check for platforms
+        temp_rect = pg.Rect(check_x - 2, check_y, 4, 4)
 
         # Check if there is a platform below the next step
         return not any(
             temp_rect.colliderect(platform.rect) for platform in self.world.platforms
         )
+
+    def start_death_animation(self):
+        """Initialize the death animation (Mario-style tumble)"""
+        self.is_dying = True
+        self.vy = -12  # Initial upward velocity (bounce up when killed)
+        # Randomize tumble direction slightly
+        self.death_horizontal_velocity = random.choice([-3, 3])
+        self.death_rotation_speed = random.randint(12, 18)
+
+    def update_death_animation(self):
+        """Handle the tumbling death animation"""
+        # Apply gravity
+        self.vy += GRAVITY
+        if self.vy > MAX_VELOCITY:
+            self.vy = MAX_VELOCITY
+
+        # Update position
+        self.rect.y += self.vy
+        self.rect.x += self.death_horizontal_velocity
+
+        # Rotate the sprite for tumbling effect
+        self.death_rotation += self.death_rotation_speed
+        if self.death_rotation >= 360:
+            self.death_rotation -= 360
+
+        # Create rotated image
+        self.image = pg.transform.rotate(self.original_image, self.death_rotation)
+        # Update rect to keep it centered during rotation
+        old_center = self.rect.center
+        self.rect = self.image.get_rect()
+        self.rect.center = old_center
+
+        # Increase timer
+        self.death_timer += 1
+
+        # Remove enemy after falling off screen or after timeout
+        if (
+            self.rect.top > HEIGHT + 100 or self.death_timer > 300
+        ):  # 5 seconds at 60 FPS
+            self.kill()

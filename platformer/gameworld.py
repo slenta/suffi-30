@@ -227,6 +227,14 @@ class GameWorld:
                 enemy_data.get("damage", 1),  # Default damage to 1 if not specified
                 enemy_data.get("shoot_range", 5),  # Default shooting range to 5 tiles
                 self,  # Pass the GameWorld instance as the world
+                enemy_data.get("chase_range", 10),  # Default chase range to 10 tiles
+                enemy_data.get("melee_damage", 5),  # Default melee damage to 5
+                enemy_data.get(
+                    "can_throw_explosives", True
+                ),  # Default to True for regular enemies
+                enemy_data.get(
+                    "is_minion", False
+                ),  # Default to False for regular enemies
             )
             self.enemies.add(enemy)
             self.all_sprites.add(enemy)

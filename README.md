@@ -112,7 +112,6 @@ For automatic deployments on push:
     - pubertät --> ziel an mama und papa vorbeizuschleichen
     - krankenhaus
 - Highscore wäre nice
-- check web deployment
 - python files aufräumen
 - consistent assets management (filepaths, clean up file system)
 - more enemy mechanics (police with light)
@@ -123,4 +122,3 @@ For automatic deployments on push:
 - durchn tisch treten als pipes mit animation
 - launcher screen mit level auswahl nicht nur mit pfeiltasten
 - graffiti malen
-- convert all mp3 to ogg
