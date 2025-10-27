@@ -22,6 +22,7 @@ Test the web version locally before deploying:
 ```bash
 # This builds and serves the game on http://localhost:8000
 python -m pygbag --PYBUILD 3.12 --disable-sound-format-error .
+python -m pygbag --PYBUILD 3.12 .
 ```
 
 Then open your browser to `http://localhost:8000` to play the web version.

@@ -112,7 +112,7 @@ level_config = {
         {"x": 0, "y": 9, "direction": "down", "damage": 10},
         {"x": 1, "y": 9, "direction": "down", "damage": 10},
     ],
-    "background_music": "assets/music/level1.mp3",  # Path relative to game root
+    "background_music": "assets/music/level1.ogg",  # Path relative to game root
     "background_image": "assets/backgrounds/level1_bg.png",  # Path to background image
     "background_scroll_speed": 0.3,  # Optional: parallax scrolling speed (0.0 = static, 1.0 = moves with camera)
 }

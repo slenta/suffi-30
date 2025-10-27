@@ -52,7 +52,7 @@ level_config = {
     # Exit
     "exit_location": (48, 13),
     # Assets
-    "background_music": "assets/music/baby_level.mp3",
+    "background_music": "assets/music/baby_level.ogg",
     "background_image": "assets/backgrounds/kindergarten_bg.png",
     "background_scroll_speed": 0.2,
 }

@@ -29,12 +29,18 @@ async def get_level_to_load():
     sounds_dir = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "assets", "sounds"
     )
-    sound_manager.load_sound_effect(
-        "menu_move", os.path.join(sounds_dir, "menu_move.wav")
+    menu_move_sound = sound_manager.load_sound_effect(
+        "menu_move", os.path.join(sounds_dir, "menu_move.ogg")
     )
-    sound_manager.load_sound_effect(
-        "menu_select", os.path.join(sounds_dir, "menu_select.wav")
+    menu_select_sound = sound_manager.load_sound_effect(
+        "menu_select", os.path.join(sounds_dir, "menu_select.ogg")
     )
+
+    # Boost menu sound volumes since they're naturally quiet
+    if menu_move_sound:
+        menu_move_sound.set_volume(1.5)  # 150% volume
+    if menu_select_sound:
+        menu_select_sound.set_volume(1.5)  # 150% volume
 
     level_selection = LevelSelectionScreen(screen)
     selected_level = await level_selection.run()  # Now async!

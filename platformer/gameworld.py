@@ -753,17 +753,17 @@ class GameWorld:
         """Load common sound effects for the game."""
         # Define common sound effects with their file paths
         sound_effects = {
-            "jump": "jump.wav",
-            "gem_collect": "gem_collect.wav",
-            "enemy_hit": "enemy_hit.wav",
-            "player_hurt": "player_hurt.wav",
-            "player_death": "player_death.wav",  # Player death/fall sound
-            "powerup_collect": "powerup_collect.wav",
-            "trophy_collect": "trophy_collect.wav",
-            "level_complete": "level_complete.wav",
-            "explode": "explode.wav",
-            "menu_move": "menu_move.wav",  # Menu cursor movement
-            "menu_select": "menu_select.wav",  # Menu selection
+            "jump": "jump.ogg",
+            "gem_collect": "gem_collect.ogg",
+            "enemy_hit": "enemy_hit.ogg",
+            "player_hurt": "player_hurt.ogg",
+            "player_death": "player_death.ogg",  # Player death/fall sound
+            "powerup_collect": "powerup_collect.ogg",
+            "trophy_collect": "trophy_collect.ogg",
+            "level_complete": "level_complete.ogg",
+            "explode": "explode.ogg",
+            "menu_move": "menu_move.ogg",  # Menu cursor movement
+            "menu_select": "menu_select.ogg",  # Menu selection
         }
 
         # Load each sound effect (silently ignore missing files)
