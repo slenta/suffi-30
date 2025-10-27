@@ -227,12 +227,12 @@ class Enemy(pg.sprite.Sprite):
         self.rect.y = self.initial_y
         self.start_x = self.initial_x  # Reset patrol range reference
 
-    def draw_health_bar(self, screen, camera_offset_x):
+    def draw_health_bar(self, screen, camera_offset_x, camera_offset_y=0):
         # Define the position and size of the health bar
         bar_width = self.rect.width
         bar_height = 5
         bar_x = self.rect.x - camera_offset_x
-        bar_y = self.rect.y - 10  # Position above the enemy
+        bar_y = self.rect.y - camera_offset_y - 10  # Position above the enemy
 
         # Calculate the width of the filled portion based on enemy's health
         fill_width = int((self.health / self.max_health) * bar_width)

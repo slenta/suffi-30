@@ -99,9 +99,37 @@ class Player(pg.sprite.Sprite):
                 self.rect.top = hit.rect.bottom
             self.vy = 0
 
-        # Von der Plattform runterfallen
-        if self.rect.y > self.world.top + 20:
-            self.loose()
+        # Check if player has fallen too far below the nearest platform
+        self.check_fall_death()
+
+    def check_fall_death(self):
+        """Check if player has fallen too far below the nearest platform."""
+        # Find the lowest platform below or near the player's horizontal position
+        nearest_platform_bottom = None
+        search_range = GRIDSIZE * 10  # Search within 10 tiles horizontally
+
+        for platform in self.world.platforms:
+            # Check if platform is within horizontal range
+            if abs(platform.rect.centerx - self.rect.centerx) <= search_range:
+                # Check if platform is below the player
+                if platform.rect.top >= self.rect.top:
+                    if (
+                        nearest_platform_bottom is None
+                        or platform.rect.top < nearest_platform_bottom
+                    ):
+                        nearest_platform_bottom = platform.rect.top
+
+        # If we found a platform below, check if player fell too far below it
+        if nearest_platform_bottom is not None:
+            death_threshold = (
+                nearest_platform_bottom + GRIDSIZE * 3
+            )  # 3 tiles below platform
+            if self.rect.top > death_threshold:
+                self.loose()
+        else:
+            # No platform found nearby - use global bottom boundary as fallback
+            if self.rect.y > self.world.top + GRIDSIZE * 3:
+                self.loose()
 
     def check_edges(self):
         left_edge = self.world.ground_start
@@ -358,21 +386,25 @@ class Player(pg.sprite.Sprite):
         weapon_y = self.rect.centery
 
         weapon_rect = self.weapon_image.get_rect(center=(weapon_x, weapon_y))
-        offset_rect = weapon_rect.move(-self.world.camera_offset_x, 0)
+        offset_rect = weapon_rect.move(
+            -self.world.camera_offset_x, -self.world.camera_offset_y
+        )
         self.world.screen.blit(self.weapon_image, offset_rect)
         self.weapon_rect = self.weapon_image.get_rect(
             center=(self.rect.centerx + offset_x, self.rect.centery + offset_y)
         )
 
-    def draw(self, screen, camera_offset_x):
+    def draw(self, screen, camera_offset_x, camera_offset_y=0):
         """Draw player and weapon"""
         # Draw player
-        offset_rect = self.rect.move(-camera_offset_x, 0)
+        offset_rect = self.rect.move(-camera_offset_x, -camera_offset_y)
         screen.blit(self.image, offset_rect)
 
         # Draw weapon
         if self.weapon_image and self.weapon_rect:
-            weapon_offset_rect = self.weapon_rect.move(-camera_offset_x, 0)
+            weapon_offset_rect = self.weapon_rect.move(
+                -camera_offset_x, -camera_offset_y
+            )
 
             # Rotate weapon during attack
             screen.blit(self.weapon_image, weapon_offset_rect)

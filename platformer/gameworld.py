@@ -51,6 +51,7 @@ class GameWorld:
 
         # Camera
         self.camera_offset_x = 0
+        self.camera_offset_y = 0
 
         # Level bounds
         self.x_bounds = [-600, 3000]
@@ -605,6 +606,7 @@ class GameWorld:
 
     def update_camera(self):
         # Define the free movement range dynamically based on the camera offset
+        # Horizontal camera
         free_range_left = self.camera_offset_x + WIDTH // 3
         free_range_right = self.camera_offset_x + 2 * WIDTH // 3
 
@@ -614,6 +616,17 @@ class GameWorld:
             self.camera_offset_x -= free_range_left - player_center_x
         elif player_center_x > free_range_right:
             self.camera_offset_x += player_center_x - free_range_right
+
+        # Vertical camera
+        free_range_top = self.camera_offset_y + HEIGHT // 3
+        free_range_bottom = self.camera_offset_y + 2 * HEIGHT // 3
+
+        # Adjust the camera offset only when the player moves outside the free range
+        player_center_y = self.player.rect.centery
+        if player_center_y < free_range_top:
+            self.camera_offset_y -= free_range_top - player_center_y
+        elif player_center_y > free_range_bottom:
+            self.camera_offset_y += player_center_y - free_range_bottom
 
     def update(self):
         # Update timer
@@ -657,15 +670,19 @@ class GameWorld:
         # Draw all sprites with the camera offset
         for sprite in self.all_sprites:
             if sprite != self.player:
-                offset_rect = sprite.rect.move(-self.camera_offset_x, 0)
+                offset_rect = sprite.rect.move(
+                    -self.camera_offset_x, -self.camera_offset_y
+                )
                 self.screen.blit(sprite.image, offset_rect)
 
         # Draw player with weapon
-        self.player.draw(self.screen, self.camera_offset_x)
+        self.player.draw(self.screen, self.camera_offset_x, self.camera_offset_y)
 
         # Draw enemy health bars
         for enemy in self.enemies:
-            enemy.draw_health_bar(self.screen, self.camera_offset_x)
+            enemy.draw_health_bar(
+                self.screen, self.camera_offset_x, self.camera_offset_y
+            )
 
         # Draw HUD
         draw_gems(self.screen, self.player)
@@ -693,8 +710,9 @@ class GameWorld:
     def draw_background(self):
         """Draw the background - either an image or solid color."""
         if self.background_image:
-            # Calculate parallax scrolling offset
-            bg_offset = int(self.camera_offset_x * self.background_scroll_speed)
+            # Calculate parallax scrolling offset for both X and Y
+            bg_offset_x = int(self.camera_offset_x * self.background_scroll_speed)
+            bg_offset_y = int(self.camera_offset_y * self.background_scroll_speed)
 
             # Get background and screen dimensions
             bg_width = self.background_image.get_width()
@@ -710,15 +728,20 @@ class GameWorld:
                     self.background_image, (scaled_width, screen_height)
                 )
                 bg_width = scaled_width
+                bg_height = screen_height
 
-            # Tile the background horizontally to cover the entire screen width
-            start_x = -(bg_offset % bg_width)
+            # Tile the background horizontally and vertically to cover the entire screen
+            start_x = -(bg_offset_x % bg_width)
+            start_y = -(bg_offset_y % bg_height)
 
             # Draw background tiles
-            x = start_x
-            while x < screen_width:
-                self.screen.blit(self.background_image, (x, 0))
-                x += bg_width
+            y = start_y
+            while y < screen_height:
+                x = start_x
+                while x < screen_width:
+                    self.screen.blit(self.background_image, (x, y))
+                    x += bg_width
+                y += bg_height
         else:
             # Fall back to solid color background
             self.screen.fill(BG_COLOR)

@@ -35,6 +35,10 @@ def load_sprite_image(image_path, size=None):
         # Try different possible paths (updated for centralized assets)
         possible_paths = [
             image_path,
+            f"platformer/assets/images/{image_path}",
+            f"platformer/assets/images/{os.path.basename(image_path)}",
+            f"platformer/assets/backgrounds/{image_path}",
+            f"platformer/assets/backgrounds/{os.path.basename(image_path)}",
             f"assets/images/{image_path}",
             f"assets/images/{os.path.basename(image_path)}",
             f"assets/backgrounds/{image_path}",
@@ -84,7 +88,10 @@ COLORS = {
     "player_start": (0, 0, 255),  # Blue
     "moving_platform": (100, 100, 200),  # Light blue
     "weapon": (255, 215, 0),  # Gold
+    "pipe": (0, 200, 0),  # Green
+    "spike": (255, 50, 50),  # Bright red
     "moving_platform_path": (200, 200, 200, 100),  # Light gray, semi-transparent
+    "death_zone": (255, 0, 0, 50),  # Red, very transparent
 }
 
 
@@ -154,6 +161,22 @@ def calculate_level_bounds(level_config):
     for weapon in weapon_locations:
         all_x_coords.append(weapon["x"])
         all_y_coords.append(weapon["y"])
+
+    # Collect pipe locations
+    pipe_locations = level_config.get("pipe_locations", [])
+    for pipe in pipe_locations:
+        all_x_coords.append(pipe["x"])
+        all_y_coords.append(pipe["y"])
+
+    # Collect spike locations
+    spike_locations = level_config.get("spike_locations", [])
+    for spike_loc in spike_locations:
+        if isinstance(spike_loc, tuple):
+            x, y = spike_loc
+        else:
+            x, y = spike_loc["x"], spike_loc["y"]
+        all_x_coords.append(x)
+        all_y_coords.append(y)
 
     # Collect moving platform locations (including their movement range)
     moving_platform_locations = level_config.get("moving_platform_locations", [])
@@ -543,6 +566,29 @@ def render_level(level_config, output_path, show_grid=True):
                 COLORS["exit"],
             )
 
+        # Draw pipes using actual sprites
+        pipe_locations = level_config.get("pipe_locations", [])
+        if pipe_locations:
+            for pipe_data in pipe_locations:
+                x, y = pipe_data["x"], pipe_data["y"]
+                img_x, img_y = world_to_image_coords(x, y, min_x, min_y)
+                pipe_image = load_sprite_image(
+                    "pipe/pipe.png", (GRIDSIZE * 2, GRIDSIZE * 2)
+                )
+                image.paste(pipe_image, (img_x, img_y), pipe_image)
+
+        # Draw spikes using actual sprites
+        spike_locations = level_config.get("spike_locations", [])
+        if spike_locations:
+            for spike_loc in spike_locations:
+                if isinstance(spike_loc, tuple):
+                    x, y = spike_loc
+                else:
+                    x, y = spike_loc["x"], spike_loc["y"]
+                img_x, img_y = world_to_image_coords(x, y, min_x, min_y)
+                spike_image = load_sprite_image("spike.png", (GRIDSIZE, GRIDSIZE))
+                image.paste(spike_image, (img_x, img_y), spike_image)
+
         # Draw player start position using actual sprites
         player_start = [(5, 1)]  # From PLAYER_START_X, PLAYER_START_Y in settings
         draw_special_locations_with_sprites(
@@ -583,6 +629,8 @@ def draw_legend(draw, width, height):
         ("Weapons", COLORS["weapon"]),
         ("Enemies", COLORS["enemy"]),
         ("M.Platforms", COLORS["moving_platform"]),
+        ("Pipes", COLORS["pipe"]),
+        ("Spikes", COLORS["spike"]),
         ("Exit", COLORS["exit"]),
         ("Player", COLORS["player_start"]),
     ]
@@ -616,6 +664,8 @@ def draw_level_info(draw, level_config, width):
     powerup_count = len(level_config.get("powerup_locations", []))
     weapon_count = len(level_config.get("weapon_locations", []))
     moving_platform_count = len(level_config.get("moving_platform_locations", []))
+    pipe_count = len(level_config.get("pipe_locations", []))
+    spike_count = len(level_config.get("spike_locations", []))
 
     info_lines = [
         f"Gems: {gem_count}",
@@ -624,6 +674,8 @@ def draw_level_info(draw, level_config, width):
         f"Powerups: {powerup_count}",
         f"Weapons: {weapon_count}",
         f"M.Platforms: {moving_platform_count}",
+        f"Pipes: {pipe_count}",
+        f"Spikes: {spike_count}",
     ]
 
     # Position in top-right
@@ -650,6 +702,8 @@ def draw_level_info(draw, level_config, width):
             COLORS["powerup"],
             COLORS["weapon"],
             COLORS["moving_platform"],
+            COLORS["pipe"],
+            COLORS["spike"],
         ]
         if i < len(colors):
             draw.rectangle(
@@ -670,7 +724,7 @@ def main():
     )
     parser.add_argument(
         "--output-dir",
-        default="assets/renders",
+        default="platformer/assets/renders",
         help="Output directory for rendered images",
     )
 
