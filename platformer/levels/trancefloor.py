@@ -209,7 +209,7 @@ level_config = {
             "chase_range": 10,
             "melee_damage": 2,
             "can_throw_explosives": False,
-            "can_summon_minions": True,  # ← Add this line to enable minion spawning
+            "can_summon_minions": False,  # ← Add this line to enable minion spawning
         },
         {
             "x": 140,
