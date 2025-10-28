@@ -40,6 +40,16 @@ class Player(pg.sprite.Sprite):
         self.weapon_rect = None
         self.controls_reversed = False  # Flag for reversed controls powerup
         self.spike_damage_cooldown = 0  # Cooldown to prevent repeated spike damage
+        
+        # Ladder mechanics
+        self.on_ladder = False  # Flag to track if player is on a ladder
+        self.ladder_grip = False  # Flag to track if player is gripping the ladder
+        self.ladder_move_speed = 2  # Speed when moving on ladder
+        
+        # Waterfall mechanics
+        self.in_waterfall = False  # Flag to track if player is in waterfall
+        self.waterfall_grip = False  # Flag to track if player is gripping waterfall
+        self.waterfall_move_speed = 2  # Speed when moving in waterfall
 
     def jump(self):
         self.rect.y += 2
@@ -50,9 +60,11 @@ class Player(pg.sprite.Sprite):
             sound_manager.play_sound_effect("jump")  # Play jump sound
 
     def apply_gravity(self):
-        self.vy += GRAVITY
-        if self.vy > MAX_VELOCITY:
-            self.vy = MAX_VELOCITY
+        # Only apply gravity when not gripping a ladder
+        if not self.ladder_grip:
+            self.vy += GRAVITY
+            if self.vy > MAX_VELOCITY:
+                self.vy = MAX_VELOCITY
 
     def move(self):
         keys = pg.key.get_pressed()
@@ -343,6 +355,115 @@ class Player(pg.sprite.Sprite):
             self.is_knocked_back = False  # End knockback state
 
         if not self.is_knocked_back:  # Only allow normal updates if not incapacitated
+            # Handle ladder mechanics
+            keys = pg.key.get_pressed()
+            
+            # Check for ladder collision
+            self.on_ladder = False
+            for ladder in self.world.ladders:
+                if ladder.can_climb(self):
+                    self.on_ladder = True
+                    # Start climbing when pressing up/down
+                    if (keys[pg.K_UP] or keys[pg.K_DOWN]) and not self.ladder_grip:
+                        self.ladder_grip = True
+                        self.vx = 0
+                        self.vy = 0
+                    break
+            
+            # Handle ladder tops
+            for ladder_top in self.world.ladder_tops:
+                # Check if player can climb up through this top
+                if ladder_top.can_climb_up(self):
+                    self.on_ladder = True
+                    if (keys[pg.K_UP] or keys[pg.K_DOWN]) and not self.ladder_grip:
+                        self.ladder_grip = True
+                        self.vx = 0
+                        self.vy = 0
+                # Check if player should be blocked by the top
+                elif ladder_top.should_block(self):
+                    if ladder_top not in self.world.platforms:
+                        self.world.platforms.add(ladder_top)
+                elif ladder_top in self.world.platforms:
+                    self.world.platforms.remove(ladder_top)
+                
+                # Check for climbing down from top
+                if ladder_top.can_climb_down(self):
+                    self.ladder_grip = True
+                    self.on_ladder = True
+                    # Remove from platforms to allow climbing down
+                    if ladder_top in self.world.platforms:
+                        self.world.platforms.remove(ladder_top)
+            
+            # Handle ladder movement
+            if self.on_ladder and self.ladder_grip:
+                # Vertical movement (only when pressing up/down)
+                if keys[pg.K_UP]:
+                    self.vy = -self.ladder_move_speed
+                elif keys[pg.K_DOWN]:
+                    self.vy = self.ladder_move_speed
+                else:
+                    self.vy = 0  # Stay in place when not pressing up/down
+                
+                # Slower horizontal movement
+                if keys[pg.K_LEFT]:
+                    self.vx = -self.ladder_move_speed
+                elif keys[pg.K_RIGHT]:
+                    self.vx = self.ladder_move_speed
+                else:
+                    self.vx = 0
+                
+                # Can jump off
+                if keys[pg.K_SPACE]:
+                    self.ladder_grip = False
+                    self.jump()
+            elif not self.on_ladder:
+                self.ladder_grip = False
+                
+            # Handle waterfall mechanics (continuous downward flow)
+            self.in_waterfall = False
+            for waterfall in self.world.waterfalls:
+                if waterfall.can_flow(self):
+                    self.in_waterfall = True
+                    if (keys[pg.K_UP] or keys[pg.K_DOWN]) and not self.waterfall_grip:
+                        self.waterfall_grip = True
+                        self.vx = 0
+                    break
+            
+            # Handle waterfall tops
+            for waterfall_top in self.world.waterfall_tops:
+                if waterfall_top.is_platform_collision(self):
+                    if waterfall_top not in self.world.platforms:
+                        self.world.platforms.add(waterfall_top)
+                elif waterfall_top in self.world.platforms:
+                    self.world.platforms.remove(waterfall_top)
+                
+                if waterfall_top.can_flow_down(self):
+                    self.waterfall_grip = True
+                    self.in_waterfall = True
+            
+            # Handle waterfall movement
+            if self.in_waterfall and self.waterfall_grip:
+                # Always flow down unless climbing
+                if keys[pg.K_UP]:
+                    self.vy = -self.waterfall_move_speed
+                else:
+                    self.vy = self.waterfall_move_speed  # Always flow down
+                
+                # Slower horizontal movement
+                if keys[pg.K_LEFT]:
+                    self.vx = -self.waterfall_move_speed
+                elif keys[pg.K_RIGHT]:
+                    self.vx = self.waterfall_move_speed
+                else:
+                    self.vx = 0
+                
+                # Can jump out
+                if keys[pg.K_SPACE]:
+                    self.waterfall_grip = False
+                    self.jump()
+            elif not self.in_waterfall:
+                self.waterfall_grip = False
+            
             self.apply_gravity()
             self.check_edges()
             self.move()
