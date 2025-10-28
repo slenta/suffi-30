@@ -542,10 +542,8 @@ class Player(pg.sprite.Sprite):
             return
 
         # Check if player is jumping on the enemy (from above)
-        # Player must be falling (vy > 0) and player's bottom must be near or above enemy's top
-        # We check if the player's bottom is within a threshold above the enemy's center (allowing some overlap)
-        stomp_threshold = enemy_hit.rect.height * 0.3  # Allow 30% overlap for stomp detection
-        if self.vy > 0 and self.rect.bottom <= enemy_hit.rect.centery + stomp_threshold:
+        # Player must be falling (vy > 0) and player's bottom must be above enemy's center
+        if self.vy > 0 and self.rect.bottom <= enemy_hit.rect.centery:
             # Stomp on enemy
             if hasattr(enemy_hit, "is_minion") and enemy_hit.is_minion:
                 # Minion: instant kill
@@ -554,13 +552,12 @@ class Player(pg.sprite.Sprite):
                 # Regular enemy: deal 10 damage
                 enemy_hit.take_damage(10)
 
-            # Bounce the player up with reduced horizontal momentum
+            # Bounce the player up
             self.vy = -10
-            self.vx *= 0.3  # Reduce horizontal velocity to 30% (soft horizontal bounce)
             sound_manager.play_sound_effect("jump")  # Play bounce sound
-            return  # Exit early - no damage or horizontal knockback for stomp
+            return
 
-        # Otherwise, handle side collision - take damage and get knocked back
+        # Otherwise, take damage from collision
         if not self.is_knocked_back:  # Prevent repeated knockback during incapacitation
             # Take damage
             self.take_damage(1)
