@@ -6,10 +6,24 @@ This is an example sub-level accessed via a pipe from the main level.
 level_config = {
     "x_bounds": [-300, 2000],  # Smaller sub-level
     "y_bounds": [-200, 300],
+    # Bright red background so we know our changes are working
+    "background_color": (255, 0, 0),  # Bright red
+    "background_image": "graffiti_sublevel.png",  # Image is directly in backgrounds folder
     # Player spawn point - where player appears when entering this sub-level
     "player_spawn": (5, 1),
     # Floor grass locations
     "grass_locations": [(i, 14) for i in range(-20, 80)],
+    # Add a distinctive pattern of blocks to form "HI"
+    "block_locations": [
+        # Letter H
+        (3, 8), (3, 9), (3, 10),  # Left vertical
+        (4, 9),                    # Middle
+        (5, 8), (5, 9), (5, 10),  # Right vertical
+        # Letter I
+        (7, 8), (8, 8), (9, 8),   # Top
+        (8, 9), (8, 10),          # Middle
+        (7, 10), (8, 10), (9, 10) # Bottom
+    ],
     # Block locations - create a small cave-like structure
     "block_locations": [
         # Upper ceiling

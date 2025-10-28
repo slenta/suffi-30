@@ -772,7 +772,72 @@ class GameWorld:
                 y += bg_height
         else:
             # Fall back to solid color background
-            self.screen.fill(BG_COLOR)
+            # Check for background image first
+            if "background_image" in self.level_config:
+                if not hasattr(self, 'background_surface'):
+                    print(f"IMAGEPATH is: {IMAGEPATH}")
+                    print(f"Current working directory: {os.getcwd()}")
+                    print(f"Looking for background image: {self.level_config['background_image']}")
+                    
+                    # Try both with and without the backgrounds folder
+                    bg_paths = [
+                        os.path.join(IMAGEPATH, "backgrounds", self.level_config["background_image"]),
+                        os.path.join(IMAGEPATH, self.level_config["background_image"]),
+                        os.path.join("platformer", "assets", "backgrounds", self.level_config["background_image"])
+                    ]
+                    
+                    for bg_path in bg_paths:
+                        print(f"\nTrying path: {bg_path}")
+                        print(f"File exists: {os.path.exists(bg_path)}")
+                        try:
+                            # Load the image
+                            original_bg = pg.image.load(bg_path).convert()
+                            print(f"Successfully loaded background image from: {bg_path}")
+                            
+                            # Calculate scaling to maintain aspect ratio
+                            img_width, img_height = original_bg.get_size()
+                            width_ratio = WIDTH / img_width
+                            height_ratio = HEIGHT / img_height
+                            
+                            # Use the smaller ratio to fit screen while maintaining aspect ratio
+                            scale_ratio = max(width_ratio, height_ratio)
+                            new_width = int(img_width * scale_ratio)
+                            new_height = int(img_height * scale_ratio)
+                            
+                            # Scale image maintaining aspect ratio
+                            self.background_surface = pg.transform.scale(original_bg, (new_width, new_height))
+                            
+                            # Create a surface for the final background
+                            final_surface = pg.Surface((WIDTH, HEIGHT))
+                            final_surface.fill((0, 0, 0))  # Fill with black for letterboxing
+                            
+                            # Calculate position to center the image
+                            x_offset = (WIDTH - new_width) // 2
+                            y_offset = (HEIGHT - new_height) // 2
+                            
+                            # Blit the scaled image centered
+                            final_surface.blit(self.background_surface, (x_offset, y_offset))
+                            self.background_surface = final_surface
+                            break
+                        except Exception as e:
+                            print(f"Error loading from {bg_path}: {str(e)}")
+                            self.background_surface = None
+                            continue
+                
+                if self.background_surface:
+                    # Apply parallax scrolling - background moves slower than foreground
+                    bg_x = int(-self.camera_offset_x * 0.5) % WIDTH
+                    # Draw the background twice to cover the whole screen when scrolling
+                    self.screen.blit(self.background_surface, (bg_x, 0))
+                    self.screen.blit(self.background_surface, (bg_x - WIDTH, 0))
+                else:
+                    # Fallback to color if image loading failed
+                    bg_color = self.level_config.get("background_color", (135, 206, 235))
+                    self.screen.fill(bg_color)
+            else:
+                # Use level-specific background color if defined, otherwise use default
+                bg_color = self.level_config.get("background_color", (135, 206, 235))
+                self.screen.fill(bg_color)
 
     def draw_timer(self):
         """Draw the countdown timer in the top right corner."""
