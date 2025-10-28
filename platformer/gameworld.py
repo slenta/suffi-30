@@ -15,6 +15,8 @@ from .sound_manager import sound_manager  # Import the sound manager
 from .weapon import WeaponPickup
 from .pipe import Pipe  # Import the Pipe class
 from .spike import Spike  # Import the Spike class
+from .ladder import Ladder, LadderTop  # Import the Ladder classes
+from .waterfall import Waterfall, WaterfallTop  # Import the Waterfall classes
 import importlib
 
 
@@ -48,6 +50,10 @@ class GameWorld:
         self.weapon_pickups = pg.sprite.Group()
         self.pipes = pg.sprite.Group()
         self.spikes = pg.sprite.Group()
+        self.ladders = pg.sprite.Group()
+        self.ladder_tops = pg.sprite.Group()
+        self.waterfalls = pg.sprite.Group()
+        self.waterfall_tops = pg.sprite.Group()
 
         # Camera
         self.camera_offset_x = 0
@@ -91,6 +97,8 @@ class GameWorld:
         self.weapon_pickups.empty()
         self.pipes.empty()
         self.spikes.empty()
+        self.ladders.empty()
+        self.ladder_tops.empty()
 
         # Store current level name
         self.current_level_name = level_name
@@ -179,6 +187,26 @@ class GameWorld:
             g = Gem(x, y, gem_image)
             self.items.add(g)
             self.all_sprites.add(g)
+
+                # Add ladders with tops
+        if "ladder_locations" in self.level_config:
+            for x, y in self.level_config["ladder_locations"][:-1]:  # All but last
+                ladder = Ladder(x, y)
+                self.all_sprites.add(ladder)
+                self.ladders.add(ladder)
+            # Last location gets a ladder top
+            if self.level_config["ladder_locations"]:
+                x, y = self.level_config["ladder_locations"][-1]
+                ladder_top = LadderTop(x, y)
+                self.all_sprites.add(ladder_top)
+                self.ladder_tops.add(ladder_top)
+                
+        # Add waterfalls
+        if "waterfall_locations" in self.level_config:
+            for x, y in self.level_config["waterfall_locations"]:
+                waterfall = Waterfall(x, y)
+                self.all_sprites.add(waterfall)
+                self.waterfalls.add(waterfall)
 
         # Use level-specific player spawn point if defined, otherwise use default
         player_spawn = self.level_config.get(
