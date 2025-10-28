@@ -47,11 +47,27 @@ level_config = {
     "weapon_locations": [],
     # No moving platforms
     "moving_platform_locations": [],
+    # Add waterfall
+    "waterfall_locations": [(9, y) for y in range(4, 14)],  # 10 blocks high starting at y=4
     # Trophy to collect
     "trophy_locations": [
         (45, 12),
     ],
     "trophy_image": "trophy.png",
+    # Ladder locations
+    "ladder_locations": [
+        (5, 14),  # Bottom of ladder
+        (5, 13),
+        (5, 12),
+        (5, 11),
+        (5, 10),
+        (5, 9),
+        (5, 8),
+        (5, 7),
+        (5, 6),
+        (5, 5),
+        (5, 4),  # Top of ladder
+    ],
     # Exit at the end
     "exit_location": (50, 13),
     # Pipe configuration - this is the important part!
