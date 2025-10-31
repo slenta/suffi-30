@@ -135,26 +135,22 @@ level_config = {
         (132, 1),
         (130, 2),
         (128, 3),
-        # New Jesus Block
-        (175, 3),
-        (175, 2),
-        (175, 1),
-        # Trphy
-        # (168, 12),
-        # (169, 7),
-        # (170, 2),
+        # First Weapon
+        (159, -14),
+        (160, -14),
+        (161, -14),
         # Hippie Enemy
-        (190, 8),
-        (191, 8),
-        (192, 8),
-        (193, 8),
-        (194, 8),
-        (195, 8),
-        (196, 8),
-        (197, 8),
-        (198, 8),
-        (199, 8),
-        (200, 8),
+        (190, -9),
+        (191, -9),
+        (192, -9),
+        (193, -9),
+        (194, -9),
+        (195, -9),
+        (196, -9),
+        (197, -9),
+        (198, -9),
+        (199, -9),
+        (200, -9),
         # Section 6 - Complex structure
         (250, 13),
         (251, 13),
@@ -255,16 +251,16 @@ level_config = {
         },
         {
             "x": 195,
-            "y": 4,
+            "y": -8,
             "image": "enemies/trance-hippie.png",
             "speed": 1,
             "patrol_range": 30,
             "size_multiplier": 4,
             "health": 20,
-            "damage": 15,
+            "damage": 2,
             "shoot_range": 30,
-            "chase_range": 10,
-            "melee_damage": 10,
+            "chase_range": 5,
+            "melee_damage": 2,
         },
         {
             "x": 240,
@@ -282,7 +278,7 @@ level_config = {
     ],
     # Extended trophy locations - more collectibles
     "weapon_locations": [
-        {"x": 175, "y": 0, "type": "wasserpistole"},  # Erste Waffe
+        {"x": 170, "y": -20, "type": "wasserpistole"},  # Erste Waffe
     ],
     # Moving platform locations - new feature!
     "moving_platform_locations": [
@@ -304,6 +300,15 @@ level_config = {
             "distance": 8,  # Distance to travel (grid units for linear, radius for circular)
             "direction": "horizontal",  # "horizontal" or "vertical" (for linear only)
         },
+        {
+            "x": 164,  # Starting x position (grid units)
+            "y": -12,  # Starting y position (grid units)
+            "platform_type": "block",  # "grass" or "block"
+            "movement_type": "linear",  # "linear" or "circular"
+            "speed": 1,  # Movement speed (pixels per frame)
+            "distance": 8,  # Distance to travel (grid units for linear, radius for circular)
+            "direction": "vertical",  # "horizontal" or "vertical" (for linear only)
+        },
         # {
         #     "x": 60,
         #     "y": 8,
@@ -323,8 +328,8 @@ level_config = {
         #     "direction": "horizontal",
         # },
         {
-            "x": 180,
-            "y": 9,
+            "x": 170,
+            "y": -14,
             "platform_type": "block",
             "movement_type": "circular",
             "speed": 30,
@@ -343,6 +348,7 @@ level_config = {
     ],
     "trophy_locations": [
         (84, 0),
+        (133, -2),
     ],
     "trophy_image": "mushroom.png",
     "exit_location": (420, 13),

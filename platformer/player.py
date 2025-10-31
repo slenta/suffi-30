@@ -40,12 +40,12 @@ class Player(pg.sprite.Sprite):
         self.weapon_rect = None
         self.controls_reversed = False  # Flag for reversed controls powerup
         self.spike_damage_cooldown = 0  # Cooldown to prevent repeated spike damage
-        
+
         # Ladder mechanics
         self.on_ladder = False  # Flag to track if player is on a ladder
         self.ladder_grip = False  # Flag to track if player is gripping the ladder
         self.ladder_move_speed = 2  # Speed when moving on ladder
-        
+
         # Waterfall mechanics
         self.in_waterfall = False  # Flag to track if player is in waterfall
         self.waterfall_grip = False  # Flag to track if player is gripping waterfall
@@ -88,10 +88,24 @@ class Player(pg.sprite.Sprite):
         if keys[KEYBINDINGS.get("jump")]:
             self.jump()
 
+        # Check if standing on a moving platform BEFORE movement
+        # This needs to happen before any position changes
+        standing_on_platform = None
+        self.rect.y += 2  # Check slightly below
+        platform_hits = pg.sprite.spritecollide(
+            self, self.world.moving_platforms, False
+        )
+        self.rect.y -= 2  # Restore position
+        if platform_hits:
+            standing_on_platform = platform_hits[0]
+
         # Horizonfale Kollision
         self.rect.x += self.vx
         hits = pg.sprite.spritecollide(self, self.world.platforms, False)
         for hit in hits:
+            # Skip collision with platform we're standing on to avoid side collision issues
+            if hit == standing_on_platform:
+                continue
             if self.vx > 0:
                 self.rect.right = hit.rect.left
             elif self.vx < 0:
@@ -103,13 +117,20 @@ class Player(pg.sprite.Sprite):
         for hit in hits:
             if self.vy > 0:
                 self.rect.bottom = hit.rect.top
-                # If standing on a moving platform, move with it
-                if hit in self.world.moving_platforms:
-                    vel_x, vel_y = hit.get_velocity()
-                    self.rect.x += vel_x
+                standing_on_platform = (
+                    hit if hit in self.world.moving_platforms else standing_on_platform
+                )
             elif self.vy < 0:
                 self.rect.top = hit.rect.bottom
             self.vy = 0
+
+        # Apply moving platform velocity if standing on one
+        # This happens AFTER all collision resolution
+        if standing_on_platform and standing_on_platform in self.world.moving_platforms:
+            vel_x, vel_y = standing_on_platform.get_velocity()
+            self.rect.x += vel_x
+            # Don't apply vertical velocity if player is on top (would cause bouncing)
+            # But apply it for checking if still on platform
 
         # Check if player has fallen too far below the nearest platform
         self.check_fall_death()
@@ -357,7 +378,7 @@ class Player(pg.sprite.Sprite):
         if not self.is_knocked_back:  # Only allow normal updates if not incapacitated
             # Handle ladder mechanics
             keys = pg.key.get_pressed()
-            
+
             # Check for ladder collision
             self.on_ladder = False
             for ladder in self.world.ladders:
@@ -369,7 +390,7 @@ class Player(pg.sprite.Sprite):
                         self.vx = 0
                         self.vy = 0
                     break
-            
+
             # Handle ladder tops
             for ladder_top in self.world.ladder_tops:
                 # Check if player can climb up through this top
@@ -385,7 +406,7 @@ class Player(pg.sprite.Sprite):
                         self.world.platforms.add(ladder_top)
                 elif ladder_top in self.world.platforms:
                     self.world.platforms.remove(ladder_top)
-                
+
                 # Check for climbing down from top
                 if ladder_top.can_climb_down(self):
                     self.ladder_grip = True
@@ -393,7 +414,7 @@ class Player(pg.sprite.Sprite):
                     # Remove from platforms to allow climbing down
                     if ladder_top in self.world.platforms:
                         self.world.platforms.remove(ladder_top)
-            
+
             # Handle ladder movement
             if self.on_ladder and self.ladder_grip:
                 # Vertical movement (only when pressing up/down)
@@ -403,7 +424,7 @@ class Player(pg.sprite.Sprite):
                     self.vy = self.ladder_move_speed
                 else:
                     self.vy = 0  # Stay in place when not pressing up/down
-                
+
                 # Slower horizontal movement
                 if keys[pg.K_LEFT]:
                     self.vx = -self.ladder_move_speed
@@ -411,14 +432,14 @@ class Player(pg.sprite.Sprite):
                     self.vx = self.ladder_move_speed
                 else:
                     self.vx = 0
-                
+
                 # Can jump off
                 if keys[pg.K_SPACE]:
                     self.ladder_grip = False
                     self.jump()
             elif not self.on_ladder:
                 self.ladder_grip = False
-                
+
             # Handle waterfall mechanics (continuous downward flow)
             self.in_waterfall = False
             for waterfall in self.world.waterfalls:
@@ -428,7 +449,7 @@ class Player(pg.sprite.Sprite):
                         self.waterfall_grip = True
                         self.vx = 0
                     break
-            
+
             # Handle waterfall tops
             for waterfall_top in self.world.waterfall_tops:
                 if waterfall_top.is_platform_collision(self):
@@ -436,11 +457,11 @@ class Player(pg.sprite.Sprite):
                         self.world.platforms.add(waterfall_top)
                 elif waterfall_top in self.world.platforms:
                     self.world.platforms.remove(waterfall_top)
-                
+
                 if waterfall_top.can_flow_down(self):
                     self.waterfall_grip = True
                     self.in_waterfall = True
-            
+
             # Handle waterfall movement
             if self.in_waterfall and self.waterfall_grip:
                 # Always flow down unless climbing
@@ -448,7 +469,7 @@ class Player(pg.sprite.Sprite):
                     self.vy = -self.waterfall_move_speed
                 else:
                     self.vy = self.waterfall_move_speed  # Always flow down
-                
+
                 # Slower horizontal movement
                 if keys[pg.K_LEFT]:
                     self.vx = -self.waterfall_move_speed
@@ -456,14 +477,14 @@ class Player(pg.sprite.Sprite):
                     self.vx = self.waterfall_move_speed
                 else:
                     self.vx = 0
-                
+
                 # Can jump out
                 if keys[pg.K_SPACE]:
                     self.waterfall_grip = False
                     self.jump()
             elif not self.in_waterfall:
                 self.waterfall_grip = False
-            
+
             self.apply_gravity()
             self.check_edges()
             self.move()
