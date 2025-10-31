@@ -4,14 +4,15 @@ level_config = {
     "level_time": 300,  # Time limit in seconds (5 minutes)
     # Player spawn point (optional) - x and y coordinates in grid units
     # If not specified, defaults to PLAYER_START_X, PLAYER_START_Y from settings.py
-    # "player_spawn": (160, 1),  # Example: spawn at grid position (5, 1)
+    "player_spawn": (120, 1),  # Example: spawn at grid position (5, 1)
     # Extended grass locations - keeping original and adding more sections
     "grass_locations": [(i, 14) for i in range(-20, 16)]
     + [(i, 14) for i in range(25, 30)]
     + [(i, 14) for i in range(40, 59)]
     + [(i, 14) for i in range(78, 99)]
-    + [(i, 14) for i in range(113, 170)]
-    + [(i, 14) for i in range(180, 220)]
+    + [(i, 8) for i in range(112, 150)]
+    + [(i, -2) for i in range(150, 175)]
+    + [(i, -2) for i in range(180, 220)]
     + [(i, 14) for i in range(225, 280)]  # New section 3
     + [(i, 14) for i in range(285, 350)]  # New section 4
     + [(i, 14) for i in range(360, 420)],  # Final section
@@ -40,11 +41,20 @@ level_config = {
         (50, 7),
         (43, 3),
         (42, 3),
-        (49, -1),
-        (48, -1),
-        (47, -1),
+        (49, -2),
+        (48, -2),
+        (47, -2),
         (54, -5),
         (55, -5),
+        (48, -9),
+        (47, -9),
+        (46, -9),
+        (45, -9),
+        (44, -9),
+        (43, -9),
+        (42, -9),
+        (41, -9),
+        (40, -9),
         # 2. abgrund
         (60, 10),
         (61, 10),
@@ -120,10 +130,11 @@ level_config = {
         (108, 11),
         (108, 10),
         # Next gem
-        (145, 9),
-        (147, 8),
-        (149, 7),
-        (151, 6),
+        (136, -1),
+        (134, 0),
+        (132, 1),
+        (130, 2),
+        (128, 3),
         # New Jesus Block
         (175, 3),
         (175, 2),
@@ -190,7 +201,7 @@ level_config = {
     "gem_locations": [
         # Original gems
         (35, -10),
-        (151, 5),
+        (140, -10),
         (195, 13),
     ],
     "powerup_locations": [
@@ -215,30 +226,32 @@ level_config = {
         #     "can_summon_minions": False,  # ← Add this line to enable minion spawning
         # },
         {
-            "x": 140,
-            "y": 7,
+            "x": 130,
+            "y": 6,
             "image": "enemies/trance-totem.png",
-            "speed": 1,
-            "patrol_range": 20,
+            "speed": 2,
+            "patrol_range": 100,
             "size_multiplier": 4,
             "health": 15,
             "damage": 5,
-            "shoot_range": 0,
+            "shoot_range": 5,
             "chase_range": 10,
             "melee_damage": 2,
+            "can_throw_explosives": False,
         },
         {
-            "x": 165,
-            "y": 10,
+            "x": 170,
+            "y": -5,
             "image": "enemies/trance-jesus.png",
             "speed": 3,
-            "patrol_range": 150,
+            "patrol_range": 100,
             "size_multiplier": 4,
             "health": 20,
-            "damage": 15,
+            "damage": 5,
             "shoot_range": 30,
             "chase_range": 20,
-            "melee_damage": 10,
+            "melee_damage": 4,
+            "can_throw_explosives": False,
         },
         {
             "x": 195,
@@ -274,13 +287,22 @@ level_config = {
     # Moving platform locations - new feature!
     "moving_platform_locations": [
         {
-            "x": 170,  # Starting x position (grid units)
-            "y": 4,  # Starting y position (grid units)
+            "x": 138,  # Starting x position (grid units)
+            "y": -10,  # Starting y position (grid units)
             "platform_type": "block",  # "grass" or "block"
             "movement_type": "linear",  # "linear" or "circular"
             "speed": 1,  # Movement speed (pixels per frame)
-            "distance": 7,  # Distance to travel (grid units for linear, radius for circular)
+            "distance": 8,  # Distance to travel (grid units for linear, radius for circular)
             "direction": "vertical",  # "horizontal" or "vertical" (for linear only)
+        },
+        {
+            "x": 142,  # Starting x position (grid units)
+            "y": -7,  # Starting y position (grid units)
+            "platform_type": "block",  # "grass" or "block"
+            "movement_type": "linear",  # "linear" or "circular"
+            "speed": 1,  # Movement speed (pixels per frame)
+            "distance": 8,  # Distance to travel (grid units for linear, radius for circular)
+            "direction": "horizontal",  # "horizontal" or "vertical" (for linear only)
         },
         # {
         #     "x": 60,
