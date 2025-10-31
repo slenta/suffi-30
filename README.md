@@ -99,7 +99,6 @@ For automatic deployments on push:
 3. Vercel will auto-deploy on every push to main
 
 # ToDo-Liste
-- gameworld etwas höher gestalten
 - modify player image, strength, speed to level
 - add weapons, which can be used when collected (Spraydose, Milchflasche etc.) -> was machen die?
 - add End to Level --> Trophy collection, when coming to end with all trophys end level
@@ -122,3 +121,10 @@ For automatic deployments on push:
 - durchn tisch treten als pipes mit animation
 - launcher screen mit level auswahl nicht nur mit pfeiltasten
 - graffiti malen
+
+
+ideas trancefloor:
+- dj enemy (in dj booth)
+- sub level at the bar
+- background
+- the final enemy is yourself

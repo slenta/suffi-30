@@ -75,6 +75,13 @@ class GameWorld:
             None  # Store parent level's time when entering sub-level
         )
 
+        # Encounter message system
+        self.encounter_message = None  # Current message to display
+        self.encounter_message_timer = 0  # Timer for how long to display message
+        self.encounter_message_duration = (
+            180  # Duration in frames (3 seconds at 60 FPS)
+        )
+
     def load_level(
         self, level_name, player_spawn_override=None, preserve_player_state=None
     ):
@@ -189,7 +196,7 @@ class GameWorld:
             self.items.add(g)
             self.all_sprites.add(g)
 
-                # Add ladders with tops
+            # Add ladders with tops
         if "ladder_locations" in self.level_config:
             for x, y in self.level_config["ladder_locations"][:-1]:  # All but last
                 ladder = Ladder(x, y)
@@ -201,7 +208,7 @@ class GameWorld:
                 ladder_top = LadderTop(x, y)
                 self.all_sprites.add(ladder_top)
                 self.ladder_tops.add(ladder_top)
-                
+
         # Add waterfalls
         if "waterfall_locations" in self.level_config:
             for x, y in self.level_config["waterfall_locations"]:
@@ -267,6 +274,7 @@ class GameWorld:
                 enemy_data.get(
                     "can_summon_minions", False
                 ),  # Default to False - must be explicitly enabled
+                enemy_data.get("encounter_message", None),  # Optional encounter message
             )
             self.enemies.add(enemy)
             self.all_sprites.add(enemy)
@@ -717,6 +725,9 @@ class GameWorld:
         draw_trophies(self.screen, self.player, self.total_trophies)
         draw_health_bar(self.screen, self.player, 200, 20, self.player.max_health)
 
+        # Draw encounter message (if active)
+        self.draw_encounter_message()
+
         # Draw timer (top right corner)
         if self.time_remaining is not None:
             self.draw_timer()
@@ -774,56 +785,75 @@ class GameWorld:
             # Fall back to solid color background
             # Check for background image first
             if "background_image" in self.level_config:
-                if not hasattr(self, 'background_surface'):
+                if not hasattr(self, "background_surface"):
                     print(f"IMAGEPATH is: {IMAGEPATH}")
                     print(f"Current working directory: {os.getcwd()}")
-                    print(f"Looking for background image: {self.level_config['background_image']}")
-                    
+                    print(
+                        f"Looking for background image: {self.level_config['background_image']}"
+                    )
+
                     # Try both with and without the backgrounds folder
                     bg_paths = [
-                        os.path.join(IMAGEPATH, "backgrounds", self.level_config["background_image"]),
+                        os.path.join(
+                            IMAGEPATH,
+                            "backgrounds",
+                            self.level_config["background_image"],
+                        ),
                         os.path.join(IMAGEPATH, self.level_config["background_image"]),
-                        os.path.join("platformer", "assets", "backgrounds", self.level_config["background_image"])
+                        os.path.join(
+                            "platformer",
+                            "assets",
+                            "backgrounds",
+                            self.level_config["background_image"],
+                        ),
                     ]
-                    
+
                     for bg_path in bg_paths:
                         print(f"\nTrying path: {bg_path}")
                         print(f"File exists: {os.path.exists(bg_path)}")
                         try:
                             # Load the image
                             original_bg = pg.image.load(bg_path).convert()
-                            print(f"Successfully loaded background image from: {bg_path}")
-                            
+                            print(
+                                f"Successfully loaded background image from: {bg_path}"
+                            )
+
                             # Calculate scaling to maintain aspect ratio
                             img_width, img_height = original_bg.get_size()
                             width_ratio = WIDTH / img_width
                             height_ratio = HEIGHT / img_height
-                            
+
                             # Use the smaller ratio to fit screen while maintaining aspect ratio
                             scale_ratio = max(width_ratio, height_ratio)
                             new_width = int(img_width * scale_ratio)
                             new_height = int(img_height * scale_ratio)
-                            
+
                             # Scale image maintaining aspect ratio
-                            self.background_surface = pg.transform.scale(original_bg, (new_width, new_height))
-                            
+                            self.background_surface = pg.transform.scale(
+                                original_bg, (new_width, new_height)
+                            )
+
                             # Create a surface for the final background
                             final_surface = pg.Surface((WIDTH, HEIGHT))
-                            final_surface.fill((0, 0, 0))  # Fill with black for letterboxing
-                            
+                            final_surface.fill(
+                                (0, 0, 0)
+                            )  # Fill with black for letterboxing
+
                             # Calculate position to center the image
                             x_offset = (WIDTH - new_width) // 2
                             y_offset = (HEIGHT - new_height) // 2
-                            
+
                             # Blit the scaled image centered
-                            final_surface.blit(self.background_surface, (x_offset, y_offset))
+                            final_surface.blit(
+                                self.background_surface, (x_offset, y_offset)
+                            )
                             self.background_surface = final_surface
                             break
                         except Exception as e:
                             print(f"Error loading from {bg_path}: {str(e)}")
                             self.background_surface = None
                             continue
-                
+
                 if self.background_surface:
                     # Apply parallax scrolling - background moves slower than foreground
                     bg_x = int(-self.camera_offset_x * 0.5) % WIDTH
@@ -832,7 +862,9 @@ class GameWorld:
                     self.screen.blit(self.background_surface, (bg_x - WIDTH, 0))
                 else:
                     # Fallback to color if image loading failed
-                    bg_color = self.level_config.get("background_color", (135, 206, 235))
+                    bg_color = self.level_config.get(
+                        "background_color", (135, 206, 235)
+                    )
                     self.screen.fill(bg_color)
             else:
                 # Use level-specific background color if defined, otherwise use default
@@ -873,6 +905,36 @@ class GameWorld:
 
         # Draw the timer
         self.screen.blit(timer_surface, timer_rect)
+
+    def show_encounter_message(self, message):
+        """Display an encounter message when player first sees an enemy."""
+        self.encounter_message = message
+        self.encounter_message_timer = self.encounter_message_duration
+
+    def draw_encounter_message(self):
+        """Draw the encounter message in yellow at the center of the screen."""
+        if self.encounter_message_timer <= 0 or not self.encounter_message:
+            return
+
+        # Render the message in yellow
+        font = pg.font.Font(None, 36)
+        message_surface = font.render(self.encounter_message, True, (255, 255, 0))
+
+        # Position at center of screen
+        message_rect = message_surface.get_rect()
+        message_rect.center = (WIDTH // 2, HEIGHT // 2)
+
+        # Draw semi-transparent black background for better readability
+        bg_rect = message_rect.inflate(40, 20)
+        bg_surface = pg.Surface((bg_rect.width, bg_rect.height), pg.SRCALPHA)
+        bg_surface.fill((0, 0, 0, 180))
+        self.screen.blit(bg_surface, bg_rect.topleft)
+
+        # Draw the message
+        self.screen.blit(message_surface, message_rect)
+
+        # Decrease the timer
+        self.encounter_message_timer -= 1
 
     pass
 

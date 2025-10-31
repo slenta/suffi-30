@@ -2,9 +2,8 @@ level_config = {
     "x_bounds": [-300, 9000],  # Extended gameworld width (doubled)
     "y_bounds": [-1200, 1200],  # Increased gameworld height for more vertical space
     "level_time": 300,  # Time limit in seconds (5 minutes)
-    # Player spawn point (optional) - x and y coordinates in grid units
-    # If not specified, defaults to PLAYER_START_X, PLAYER_START_Y from settings.py
-    "player_spawn": (285, 12),  # Example: spawn at grid position (5, 1)
+    # "player_spawn": (285, 12),
+    "player_spawn": (450, 0),
     # Extended grass locations - keeping original and adding more sections
     "grass_locations": [(i, 14) for i in range(-20, 16)]
     + [(i, 14) for i in range(25, 30)]
@@ -21,7 +20,8 @@ level_config = {
     + [(270, i) for i in range(14, 20)]
     + [(i, 14) for i in range(270, 281)]
     + [(i, 14) for i in range(282, 290)]
-    + [(i, -10) for i in range(290, 420)],  # Final section
+    + [(i, -10) for i in range(290, 420)]
+    + [(i, 10) for i in range(420, 600)],
     # Extended block locations - original plus new challenging platforming sections
     "block_locations": [
         # pyramid structure
@@ -130,6 +130,7 @@ level_config = {
             "chase_range": 10,
             "melee_damage": 2,
             "can_throw_explosives": False,
+            "encounter_message": "Watch out for the Totem!",
         },
         {
             "x": 170,
@@ -144,6 +145,7 @@ level_config = {
             "chase_range": 20,
             "melee_damage": 4,
             "can_throw_explosives": False,
+            "encounter_message": "Trance Jesus has entered the chat!",
         },
         {
             "x": 215,
@@ -157,6 +159,7 @@ level_config = {
             "shoot_range": 30,
             "chase_range": 5,
             "melee_damage": 2,
+            "encounter_message": "Peace, Love & Bullets!",
         },
         {
             "x": 255,
@@ -171,6 +174,36 @@ level_config = {
             "chase_range": 100,
             "melee_damage": 15,
             "can_throw_explosives": False,
+            "encounter_message": "BOSS FIGHT: The OKF Guardian!",
+        },
+        {
+            "x": 490,
+            "y": 8,
+            "image": "enemies/trance-okf.png",
+            "speed": 0,
+            "patrol_range": 0,
+            "size_multiplier": 4,
+            "health": 40,
+            "damage": 1,
+            "shoot_range": 200,
+            "chase_range": 0,
+            "melee_damage": 15,
+            "can_throw_explosives": False,
+        },
+        {
+            "x": 550,
+            "y": 8,
+            "image": "enemies/trance-okf.png",
+            "speed": 2,
+            "patrol_range": 300,
+            "size_multiplier": 4,
+            "health": 40,
+            "damage": 5,
+            "shoot_range": 0,
+            "chase_range": 100,
+            "melee_damage": 15,
+            "can_throw_explosives": False,
+            "encounter_message": "The final enemy on the trancefloor – it is yourself!",
         },
     ],
     # Extended trophy locations - more collectibles
@@ -303,7 +336,7 @@ level_config = {
         (256, -20),
     ],
     "trophy_image": "mushroom.png",
-    "exit_location": (420, 13),
+    "exit_location": (590, 8),
     "background_music": "assets/music/default.ogg",
     # "background_image": "assets/backgrounds/level2.png",
     "background_scroll_speed": 0.2,

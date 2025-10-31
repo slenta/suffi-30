@@ -25,6 +25,7 @@ class Enemy(pg.sprite.Sprite):
         can_throw_explosives=True,  # Default to True for regular enemies
         is_minion=False,  # Default to False for regular enemies
         can_summon_minions=False,  # Default to False - must be explicitly enabled in level config
+        encounter_message=None,  # Optional message to display when first encountered
     ):
         super().__init__()
         # Store the image path
@@ -60,6 +61,10 @@ class Enemy(pg.sprite.Sprite):
         self.is_minion = is_minion  # Store minion status
         self.can_summon_minions = can_summon_minions  # Store minion summoning ability
 
+        # Encounter message attributes
+        self.encounter_message = encounter_message  # Message to display
+        self.has_been_encountered = False  # Track if player has seen this enemy
+
         # Add gravity-related attributes
         self.vy = 0  # Vertical velocity
         self.on_ground = False  # Flag to check if the enemy is on the ground
@@ -77,6 +82,14 @@ class Enemy(pg.sprite.Sprite):
         if self.is_dying:
             self.update_death_animation()
             return
+
+        # Check if enemy is visible to player for the first time
+        if not self.has_been_encountered and self.encounter_message:
+            if self.is_visible_to_player():
+                self.has_been_encountered = True
+                # Trigger the encounter message in the world
+                if self.world:
+                    self.world.show_encounter_message(self.encounter_message)
 
         # Apply gravity
         self.vy += GRAVITY
@@ -324,6 +337,23 @@ class Enemy(pg.sprite.Sprite):
         # Check if there is a platform below the next step
         return not any(
             temp_rect.colliderect(platform.rect) for platform in self.world.platforms
+        )
+
+    def is_visible_to_player(self):
+        """Check if the enemy is currently visible on the screen (in player's sight)"""
+        if not self.world:
+            return False
+
+        # Calculate the enemy's position relative to the camera
+        screen_x = self.rect.x - self.world.camera_offset_x
+        screen_y = self.rect.y - self.world.camera_offset_y
+
+        # Check if enemy is within the visible screen area
+        # Adding some margin to detect enemies just entering the screen
+        margin = 50
+        return (
+            -margin <= screen_x <= WIDTH + margin
+            and -margin <= screen_y <= HEIGHT + margin
         )
 
     def start_death_animation(self):
