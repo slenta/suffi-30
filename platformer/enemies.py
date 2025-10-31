@@ -152,10 +152,18 @@ class Enemy(pg.sprite.Sprite):
         for hit in hits:
             # Check if this is a vertical wall collision (not the platform we're standing on)
             # If enemy moved right and hit something on the right side
-            if move_right and self.rect.right > hit.rect.left and self.rect.left < hit.rect.left:
+            if (
+                move_right
+                and self.rect.right > hit.rect.left
+                and self.rect.left < hit.rect.left
+            ):
                 self.rect.right = hit.rect.left
             # If enemy moved left and hit something on the left side
-            elif move_left and self.rect.left < hit.rect.right and self.rect.right > hit.rect.right:
+            elif (
+                move_left
+                and self.rect.left < hit.rect.right
+                and self.rect.right > hit.rect.right
+            ):
                 self.rect.left = hit.rect.right
 
     def shoot_at_player(self, player):
