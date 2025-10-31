@@ -10,15 +10,14 @@ import math
 ## Class Player
 class Player(pg.sprite.Sprite):
 
-    def __init__(self, _x, _y, world, start_gems=0, trophies_collected=0, health=100):
+    def __init__(self, _x, _y, world, start_gems=0, trophies_collected=0, health=80):
         super().__init__()
-        self.img = []
-        for i in range(2):
-            player_image = pg.image.load(
-                os.path.join(IMAGEPATH, "suffi_0" + str(i) + ".png")
-            ).convert_alpha()
-            self.img.append(player_image)
-        self.image = self.img[0]
+        # Load and scale the player image to fit within one grid cell
+        original_image = pg.image.load(
+            os.path.join(IMAGEPATH, "player/suffi.png")
+        ).convert_alpha()
+        # Scale to GRIDSIZE (18x18 pixels for size of 1)
+        self.image = pg.transform.scale(original_image, (2 * GRIDSIZE, 2 * GRIDSIZE))
         self.rect = self.image.get_rect()
         self.rect.x = _x * GRIDSIZE
         self.rect.bottom = _y * GRIDSIZE
