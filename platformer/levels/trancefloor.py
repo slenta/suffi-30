@@ -4,7 +4,7 @@ level_config = {
     "level_time": 300,  # Time limit in seconds (5 minutes)
     # Player spawn point (optional) - x and y coordinates in grid units
     # If not specified, defaults to PLAYER_START_X, PLAYER_START_Y from settings.py
-    "player_spawn": (120, 1),  # Example: spawn at grid position (5, 1)
+    "player_spawn": (238, 12),  # Example: spawn at grid position (5, 1)
     # Extended grass locations - keeping original and adding more sections
     "grass_locations": [(i, 14) for i in range(-20, 16)]
     + [(i, 14) for i in range(25, 30)]
@@ -12,9 +12,15 @@ level_config = {
     + [(i, 14) for i in range(78, 99)]
     + [(i, 8) for i in range(112, 150)]
     + [(i, -2) for i in range(150, 175)]
-    + [(i, -2) for i in range(180, 220)]
-    + [(i, 14) for i in range(225, 280)]  # New section 3
-    + [(i, 14) for i in range(285, 350)]  # New section 4
+    + [(i, -2) for i in range(180, 190)]
+    + [(i, -2) for i in range(193, 203)]
+    + [(i, -2) for i in range(206, 218)]
+    + [(i, 14) for i in range(225, 240)]
+    + [(240, i) for i in range(14, 22)]
+    + [(i, 22) for i in range(240, 285)]
+    + [(270, i) for i in range(14, 20)]
+    + [(i, 14) for i in range(270, 281)]
+    + [(i, 14) for i in range(282, 350)]
     + [(i, 14) for i in range(360, 420)],  # Final section
     # Extended block locations - original plus new challenging platforming sections
     "block_locations": [
@@ -140,43 +146,24 @@ level_config = {
         (160, -14),
         (161, -14),
         # Hippie Enemy
-        (190, -9),
-        (191, -9),
-        (192, -9),
-        (193, -9),
-        (194, -9),
-        (195, -9),
-        (196, -9),
-        (197, -9),
-        (198, -9),
-        (199, -9),
-        (200, -9),
-        # Section 6 - Complex structure
-        (250, 13),
-        (251, 13),
-        (252, 13),
-        (250, 10),
-        (252, 10),
-        (251, 7),
-        (253, 7),
-        (255, 7),
-        (254, 4),
-        (256, 4),
-        # Section 7 - Moving platform bases
-        (270, 12),
-        (272, 10),
-        (274, 8),
-        (276, 6),
-        # Section 8 - Pyramid structure
-        (320, 13),
-        (321, 13),
-        (322, 13),
-        (323, 13),
-        (324, 13),
-        (321, 10),
-        (322, 10),
-        (323, 10),
-        (322, 7),
+        (210, -6),
+        (211, -6),
+        (212, -6),
+        (213, -6),
+        (214, -6),
+        (215, -6),
+        (216, -6),
+        (217, -6),
+        (218, -6),
+        (219, -6),
+        (220, -6),
+        # Section Macker
+        # (253, 8),
+        # (254, 8),
+        # (265, 15),
+        # (266, 15),
+        # (250, 13),
+        # (251, 13),
         # Section 9 - Final challenge platforms
         (380, 11),
         (382, 9),
@@ -199,9 +186,11 @@ level_config = {
         (35, -10),
         (140, -10),
         (195, 13),
+        (280, 20),
     ],
     "powerup_locations": [
         {"x": 50, "y": 5, "type": 3},
+        {"x": 182, "y": -7, "type": 3},
         {"x": 83, "y": 3, "type": 2},
         {"x": 108, "y": 5, "type": 0},
     ],
@@ -250,8 +239,8 @@ level_config = {
             "can_throw_explosives": False,
         },
         {
-            "x": 195,
-            "y": -8,
+            "x": 215,
+            "y": -12,
             "image": "enemies/trance-hippie.png",
             "speed": 1,
             "patrol_range": 30,
@@ -263,17 +252,18 @@ level_config = {
             "melee_damage": 2,
         },
         {
-            "x": 240,
-            "y": 10,
+            "x": 255,
+            "y": 20,
             "image": "enemies/trance-okf.png",
-            "speed": 1,
-            "patrol_range": 30,
+            "speed": 2,
+            "patrol_range": 300,
             "size_multiplier": 4,
-            "health": 20,
-            "damage": 15,
-            "shoot_range": 30,
-            "chase_range": 10,
-            "melee_damage": 10,
+            "health": 40,
+            "damage": 5,
+            "shoot_range": 0,
+            "chase_range": 100,
+            "melee_damage": 15,
+            "can_throw_explosives": False,
         },
     ],
     # Extended trophy locations - more collectibles
@@ -309,24 +299,6 @@ level_config = {
             "distance": 8,  # Distance to travel (grid units for linear, radius for circular)
             "direction": "vertical",  # "horizontal" or "vertical" (for linear only)
         },
-        # {
-        #     "x": 60,
-        #     "y": 8,
-        #     "platform_type": "grass",
-        #     "movement_type": "linear",
-        #     "speed": 2,
-        #     "distance": 8,
-        #     "direction": "vertical",
-        # },
-        # {
-        #     "x": 100,
-        #     "y": 9,
-        #     "platform_type": "block",
-        #     "movement_type": "linear",
-        #     "speed": 1.5,
-        #     "distance": 15,
-        #     "direction": "horizontal",
-        # },
         {
             "x": 170,
             "y": -14,
@@ -336,19 +308,92 @@ level_config = {
             "distance": 5,  # This acts as radius for circular movement
             "direction": "horizontal",  # Not used for circular
         },
-        # {
-        #     "x": 365,
-        #     "y": 8,
-        #     "platform_type": "block",
-        #     "movement_type": "linear",
-        #     "speed": 2,
-        #     "distance": 12,
-        #     "direction": "horizontal"
-        # },
+        {
+            "x": 258,  # Starting x position (grid units)
+            "y": 15,  # Starting y position (grid units)
+            "platform_type": "block",  # "grass" or "block"
+            "movement_type": "linear",  # "linear" or "circular"
+            "speed": 1,  # Movement speed (pixels per frame)
+            "distance": 3,  # Distance to travel (grid units for linear, radius for circular)
+            "direction": "horizontal",  # "horizontal" or "vertical" (for linear only)
+        },
+        {
+            "x": 254,  # Starting x position (grid units)
+            "y": 17,  # Starting y position (grid units)
+            "platform_type": "block",  # "grass" or "block"
+            "movement_type": "linear",  # "linear" or "circular"
+            "speed": 1,  # Movement speed (pixels per frame)
+            "distance": 3,  # Distance to travel (grid units for linear, radius for circular)
+            "direction": "horizontal",  # "horizontal" or "vertical" (for linear only)
+        },
+        {
+            "x": 247,  # Starting x position (grid units)
+            "y": 14,  # Starting y position (grid units)
+            "platform_type": "block",  # "grass" or "block"
+            "movement_type": "linear",  # "linear" or "circular"
+            "speed": 1,  # Movement speed (pixels per frame)
+            "distance": 5,  # Distance to travel (grid units for linear, radius for circular)
+            "direction": "horizontal",  # "horizontal" or "vertical" (for linear only)
+        },
+        {
+            "x": 242,  # Starting x position (grid units)
+            "y": 16,  # Starting y position (grid units)
+            "platform_type": "block",  # "grass" or "block"
+            "movement_type": "linear",  # "linear" or "circular"
+            "speed": 1,  # Movement speed (pixels per frame)
+            "distance": 4,  # Distance to travel (grid units for linear, radius for circular)
+            "direction": "horizontal",  # "horizontal" or "vertical" (for linear only)
+        },
+        {
+            "x": 281,  # Starting x position (grid units)
+            "y": 10,  # Starting y position (grid units)
+            "platform_type": "block",  # "grass" or "block"
+            "movement_type": "linear",  # "linear" or "circular"
+            "speed": 2,  # Movement speed (pixels per frame)
+            "distance": 10,  # Distance to travel (grid units for linear, radius for circular)
+            "direction": "vertical",  # "horizontal" or "vertical" (for linear only)
+        },
+        {
+            "x": 263,  # Starting x position (grid units)
+            "y": -12,  # Starting y position (grid units)
+            "platform_type": "block",  # "grass" or "block"
+            "movement_type": "linear",  # "linear" or "circular"
+            "speed": 1,  # Movement speed (pixels per frame)
+            "distance": 29,  # Distance to travel (grid units for linear, radius for circular)
+            "direction": "vertical",  # "horizontal" or "vertical" (for linear only)
+        },
+        {
+            "x": 258,  # Starting x position (grid units)
+            "y": -9,  # Starting y position (grid units)
+            "platform_type": "block",  # "grass" or "block"
+            "movement_type": "linear",  # "linear" or "circular"
+            "speed": 1,  # Movement speed (pixels per frame)
+            "distance": 5,  # Distance to travel (grid units for linear, radius for circular)
+            "direction": "horizontal",  # "horizontal" or "vertical" (for linear only)
+        },
+        {
+            "x": 257,  # Starting x position (grid units)
+            "y": -9,  # Starting y position (grid units)
+            "platform_type": "block",  # "grass" or "block"
+            "movement_type": "linear",  # "linear" or "circular"
+            "speed": 1,  # Movement speed (pixels per frame)
+            "distance": 5,  # Distance to travel (grid units for linear, radius for circular)
+            "direction": "horizontal",  # "horizontal" or "vertical" (for linear only)
+        },
+        {
+            "x": 256,  # Starting x position (grid units)
+            "y": -19,  # Starting y position (grid units)
+            "platform_type": "block",  # "grass" or "block"
+            "movement_type": "linear",  # "linear" or "circular"
+            "speed": 1,  # Movement speed (pixels per frame)
+            "distance": 10,  # Distance to travel (grid units for linear, radius for circular)
+            "direction": "vertical",  # "horizontal" or "vertical" (for linear only)
+        },
     ],
     "trophy_locations": [
         (84, 0),
         (133, -2),
+        (256, -20),
     ],
     "trophy_image": "mushroom.png",
     "exit_location": (420, 13),

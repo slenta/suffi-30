@@ -147,16 +147,16 @@ class Enemy(pg.sprite.Sprite):
             self.rect.x -= self.speed
             self.direction = -1
 
-        # Check for horizontal collisions with platforms
+        # Check for horizontal collisions with platforms (prevents climbing vertical walls)
         hits = pg.sprite.spritecollide(self, self.world.platforms, False)
         for hit in hits:
-            if self.rect.right > hit.rect.left and self.rect.left < hit.rect.right:
-                if player.rect.centerx > self.rect.centerx:  # Moving right
-                    self.rect.right = hit.rect.left
-                elif player.rect.centerx < self.rect.centerx:  # Moving left
-                    self.rect.left = hit.rect.right
-
-        # Ignore vertical movement
+            # Check if this is a vertical wall collision (not the platform we're standing on)
+            # If enemy moved right and hit something on the right side
+            if move_right and self.rect.right > hit.rect.left and self.rect.left < hit.rect.left:
+                self.rect.right = hit.rect.left
+            # If enemy moved left and hit something on the left side
+            elif move_left and self.rect.left < hit.rect.right and self.rect.right > hit.rect.right:
+                self.rect.left = hit.rect.right
 
     def shoot_at_player(self, player):
         if self.shoot_timer == 0:  # Only shoot if the timer is 0
