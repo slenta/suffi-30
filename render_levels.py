@@ -14,7 +14,7 @@ Usage:
 import os
 import sys
 import importlib.util
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 import glob
 import argparse
 
@@ -235,16 +235,50 @@ def world_to_image_coords(x, y, min_x, min_y):
 
 
 def draw_grid(draw, min_x, min_y, width, height):
-    """Draw a light grid to help visualize tile boundaries."""
+    """Draw a light grid to help visualize tile boundaries with coordinate labels."""
     grid_color = (200, 200, 200, 100)  # Light gray, semi-transparent
+    coord_color = (50, 50, 50)  # Dark gray for text
 
-    # Vertical lines
-    for x in range(0, width, GRIDSIZE):
+    # Try to load a larger font, fallback to default if not available
+    try:
+        font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 20)
+    except:
+        try:
+            font = ImageFont.truetype("Arial.ttf", 20)
+        except:
+            font = ImageFont.load_default()
+
+    # Calculate the starting grid coordinates
+    start_x_coord = min_x // GRIDSIZE
+    start_y_coord = min_y // GRIDSIZE
+
+    # Vertical lines with x-coordinate labels
+    for i, x in enumerate(range(0, width, GRIDSIZE)):
         draw.line([(x, 0), (x, height)], fill=grid_color, width=1)
+        # Draw x-coordinate label every 5 tiles to avoid clutter
+        if i % 5 == 0:
+            coord_label = str(start_x_coord + i)
+            # Draw text at top and bottom of image
+            draw.text((x + 2, 2), coord_label, fill=coord_color, font=font)
+            if height > 30:
+                draw.text(
+                    (x + 2, height - 25), coord_label, fill=coord_color, font=font
+                )
 
-    # Horizontal lines
-    for y in range(0, height, GRIDSIZE):
+    # Horizontal lines with y-coordinate labels
+    for i, y in enumerate(range(0, height, GRIDSIZE)):
         draw.line([(0, y), (width, y)], fill=grid_color, width=1)
+        # Draw y-coordinate label every 5 tiles to avoid clutter
+        if i % 5 == 0:
+            coord_label = str(start_y_coord + i)
+            # Draw text at left and right of image
+            draw.text((2, y + 2), coord_label, fill=coord_color, font=font)
+            if width > 30:
+                draw.text((width - 30, y + 2), coord_label, fill=coord_color, font=font)
+
+            # Draw y-axis coordinate labels every 50 x pixels
+            for x in range(50, width, 500):
+                draw.text((x + 2, y + 2), coord_label, fill=coord_color, font=font)
 
 
 def draw_platforms(draw, image, locations, min_x, min_y, sprite_name, size=GRIDSIZE):

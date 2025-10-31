@@ -1,6 +1,6 @@
 level_config = {
     "x_bounds": [-300, 9000],  # Extended gameworld width (doubled)
-    "y_bounds": [-400, 400],  # Increased gameworld height for more vertical space
+    "y_bounds": [-1200, 1200],  # Increased gameworld height for more vertical space
     "level_time": 300,  # Time limit in seconds (5 minutes)
     # Player spawn point (optional) - x and y coordinates in grid units
     # If not specified, defaults to PLAYER_START_X, PLAYER_START_Y from settings.py
@@ -39,6 +39,12 @@ level_config = {
         (49, 7),
         (50, 7),
         (43, 3),
+        (42, 3),
+        (49, -1),
+        (48, -1),
+        (47, -1),
+        (54, -5),
+        (55, -5),
         # 2. abgrund
         (60, 10),
         (61, 10),
@@ -183,34 +189,31 @@ level_config = {
     # Extended gem locations - more rewards throughout the longer level
     "gem_locations": [
         # Original gems
-        (12, 12),
-        (13, 12),
-        (14, 12),
-        (35, 0),
+        (35, -10),
         (151, 5),
         (195, 13),
     ],
     "powerup_locations": [
+        {"x": 50, "y": 5, "type": 3},
         {"x": 83, "y": 3, "type": 2},
         {"x": 108, "y": 5, "type": 0},
-        {"x": 10, "y": 10, "type": 3},
     ],
     "enemy_locations": [
-        {
-            "x": 40,
-            "y": 7,
-            "image": "enemies/trance-totem.png",
-            "speed": 1,
-            "patrol_range": 20,
-            "size_multiplier": 4,
-            "health": 15,
-            "damage": 5,
-            "shoot_range": 0,
-            "chase_range": 10,
-            "melee_damage": 2,
-            "can_throw_explosives": False,
-            "can_summon_minions": False,  # ← Add this line to enable minion spawning
-        },
+        # {
+        #     "x": 40,
+        #     "y": 7,
+        #     "image": "enemies/trance-totem.png",
+        #     "speed": 1,
+        #     "patrol_range": 20,
+        #     "size_multiplier": 4,
+        #     "health": 15,
+        #     "damage": 5,
+        #     "shoot_range": 0,
+        #     "chase_range": 10,
+        #     "melee_damage": 2,
+        #     "can_throw_explosives": False,
+        #     "can_summon_minions": False,  # ← Add this line to enable minion spawning
+        # },
         {
             "x": 140,
             "y": 7,
