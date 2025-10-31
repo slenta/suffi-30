@@ -4,7 +4,7 @@ level_config = {
     "level_time": 300,  # Time limit in seconds (5 minutes)
     # Player spawn point (optional) - x and y coordinates in grid units
     # If not specified, defaults to PLAYER_START_X, PLAYER_START_Y from settings.py
-    "player_spawn": (238, 12),  # Example: spawn at grid position (5, 1)
+    "player_spawn": (285, 12),  # Example: spawn at grid position (5, 1)
     # Extended grass locations - keeping original and adding more sections
     "grass_locations": [(i, 14) for i in range(-20, 16)]
     + [(i, 14) for i in range(25, 30)]
@@ -20,10 +20,11 @@ level_config = {
     + [(i, 22) for i in range(240, 285)]
     + [(270, i) for i in range(14, 20)]
     + [(i, 14) for i in range(270, 281)]
-    + [(i, 14) for i in range(282, 350)]
-    + [(i, 14) for i in range(360, 420)],  # Final section
+    + [(i, 14) for i in range(282, 290)]
+    + [(i, -10) for i in range(290, 420)],  # Final section
     # Extended block locations - original plus new challenging platforming sections
     "block_locations": [
+        # pyramid structure
         (15, 13),
         (16, 12),
         (17, 11),
@@ -35,37 +36,19 @@ level_config = {
         (23, 11),
         (24, 12),
         (25, 13),
-        # pyramid structure
         # abgrund
-        (33, 10),
-        (34, 10),
-        (35, 10),
+        *[(i, 10) for i in range(33, 36)],
         # first gem
-        (45, 10),
-        (46, 10),
-        (49, 7),
-        (50, 7),
+        *[(i, 10) for i in range(45, 47)],
+        *[(i, 7) for i in range(49, 51)],
         (43, 3),
         (42, 3),
-        (49, -2),
-        (48, -2),
-        (47, -2),
-        (54, -5),
-        (55, -5),
-        (48, -9),
-        (47, -9),
-        (46, -9),
-        (45, -9),
-        (44, -9),
-        (43, -9),
-        (42, -9),
-        (41, -9),
-        (40, -9),
+        *[(i, -2) for i in range(47, 50)],
+        *[(i, -5) for i in range(54, 56)],
+        *[(i, -9) for i in range(40, 49)],
         # 2. abgrund
-        (60, 10),
-        (61, 10),
-        (64, 6),
-        (65, 6),
+        *[(i, 10) for i in range(60, 62)],
+        *[(i, 6) for i in range(64, 66)],
         (68, 2),
         (69, 3),
         (70, 4),
@@ -75,66 +58,22 @@ level_config = {
         (74, 8),
         (75, 9),
         # first trophy
-        (77, 1),
-        (78, 1),
-        (79, 1),
-        (80, 1),
-        (81, 1),
-        (82, 1),
-        (83, 1),
-        (84, 1),
+        *[(i, 1) for i in range(77, 85)],
         # höhle für powerup type 2
-        (82, 11),
-        (83, 11),
-        (84, 11),
-        (85, 11),
-        (86, 11),
+        *[(i, 11) for i in range(82, 87)],
         # (89, 12),
         # (89, 13),
-        (89, 11),
-        (89, 10),
-        (89, 9),
-        (89, 8),
-        (88, 8),
-        (87, 8),
-        (86, 8),
-        (85, 8),
-        (85, 1),
-        (86, 1),
-        (87, 1),
-        (88, 1),
-        (89, 1),
-        (90, 1),
-        (91, 1),
-        (92, 1),
-        (93, 1),
-        (94, 1),
-        (95, 1),
+        *[(89, i) for i in range(8, 12)],
+        *[(i, 8) for i in range(85, 89)],
+        *[(i, 1) for i in range(85, 96)],
         # (84, 8),
         # (83, 8),
-        (82, 8),
-        (82, 9),
-        (82, 10),
-        (82, 7),
-        (82, 6),
-        (82, 5),
-        (83, 5),
-        (84, 5),
-        (85, 5),
-        (86, 5),
-        (87, 5),
-        (88, 5),
-        (89, 5),
+        *[(82, i) for i in range(5, 11)],
+        *[(i, 5) for i in range(82, 90)],
         (92, 8),
         # Towers Abgrund
-        (103, 13),
-        (103, 12),
-        (103, 11),
-        (103, 10),
-        (108, 13),
-        (108, 12),
-        (108, 11),
-        (108, 10),
+        *[(103, i) for i in range(10, 14)],
+        *[(108, i) for i in range(10, 14)],
         # Next gem
         (136, -1),
         (134, 0),
@@ -142,43 +81,10 @@ level_config = {
         (130, 2),
         (128, 3),
         # First Weapon
-        (159, -14),
-        (160, -14),
-        (161, -14),
+        *[(i, -14) for i in range(159, 162)],
         # Hippie Enemy
-        (210, -6),
-        (211, -6),
-        (212, -6),
-        (213, -6),
-        (214, -6),
-        (215, -6),
-        (216, -6),
-        (217, -6),
-        (218, -6),
-        (219, -6),
-        (220, -6),
-        # Section Macker
-        # (253, 8),
-        # (254, 8),
-        # (265, 15),
-        # (266, 15),
-        # (250, 13),
-        # (251, 13),
-        # Section 9 - Final challenge platforms
-        (380, 11),
-        (382, 9),
-        (384, 7),
-        (386, 5),
-        (388, 3),
-        (395, 13),
-        (396, 13),
-        (397, 13),
-        (398, 13),
-        # Section 10 - Boss area platforms
-        (410, 10),
-        (412, 10),
-        (414, 10),
-        (416, 10),
+        *[(i, -6) for i in range(210, 221)],
+        # Section Leiter
     ],
     # Extended gem locations - more rewards throughout the longer level
     "gem_locations": [
@@ -188,6 +94,7 @@ level_config = {
         (195, 13),
         (280, 20),
     ],
+    "ladder_locations": [(289, i) for i in range(-10, 14)],
     "powerup_locations": [
         {"x": 50, "y": 5, "type": 3},
         {"x": 182, "y": -7, "type": 3},

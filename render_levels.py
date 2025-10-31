@@ -90,6 +90,8 @@ COLORS = {
     "weapon": (255, 215, 0),  # Gold
     "pipe": (0, 200, 0),  # Green
     "spike": (255, 50, 50),  # Bright red
+    "ladder": (139, 90, 43),  # Brown
+    "waterfall": (64, 164, 223),  # Water blue
     "moving_platform_path": (200, 200, 200, 100),  # Light gray, semi-transparent
     "death_zone": (255, 0, 0, 50),  # Red, very transparent
 }
@@ -175,6 +177,26 @@ def calculate_level_bounds(level_config):
             x, y = spike_loc
         else:
             x, y = spike_loc["x"], spike_loc["y"]
+        all_x_coords.append(x)
+        all_y_coords.append(y)
+
+    # Collect ladder locations
+    ladder_locations = level_config.get("ladder_locations", [])
+    for ladder_loc in ladder_locations:
+        if isinstance(ladder_loc, tuple):
+            x, y = ladder_loc
+        else:
+            x, y = ladder_loc["x"], ladder_loc["y"]
+        all_x_coords.append(x)
+        all_y_coords.append(y)
+
+    # Collect waterfall locations
+    waterfall_locations = level_config.get("waterfall_locations", [])
+    for waterfall_loc in waterfall_locations:
+        if isinstance(waterfall_loc, tuple):
+            x, y = waterfall_loc
+        else:
+            x, y = waterfall_loc["x"], waterfall_loc["y"]
         all_x_coords.append(x)
         all_y_coords.append(y)
 
@@ -499,6 +521,38 @@ def draw_enemies_with_sprites(draw, image, enemy_locations, min_x, min_y):
         )
 
 
+def draw_ladders_with_sprites(draw, image, ladder_locations, min_x, min_y):
+    """Draw ladders using actual sprites."""
+    for ladder_loc in ladder_locations:
+        if isinstance(ladder_loc, tuple):
+            x, y = ladder_loc
+        else:
+            x, y = ladder_loc["x"], ladder_loc["y"]
+
+        img_x, img_y = world_to_image_coords(x, y, min_x, min_y)
+
+        # Load ladder sprite
+        ladder_image = load_sprite_image("ladder/ladder_02.png", (GRIDSIZE, GRIDSIZE))
+        image.paste(ladder_image, (img_x, img_y), ladder_image)
+
+
+def draw_waterfalls_with_sprites(draw, image, waterfall_locations, min_x, min_y):
+    """Draw waterfalls using actual sprites."""
+    for waterfall_loc in waterfall_locations:
+        if isinstance(waterfall_loc, tuple):
+            x, y = waterfall_loc
+        else:
+            x, y = waterfall_loc["x"], waterfall_loc["y"]
+
+        img_x, img_y = world_to_image_coords(x, y, min_x, min_y)
+
+        # Load waterfall sprite
+        waterfall_image = load_sprite_image(
+            "waterfall/waterfall_01.png", (GRIDSIZE, GRIDSIZE)
+        )
+        image.paste(waterfall_image, (img_x, img_y), waterfall_image)
+
+
 def draw_special_locations_with_sprites(
     draw, image, locations, min_x, min_y, sprite_name, fallback_color
 ):
@@ -623,6 +677,14 @@ def render_level(level_config, output_path, show_grid=True):
                 spike_image = load_sprite_image("spike.png", (GRIDSIZE, GRIDSIZE))
                 image.paste(spike_image, (img_x, img_y), spike_image)
 
+        # Draw ladders using actual sprites
+        ladder_locations = level_config.get("ladder_locations", [])
+        draw_ladders_with_sprites(draw, image, ladder_locations, min_x, min_y)
+
+        # Draw waterfalls using actual sprites
+        waterfall_locations = level_config.get("waterfall_locations", [])
+        draw_waterfalls_with_sprites(draw, image, waterfall_locations, min_x, min_y)
+
         # Draw player start position using actual sprites
         player_start = [(5, 1)]  # From PLAYER_START_X, PLAYER_START_Y in settings
         draw_special_locations_with_sprites(
@@ -665,6 +727,8 @@ def draw_legend(draw, width, height):
         ("M.Platforms", COLORS["moving_platform"]),
         ("Pipes", COLORS["pipe"]),
         ("Spikes", COLORS["spike"]),
+        ("Ladders", COLORS["ladder"]),
+        ("Waterfalls", COLORS["waterfall"]),
         ("Exit", COLORS["exit"]),
         ("Player", COLORS["player_start"]),
     ]
@@ -700,6 +764,8 @@ def draw_level_info(draw, level_config, width):
     moving_platform_count = len(level_config.get("moving_platform_locations", []))
     pipe_count = len(level_config.get("pipe_locations", []))
     spike_count = len(level_config.get("spike_locations", []))
+    ladder_count = len(level_config.get("ladder_locations", []))
+    waterfall_count = len(level_config.get("waterfall_locations", []))
 
     info_lines = [
         f"Gems: {gem_count}",
@@ -710,6 +776,8 @@ def draw_level_info(draw, level_config, width):
         f"M.Platforms: {moving_platform_count}",
         f"Pipes: {pipe_count}",
         f"Spikes: {spike_count}",
+        f"Ladders: {ladder_count}",
+        f"Waterfalls: {waterfall_count}",
     ]
 
     # Position in top-right
@@ -738,6 +806,8 @@ def draw_level_info(draw, level_config, width):
             COLORS["moving_platform"],
             COLORS["pipe"],
             COLORS["spike"],
+            COLORS["ladder"],
+            COLORS["waterfall"],
         ]
         if i < len(colors):
             draw.rectangle(
