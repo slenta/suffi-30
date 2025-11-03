@@ -1,8 +1,8 @@
 import pygame as pg
 import os
 from .settings import *
-from .bullet import Bullet, ExplodingObject  # Import the ExplodingObject class
-from .sound_manager import sound_manager  # Import the sound manager
+from .bullet import Bullet, ExplodingObject
+from .sound_manager import sound_manager
 from .weapon_stats import WEAPON_CONFIG
 import math
 
@@ -49,6 +49,11 @@ class Player(pg.sprite.Sprite):
         self.in_waterfall = False  # Flag to track if player is in waterfall
         self.waterfall_grip = False  # Flag to track if player is gripping waterfall
         self.waterfall_move_speed = 2  # Speed when moving in waterfall
+
+        # Melee attack animation
+        self.is_attacking = False
+        self.attack_frame = 0
+        self.attack_duration = 15  # frames for swing animation
 
     def jump(self):
         self.rect.y += 2
@@ -346,15 +351,24 @@ class Player(pg.sprite.Sprite):
 
     def melee_attack(self):
         """Perform melee attack if player has a melee weapon"""
+
         if not self.active_weapon:
             return
 
         weapon_data = WEAPON_CONFIG.get(self.active_weapon)
+        print(self.active_weapon, weapon_data["type"])
         if not weapon_data or weapon_data["type"] != "melee":
             return
 
         if self.weapons[self.active_weapon] > 0:
             return
+
+        # Start attack animation
+        self.is_attacking = True
+        self.attack_frame = 0
+
+        # Play melee attack sound
+        sound_manager.play_sound_effect("enemy_hit")
 
         attack_range = weapon_data["range"] * GRIDSIZE
         for enemy in self.world.enemies:
@@ -368,121 +382,137 @@ class Player(pg.sprite.Sprite):
         # Set cooldown
         self.weapons[self.active_weapon] = weapon_data["cooldown"]
 
+    def handle_ladder_mechanics(self):
+        """Handle all ladder climbing mechanics"""
+        keys = pg.key.get_pressed()
+
+        # Check for ladder collision
+        self.on_ladder = False
+        for ladder in self.world.ladders:
+            if ladder.can_climb(self):
+                self.on_ladder = True
+                # Start climbing when pressing up/down
+                if (keys[pg.K_UP] or keys[pg.K_DOWN]) and not self.ladder_grip:
+                    self.ladder_grip = True
+                    self.vx = 0
+                    self.vy = 0
+                break
+
+        # Handle ladder tops
+        for ladder_top in self.world.ladder_tops:
+            # Check if player can climb up through this top
+            if ladder_top.can_climb_up(self):
+                self.on_ladder = True
+                if (keys[pg.K_UP] or keys[pg.K_DOWN]) and not self.ladder_grip:
+                    self.ladder_grip = True
+                    self.vx = 0
+                    self.vy = 0
+            # Check if player should be blocked by the top
+            elif ladder_top.should_block(self):
+                if ladder_top not in self.world.platforms:
+                    self.world.platforms.add(ladder_top)
+            elif ladder_top in self.world.platforms:
+                self.world.platforms.remove(ladder_top)
+
+            # Check for climbing down from top
+            if ladder_top.can_climb_down(self):
+                self.ladder_grip = True
+                self.on_ladder = True
+                # Remove from platforms to allow climbing down
+                if ladder_top in self.world.platforms:
+                    self.world.platforms.remove(ladder_top)
+
+        # Handle ladder movement
+        if self.on_ladder and self.ladder_grip:
+            # Vertical movement (only when pressing up/down)
+            if keys[pg.K_UP]:
+                self.vy = -self.ladder_move_speed
+            elif keys[pg.K_DOWN]:
+                self.vy = self.ladder_move_speed
+            else:
+                self.vy = 0  # Stay in place when not pressing up/down
+
+            # Slower horizontal movement
+            if keys[pg.K_LEFT]:
+                self.vx = -self.ladder_move_speed
+            elif keys[pg.K_RIGHT]:
+                self.vx = self.ladder_move_speed
+            else:
+                self.vx = 0
+
+            # Can jump off
+            if keys[pg.K_SPACE]:
+                self.ladder_grip = False
+                self.jump()
+        elif not self.on_ladder:
+            self.ladder_grip = False
+
+    def handle_waterfall_mechanics(self):
+        """Handle all waterfall flow mechanics"""
+        keys = pg.key.get_pressed()
+
+        # Check for waterfall collision
+        self.in_waterfall = False
+        for waterfall in self.world.waterfalls:
+            if waterfall.can_flow(self):
+                self.in_waterfall = True
+                if (keys[pg.K_UP] or keys[pg.K_DOWN]) and not self.waterfall_grip:
+                    self.waterfall_grip = True
+                    self.vx = 0
+                break
+
+        # Handle waterfall tops
+        for waterfall_top in self.world.waterfall_tops:
+            if waterfall_top.is_platform_collision(self):
+                if waterfall_top not in self.world.platforms:
+                    self.world.platforms.add(waterfall_top)
+            elif waterfall_top in self.world.platforms:
+                self.world.platforms.remove(waterfall_top)
+
+            if waterfall_top.can_flow_down(self):
+                self.waterfall_grip = True
+                self.in_waterfall = True
+
+        # Handle waterfall movement
+        if self.in_waterfall and self.waterfall_grip:
+            # Always flow down unless climbing
+            if keys[pg.K_UP]:
+                self.vy = -self.waterfall_move_speed
+            else:
+                self.vy = self.waterfall_move_speed  # Always flow down
+
+            # Slower horizontal movement
+            if keys[pg.K_LEFT]:
+                self.vx = -self.waterfall_move_speed
+            elif keys[pg.K_RIGHT]:
+                self.vx = self.waterfall_move_speed
+            else:
+                self.vx = 0
+
+            # Can jump out
+            if keys[pg.K_SPACE]:
+                self.waterfall_grip = False
+                self.jump()
+        elif not self.in_waterfall:
+            self.waterfall_grip = False
+
     def update(self):
         if self.knockback_timer > 0:
             self.knockback_timer -= 1  # Decrease knockback timer
         else:
             self.is_knocked_back = False  # End knockback state
 
-        if not self.is_knocked_back:  # Only allow normal updates if not incapacitated
-            # Handle ladder mechanics
-            keys = pg.key.get_pressed()
+        if not self.is_knocked_back:
+            # Handle ladder and waterfall mechanics
+            self.handle_ladder_mechanics()
+            self.handle_waterfall_mechanics()
 
-            # Check for ladder collision
-            self.on_ladder = False
-            for ladder in self.world.ladders:
-                if ladder.can_climb(self):
-                    self.on_ladder = True
-                    # Start climbing when pressing up/down
-                    if (keys[pg.K_UP] or keys[pg.K_DOWN]) and not self.ladder_grip:
-                        self.ladder_grip = True
-                        self.vx = 0
-                        self.vy = 0
-                    break
-
-            # Handle ladder tops
-            for ladder_top in self.world.ladder_tops:
-                # Check if player can climb up through this top
-                if ladder_top.can_climb_up(self):
-                    self.on_ladder = True
-                    if (keys[pg.K_UP] or keys[pg.K_DOWN]) and not self.ladder_grip:
-                        self.ladder_grip = True
-                        self.vx = 0
-                        self.vy = 0
-                # Check if player should be blocked by the top
-                elif ladder_top.should_block(self):
-                    if ladder_top not in self.world.platforms:
-                        self.world.platforms.add(ladder_top)
-                elif ladder_top in self.world.platforms:
-                    self.world.platforms.remove(ladder_top)
-
-                # Check for climbing down from top
-                if ladder_top.can_climb_down(self):
-                    self.ladder_grip = True
-                    self.on_ladder = True
-                    # Remove from platforms to allow climbing down
-                    if ladder_top in self.world.platforms:
-                        self.world.platforms.remove(ladder_top)
-
-            # Handle ladder movement
-            if self.on_ladder and self.ladder_grip:
-                # Vertical movement (only when pressing up/down)
-                if keys[pg.K_UP]:
-                    self.vy = -self.ladder_move_speed
-                elif keys[pg.K_DOWN]:
-                    self.vy = self.ladder_move_speed
-                else:
-                    self.vy = 0  # Stay in place when not pressing up/down
-
-                # Slower horizontal movement
-                if keys[pg.K_LEFT]:
-                    self.vx = -self.ladder_move_speed
-                elif keys[pg.K_RIGHT]:
-                    self.vx = self.ladder_move_speed
-                else:
-                    self.vx = 0
-
-                # Can jump off
-                if keys[pg.K_SPACE]:
-                    self.ladder_grip = False
-                    self.jump()
-            elif not self.on_ladder:
-                self.ladder_grip = False
-
-            # Handle waterfall mechanics (continuous downward flow)
-            self.in_waterfall = False
-            for waterfall in self.world.waterfalls:
-                if waterfall.can_flow(self):
-                    self.in_waterfall = True
-                    if (keys[pg.K_UP] or keys[pg.K_DOWN]) and not self.waterfall_grip:
-                        self.waterfall_grip = True
-                        self.vx = 0
-                    break
-
-            # Handle waterfall tops
-            for waterfall_top in self.world.waterfall_tops:
-                if waterfall_top.is_platform_collision(self):
-                    if waterfall_top not in self.world.platforms:
-                        self.world.platforms.add(waterfall_top)
-                elif waterfall_top in self.world.platforms:
-                    self.world.platforms.remove(waterfall_top)
-
-                if waterfall_top.can_flow_down(self):
-                    self.waterfall_grip = True
-                    self.in_waterfall = True
-
-            # Handle waterfall movement
-            if self.in_waterfall and self.waterfall_grip:
-                # Always flow down unless climbing
-                if keys[pg.K_UP]:
-                    self.vy = -self.waterfall_move_speed
-                else:
-                    self.vy = self.waterfall_move_speed  # Always flow down
-
-                # Slower horizontal movement
-                if keys[pg.K_LEFT]:
-                    self.vx = -self.waterfall_move_speed
-                elif keys[pg.K_RIGHT]:
-                    self.vx = self.waterfall_move_speed
-                else:
-                    self.vx = 0
-
-                # Can jump out
-                if keys[pg.K_SPACE]:
-                    self.waterfall_grip = False
-                    self.jump()
-            elif not self.in_waterfall:
-                self.waterfall_grip = False
+            # Update attack animation
+            if self.is_attacking:
+                self.attack_frame += 1
+                if self.attack_frame >= self.attack_duration:
+                    self.is_attacking = False
+                    self.attack_frame = 0
 
             self.apply_gravity()
             self.check_edges()
@@ -514,26 +544,27 @@ class Player(pg.sprite.Sprite):
         if not self.weapon_image:
             return
 
-        # Position weapon on player's right side (or left if facing left)
-        offset_x = 12 if self.vx >= 0 else -12
-        offset_y = 0
-
         # Determine facing direction (1 = right, -1 = left)
         facing = 1 if self.vx >= 0 else -1
 
-        # Idle: weapon at player's side
+        # Base position
         weapon_offset_x = GRIDSIZE * 0.5 * facing
-        weapon_x = self.rect.centerx + weapon_offset_x
-        weapon_y = self.rect.centery
+        weapon_offset_y = 0
 
-        weapon_rect = self.weapon_image.get_rect(center=(weapon_x, weapon_y))
-        offset_rect = weapon_rect.move(
-            -self.world.camera_offset_x, -self.world.camera_offset_y
-        )
-        self.world.screen.blit(self.weapon_image, offset_rect)
-        self.weapon_rect = self.weapon_image.get_rect(
-            center=(self.rect.centerx + offset_x, self.rect.centery + offset_y)
-        )
+        # Add swing animation during attack
+        if self.is_attacking:
+            # Calculate swing progress (0.0 to 1.0)
+            progress = self.attack_frame / self.attack_duration
+
+            # Simple up-down motion: starts at 0, goes up (-GRIDSIZE), returns to 0
+            # Using a sine wave for smooth motion
+            swing_height = -GRIDSIZE * math.sin(progress * math.pi)
+            weapon_offset_y = swing_height
+
+        weapon_x = self.rect.centerx + weapon_offset_x
+        weapon_y = self.rect.centery + weapon_offset_y
+
+        self.weapon_rect = self.weapon_image.get_rect(center=(weapon_x, weapon_y))
 
     def draw(self, screen, camera_offset_x, camera_offset_y=0):
         """Draw player and weapon"""
@@ -546,8 +577,6 @@ class Player(pg.sprite.Sprite):
             weapon_offset_rect = self.weapon_rect.move(
                 -camera_offset_x, -camera_offset_y
             )
-
-            # Rotate weapon during attack
             screen.blit(self.weapon_image, weapon_offset_rect)
 
     def handle_enemy_collision(self):

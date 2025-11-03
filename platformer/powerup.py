@@ -45,6 +45,10 @@ class PowerUp(pg.sprite.Sprite):
             ).convert_alpha()
         elif power_type == 3:
             image = pg.image.load(os.path.join(IMAGEPATH, "pulver.png")).convert_alpha()
+        elif power_type == 4:
+            image = pg.image.load(
+                os.path.join(IMAGEPATH, "powerups/babybrei.png")
+            ).convert_alpha()
         else:
             image = pg.Surface((20, 20))  # Default size for unknown power-ups
             image.fill((255, 255, 0))  # Yellow for unknown power-ups
@@ -55,7 +59,7 @@ class PowerUp(pg.sprite.Sprite):
         self.rect.center = (x, y)
 
     def apply_effect(self, player):
-        if self.power_type == 0:
+        if self.power_type == 0 or self.power_type == 4:
             # Make the player bigger
             player.image = pg.transform.scale(
                 player.image, (player.rect.width * 2, player.rect.height * 2)
@@ -82,7 +86,7 @@ class PowerUp(pg.sprite.Sprite):
                 self.fps_changed = False
 
     def power_down(self, player):
-        if self.power_type == 0:
+        if self.power_type == 0 or self.power_type == 4:
             # Restore normal size (assuming player.normal_size exists)
             player.image = pg.transform.scale(
                 player.image, (player.rect.width // 2, player.rect.height // 2)

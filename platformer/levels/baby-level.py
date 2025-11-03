@@ -1,58 +1,131 @@
 level_config = {
-    "x_bounds": [-100, 1200],  # Kurzes Tutorial-Level
-    "y_bounds": [-200, 300],
-    "level_time": 60,  # Time limit in seconds (1 minute - it's a short tutorial)
-    # Player spawn point (optional) - x and y coordinates in grid units
-    # If not specified, defaults to PLAYER_START_X, PLAYER_START_Y from settings.py
-    # "player_spawn": (5, 1),  # Example: spawn at grid position (5, 1)
-    # Einfache flache Plattform mit kleinem Loch zum Springen üben
-    "grass_locations": [(i, 14) for i in range(-5, 15)]  # Start-Plattform
-    + [(i, 14) for i in range(18, 50)],  # Haupt-Plattform (Loch bei 15-17)
-    # Paar Blöcke zum Springen üben
+    "x_bounds": [-100, 5000],  # Much longer level
+    "y_bounds": [-200, 500],
+    "level_time": 240,  # 4 minutes for exploration
+    # Player spawn point
+    "player_start": (2, 13),
+    # Ground platforms with gaps to jump over
+    "grass_locations": [
+        # Starting area - safe zone
+        *[(i, 14) for i in range(-5, 24)],
+        *[(i, 14) for i in range(28, 43)],
+        *[(i, 14) for i in range(49, 65)],
+        *[(i, 26) for i in range(101, 130)],
+        *[(i, 22) for i in range(135, 160)],
+        *[(i, 14) for i in range(101, 125)],
+        *[(i, 14) for i in range(130, 160)],
+        *[(i, 14) for i in range(165, 200)],
+    ],
     "block_locations": [
+        (8, 13),
+        (9, 13),
         (10, 12),
         (11, 12),
-        (25, 10),
-        (26, 10),
-        (40, 8),
+        (12, 11),
+        (13, 11),
+        (14, 10),
+        (15, 10),
+        (16, 9),
+        (17, 9),
+        (51, 13),
+        (52, 13),
+        (53, 12),
+        (54, 12),
+        (55, 11),
+        (56, 11),
+        (57, 10),
+        (58, 10),
+        (60, 8),
+        (61, 8),
+        (62, 8),
+        (63, 8),
+        (64, 8),
+        (70, 5),
+        (71, 5),
+        (72, 5),
+        (73, 5),
+        (74, 2),
+        (80, 2),
+        (81, 2),
+        (82, 2),
+        (83, 2),
+        (84, 2),
+        (88, 12),
+        (89, 12),
+        (90, 24),
+        (91, 24),
+        (92, 24),
+        (93, 24),
+        (140, 12),
+        (142, 12),
+        (144, 12),
+        (160, 18),
+        (161, 18),
+        (167, 12),
+        (168, 12),
+        (195, 12),
+        (196, 12),
+        (180, 10),
+        (181, 10),
+        (182, 10),
     ],
-    # Keine Gems (Tutorial-Level)
-    "gem_locations": [],
+    # Gems
+    "gem_locations": [
+        (17, 8),
+        (60, 12),
+        (120, 12),
+    ],
     # Power-Ups
     "powerup_locations": [
-        {"x": 15, "y": 13, "type": "bigger"},  # Babybrei (macht größer)
-        {"x": 35, "y": 13, "type": "bigger"},  # Zweiter Babybrei
+        {"x": 22, "y": 12, "type": 4},  # Babybrei after tutorial
+        {"x": 130, "y": 10, "type": 4},  # Babybrei before boss
     ],
-    # Waffen
+    # Weapons
     "weapon_locations": [
-        {"x": 8, "y": 13, "type": "milchflasche"},  # Erste Waffe
+        {"x": 12, "y": 10, "type": "milchflasche"},  # Erste Waffe (on stairs)
     ],
-    # Gegner
+    # Enemies
     "enemy_locations": [
         {
-            "x": 45,
+            "x": 180,
             "y": 13,
-            "image": "enemies/baby-erzieherin.png",  # Boss
+            "image": "enemies/baby-erzieherin.png",  # Boss in arena center
             "speed": 1,
-            "patrol_range": 100,
-            "size_multiplier": 3,
-            "health": 20,
+            "patrol_range": 150,
+            "size_multiplier": 4,
+            "health": 50,
             "damage": 5,
             "shoot_range": 0,  # Nur Melee
-            "chase_range": 8,
+            "chase_range": 10,
+            "melee_damage": 10,
+            "can_throw_explosives": False,
+        },
+        {
+            "x": 140,
+            "y": 20,
+            "image": "enemies/teddybear.png",
+            "speed": 1,
+            "patrol_range": 50,
+            "size_multiplier": 3,
+            "health": 30,
+            "damage": 5,
+            "shoot_range": 0,  # Nur Melee
+            "chase_range": 10,
             "melee_damage": 10,
             "can_throw_explosives": False,
         },
     ],
-    # Trophies (nur 1 für Tutorial)
+    # Trophies (3 total - placed as milestones)
     "trophy_locations": [
-        (30, 13),
+        (40, 13),
+        (90, 13),
+        (135, 13),
     ],
-    "trophy_image": "trophy.png",  # Path relative to assets/images
-    # Exit
-    "exit_location": (48, 13),
+    "trophy_image": "trophy.png",
+    # Exit (behind boss)
+    "exit_location": (190, 13),
     # Assets
-    "background_music": "assets/music/baby_level.ogg",
+    "background_music": "assets/music/kindergarten_bg.ogg",
     "background_image": "assets/backgrounds/kindergarten_bg.png",
     "background_scroll_speed": 0.2,
 }

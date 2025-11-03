@@ -1,0 +1,26 @@
+Suffi Levels Planner
+•1. LEVEL: baby level → keine waffen ganz am anfang
+◦ erst krabbeln, links rechts tutorial, dann aufstehen
+◦ waffe erste: milchflasche
+◦ powerups: babybrei → größer
+◦ erster boss: erzieherin, kann ohrfeigen verteilen
+•2. Level: Grundschule
+◦ erst nur milchflaschen waffe → bringt nichts gegen 1. Gegner: Großer Buchstabe A, der
+kleinere Buchstaben schießt
+▪ bewacht trophy, die man zum abschluss braucht
+◦ man braucht zweite waffe, die aber erst danach kommt
+▪ erst vorbeilaufen, zweite waffe finden dann zurückkommen
+◦ Powerups: Süßigkeiten → machen schneller
+◦ 2. Waffe: Schultüte, auch melee waffe, aber mehr damage
+◦ Endboss: Lehrerin: Wirft mit schwamm
+•3. Level: Gymnasiumslevel
+◦ Nächste Waffe: Ugg Boots → enablen treten
+◦ Gegner: Fiese Mädelsklicke (3 Mädchen aus der Schule)
+▪ Reden bis sie Suffi sehen
+▪ Dann: Greifen mit Sprechblasen an → Schießen auf Suffi
+◦ Powerups:
+▪ Alkohol: vertauscht zeitweise richtungen
+▪ Alkopops: Machen Größer
+▪ Zigaretten: Suffi muss kotzen
+◦ Endgegner:
+▪ Elterns: Werfen auch Sprechblasen mi

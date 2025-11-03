@@ -3,9 +3,10 @@ WEAPON_CONFIG = {
     "milchflasche": {
         "type": "melee",
         "damage": 5,
-        "range": 1.5,  # Grid units
+        "range": 4.5,  # Grid units
         "cooldown": 0,  # Frames between attacks
-        "image": "weapons/milchflasche.jpeg",
+        "image": "weapons/milchflasche.png",
+        "size": 2,
     },
     "schwert": {
         "type": "melee",
@@ -13,6 +14,7 @@ WEAPON_CONFIG = {
         "range": 2,
         "cooldown": 20,
         "image": "weapons/schwert.png",
+        "size": 2,
     },
     # Shooting weapons
     "wasserpistole": {
@@ -35,5 +37,6 @@ WEAPON_CONFIG = {
         "bullet_size": (10, 5),
         "bullet_color": (255, 255, 0),
         "image": "weapons/gun.png",
+        "size": 2,
     },
 }
