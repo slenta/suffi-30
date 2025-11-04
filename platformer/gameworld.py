@@ -474,9 +474,15 @@ class GameWorld:
 
         self.all_sprites.add(self.exit)
 
+        # Use level-specific player spawn point if defined, otherwise use default
+        player_spawn = self.level_config.get(
+            "player_spawn", (PLAYER_START_X, PLAYER_START_Y)
+        )
+        spawn_x, spawn_y = player_spawn
+
         self.player = Player(
-            PLAYER_START_X,
-            PLAYER_START_Y,
+            spawn_x,
+            spawn_y,
             world=self,
             start_gems=self.player_gems,
             trophies_collected=self.player.trophies_collected,

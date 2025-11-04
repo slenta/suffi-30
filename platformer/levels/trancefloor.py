@@ -1,110 +1,110 @@
 level_config = {
     "x_bounds": [-300, 9000],  # Extended gameworld width (doubled)
-    "y_bounds": [-1200, 1200],  # Increased gameworld height for more vertical space
+    "y_bounds": [-1230, 1170],  # Increased gameworld height for more vertical space
     "level_time": 300,  # Time limit in seconds (5 minutes)
     # "player_spawn": (285, 12),
-    "player_spawn": (0, -20),
+    "player_spawn": (0, -30),
     # Extended grass locations - keeping original and adding more sections
-    "grass_locations": [(i, 14) for i in range(-20, 16)]
-    + [(i, 14) for i in range(25, 30)]
-    + [(i, 14) for i in range(40, 59)]
-    + [(i, 14) for i in range(78, 99)]
-    + [(i, 8) for i in range(112, 150)]
-    + [(i, -2) for i in range(150, 175)]
-    + [(i, -2) for i in range(180, 190)]
-    + [(i, -2) for i in range(193, 203)]
-    + [(i, -2) for i in range(206, 218)]
-    + [(i, 14) for i in range(225, 240)]
-    + [(240, i) for i in range(14, 22)]
-    + [(i, 22) for i in range(240, 285)]
-    + [(270, i) for i in range(14, 20)]
-    + [(i, 14) for i in range(270, 281)]
-    + [(i, 14) for i in range(282, 290)]
-    + [(i, -10) for i in range(290, 420)]
-    + [(i, 10) for i in range(420, 500)],
+    "grass_locations": [(i, -16) for i in range(-20, 16)]
+    + [(i, -16) for i in range(25, 30)]
+    + [(i, -16) for i in range(40, 59)]
+    + [(i, -16) for i in range(78, 99)]
+    + [(i, -22) for i in range(112, 150)]
+    + [(i, -32) for i in range(150, 175)]
+    + [(i, -32) for i in range(180, 190)]
+    + [(i, -32) for i in range(193, 203)]
+    + [(i, -32) for i in range(206, 218)]
+    + [(i, -16) for i in range(225, 240)]
+    + [(240, i) for i in range(-16, -8)]
+    + [(i, -8) for i in range(240, 285)]
+    + [(270, i) for i in range(-16, -10)]
+    + [(i, -16) for i in range(270, 281)]
+    + [(i, -16) for i in range(282, 290)]
+    + [(i, -40) for i in range(290, 420)]
+    + [(i, -20) for i in range(420, 500)],
     # Extended block locations - original plus new challenging platforming sections
     "block_locations": [
         # pyramid structure
-        (15, 13),
-        (16, 12),
-        (17, 11),
-        (18, 10),
-        (19, 9),
-        (20, 8),
-        (21, 9),
-        (22, 10),
-        (23, 11),
-        (24, 12),
-        (25, 13),
+        (15, -17),
+        (16, -18),
+        (17, -19),
+        (18, -20),
+        (19, -21),
+        (20, -22),
+        (21, -21),
+        (22, -20),
+        (23, -19),
+        (24, -18),
+        (25, -17),
         # abgrund
-        *[(i, 10) for i in range(33, 36)],
+        *[(i, -20) for i in range(33, 36)],
         # first gem
-        *[(i, 10) for i in range(45, 47)],
-        *[(i, 7) for i in range(49, 51)],
-        (43, 3),
-        (42, 3),
-        *[(i, -2) for i in range(47, 50)],
-        *[(i, -5) for i in range(54, 56)],
-        *[(i, -9) for i in range(40, 49)],
+        *[(i, -20) for i in range(45, 47)],
+        *[(i, -23) for i in range(49, 51)],
+        (43, -27),
+        (42, -27),
+        *[(i, -32) for i in range(47, 50)],
+        *[(i, -35) for i in range(54, 56)],
+        *[(i, -39) for i in range(40, 49)],
         # 2. abgrund
-        *[(i, 10) for i in range(60, 62)],
-        *[(i, 6) for i in range(64, 66)],
-        (68, 2),
-        (69, 3),
-        (70, 4),
-        (71, 5),
-        (72, 6),
-        (73, 7),
-        (74, 8),
-        (75, 9),
+        *[(i, -20) for i in range(60, 62)],
+        *[(i, -24) for i in range(64, 66)],
+        (68, -28),
+        (69, -27),
+        (70, -26),
+        (71, -25),
+        (72, -24),
+        (73, -23),
+        (74, -22),
+        (75, -21),
         # first trophy
-        *[(i, 1) for i in range(77, 85)],
+        *[(i, -29) for i in range(77, 85)],
         # höhle für powerup type 2
-        *[(i, 11) for i in range(82, 87)],
+        *[(i, -19) for i in range(82, 87)],
         # (89, 12),
         # (89, 13),
-        *[(89, i) for i in range(8, 12)],
-        *[(i, 8) for i in range(85, 89)],
-        *[(i, 1) for i in range(85, 96)],
+        *[(89, i) for i in range(-22, -18)],
+        *[(i, -22) for i in range(85, 89)],
+        *[(i, -29) for i in range(85, 96)],
         # (84, 8),
         # (83, 8),
-        *[(82, i) for i in range(5, 11)],
-        *[(i, 5) for i in range(82, 90)],
-        (92, 8),
+        *[(82, i) for i in range(-25, -19)],
+        *[(i, -25) for i in range(82, 90)],
+        (92, -22),
         # Towers Abgrund
-        *[(103, i) for i in range(10, 14)],
-        *[(108, i) for i in range(10, 14)],
+        *[(103, i) for i in range(-20, -16)],
+        *[(108, i) for i in range(-20, -16)],
         # Next gem
-        (136, -1),
-        (134, 0),
-        (132, 1),
-        (130, 2),
-        (128, 3),
+        (136, -31),
+        (134, -30),
+        (132, -29),
+        (130, -28),
+        (128, -27),
         # First Weapon
-        *[(i, -14) for i in range(159, 162)],
+        *[(i, -44) for i in range(159, 162)],
         # Hippie Enemy
-        *[(i, -6) for i in range(210, 221)],
+        *[(i, -36) for i in range(210, 221)],
         # Section Leiter
-        *[(i, -19) for i in range(338, 345)],
-        (337, -17),
-        (336, -14),
-        (336, -12),
-        (336, -11),
+        *[(i, -49) for i in range(338, 345)],
+        (337, -47),
+        (336, -44),
+        (336, -42),
+        (336, -41),
     ],
     # Extended gem locations - more rewards throughout the longer level
     "gem_locations": [
         # Original gems
-        (35, -10),
-        (140, -10),
-        (195, 13),
-        (280, 20),
+        (35, -40),
+        (140, -40),
+        (195, -17),
+        (280, -10),
     ],
-    "ladder_locations": [(289, i) for i in range(-10, 14)],
+    "ladder_locations": [(289, i) for i in range(-40, -16)],
     "powerup_locations": [
-        {"x": 50, "y": 5, "type": 3},
-        {"x": 182, "y": -7, "type": 3},
-        {"x": 83, "y": 3, "type": 2},
-        {"x": 108, "y": 5, "type": 0},
+        {"x": 50, "y": -25, "type": 3},
+        {"x": 182, "y": -37, "type": 3},
+        {"x": 83, "y": -27, "type": 2},
+        {"x": 108, "y": -25, "type": 0},
     ],
     "enemy_locations": [
         # {
@@ -124,7 +124,7 @@ level_config = {
         # },
         {
             "x": 130,
-            "y": 6,
+            "y": -24,
             "image": "enemies/trance-totem.png",
             "speed": 2,
             "patrol_range": 100,
@@ -139,7 +139,7 @@ level_config = {
         },
         {
             "x": 170,
-            "y": -5,
+            "y": -35,
             "image": "enemies/trance-jesus.png",
             "speed": 3,
             "patrol_range": 100,
@@ -154,7 +154,7 @@ level_config = {
         },
         {
             "x": 215,
-            "y": -12,
+            "y": -42,
             "image": "enemies/trance-hippie.png",
             "speed": 1,
             "patrol_range": 30,
@@ -168,7 +168,7 @@ level_config = {
         },
         {
             "x": 255,
-            "y": 20,
+            "y": -10,
             "image": "enemies/trance-okf.png",
             "speed": 2,
             "patrol_range": 300,
@@ -183,7 +183,7 @@ level_config = {
         },
         {
             "x": 336,
-            "y": -25,
+            "y": -55,
             "image": "enemies/trancefloor/dj-booth.png",
             "speed": 0,
             "patrol_range": 0,
@@ -198,7 +198,7 @@ level_config = {
         },
         {
             "x": 480,
-            "y": 8,
+            "y": -22,
             "image": "player/suffi.png",
             "speed": 3,
             "patrol_range": 300,
@@ -214,13 +214,13 @@ level_config = {
     ],
     # Extended trophy locations - more collectibles
     "weapon_locations": [
-        {"x": 170, "y": -20, "type": "wasserpistole"},  # Erste Waffe
+        {"x": 170, "y": -50, "type": "wasserpistole"},  # Erste Waffe
     ],
     # Moving platform locations - new feature!
     "moving_platform_locations": [
         {
             "x": 138,  # Starting x position (grid units)
-            "y": -10,  # Starting y position (grid units)
+            "y": -40,  # Starting y position (grid units)
             "platform_type": "block",  # "grass" or "block"
             "movement_type": "linear",  # "linear" or "circular"
             "speed": 1,  # Movement speed (pixels per frame)
@@ -229,7 +229,7 @@ level_config = {
         },
         {
             "x": 142,  # Starting x position (grid units)
-            "y": -7,  # Starting y position (grid units)
+            "y": -37,  # Starting y position (grid units)
             "platform_type": "block",  # "grass" or "block"
             "movement_type": "linear",  # "linear" or "circular"
             "speed": 1,  # Movement speed (pixels per frame)
@@ -238,7 +238,7 @@ level_config = {
         },
         {
             "x": 164,  # Starting x position (grid units)
-            "y": -12,  # Starting y position (grid units)
+            "y": -42,  # Starting y position (grid units)
             "platform_type": "block",  # "grass" or "block"
             "movement_type": "linear",  # "linear" or "circular"
             "speed": 1,  # Movement speed (pixels per frame)
@@ -247,7 +247,7 @@ level_config = {
         },
         {
             "x": 170,
-            "y": -14,
+            "y": -44,
             "platform_type": "block",
             "movement_type": "circular",
             "speed": 30,
@@ -256,7 +256,7 @@ level_config = {
         },
         {
             "x": 258,  # Starting x position (grid units)
-            "y": 15,  # Starting y position (grid units)
+            "y": -15,  # Starting y position (grid units)
             "platform_type": "block",  # "grass" or "block"
             "movement_type": "linear",  # "linear" or "circular"
             "speed": 1,  # Movement speed (pixels per frame)
@@ -265,7 +265,7 @@ level_config = {
         },
         {
             "x": 254,  # Starting x position (grid units)
-            "y": 17,  # Starting y position (grid units)
+            "y": -13,  # Starting y position (grid units)
             "platform_type": "block",  # "grass" or "block"
             "movement_type": "linear",  # "linear" or "circular"
             "speed": 1,  # Movement speed (pixels per frame)
@@ -274,7 +274,7 @@ level_config = {
         },
         {
             "x": 247,  # Starting x position (grid units)
-            "y": 14,  # Starting y position (grid units)
+            "y": -16,  # Starting y position (grid units)
             "platform_type": "block",  # "grass" or "block"
             "movement_type": "linear",  # "linear" or "circular"
             "speed": 1,  # Movement speed (pixels per frame)
@@ -283,7 +283,7 @@ level_config = {
         },
         {
             "x": 242,  # Starting x position (grid units)
-            "y": 16,  # Starting y position (grid units)
+            "y": -14,  # Starting y position (grid units)
             "platform_type": "block",  # "grass" or "block"
             "movement_type": "linear",  # "linear" or "circular"
             "speed": 1,  # Movement speed (pixels per frame)
@@ -292,7 +292,7 @@ level_config = {
         },
         {
             "x": 281,  # Starting x position (grid units)
-            "y": 10,  # Starting y position (grid units)
+            "y": -20,  # Starting y position (grid units)
             "platform_type": "block",  # "grass" or "block"
             "movement_type": "linear",  # "linear" or "circular"
             "speed": 2,  # Movement speed (pixels per frame)
@@ -301,7 +301,7 @@ level_config = {
         },
         {
             "x": 263,  # Starting x position (grid units)
-            "y": -12,  # Starting y position (grid units)
+            "y": -42,  # Starting y position (grid units)
             "platform_type": "block",  # "grass" or "block"
             "movement_type": "linear",  # "linear" or "circular"
             "speed": 1,  # Movement speed (pixels per frame)
@@ -310,7 +310,7 @@ level_config = {
         },
         {
             "x": 258,  # Starting x position (grid units)
-            "y": -9,  # Starting y position (grid units)
+            "y": -39,  # Starting y position (grid units)
             "platform_type": "block",  # "grass" or "block"
             "movement_type": "linear",  # "linear" or "circular"
             "speed": 1,  # Movement speed (pixels per frame)
@@ -319,7 +319,7 @@ level_config = {
         },
         {
             "x": 257,  # Starting x position (grid units)
-            "y": -9,  # Starting y position (grid units)
+            "y": -39,  # Starting y position (grid units)
             "platform_type": "block",  # "grass" or "block"
             "movement_type": "linear",  # "linear" or "circular"
             "speed": 1,  # Movement speed (pixels per frame)
@@ -328,7 +328,7 @@ level_config = {
         },
         {
             "x": 256,  # Starting x position (grid units)
-            "y": -19,  # Starting y position (grid units)
+            "y": -49,  # Starting y position (grid units)
             "platform_type": "block",  # "grass" or "block"
             "movement_type": "linear",  # "linear" or "circular"
             "speed": 1,  # Movement speed (pixels per frame)
@@ -337,7 +337,7 @@ level_config = {
         },
         {
             "x": 320,  # Starting x position (grid units)
-            "y": -19,  # Starting y position (grid units)
+            "y": -49,  # Starting y position (grid units)
             "platform_type": "block",  # "grass" or "block"
             "movement_type": "linear",  # "linear" or "circular"
             "speed": 2,  # Movement speed (pixels per frame)
@@ -346,7 +346,7 @@ level_config = {
         },
         {
             "x": 327,  # Starting x position (grid units)
-            "y": -19,  # Starting y position (grid units)
+            "y": -49,  # Starting y position (grid units)
             "platform_type": "block",  # "grass" or "block"
             "movement_type": "linear",  # "linear" or "circular"
             "speed": 2,  # Movement speed (pixels per frame)
@@ -355,7 +355,7 @@ level_config = {
         },
         {
             "x": 315,  # Starting x position (grid units)
-            "y": -15,  # Starting y position (grid units)
+            "y": -45,  # Starting y position (grid units)
             "platform_type": "block",  # "grass" or "block"
             "movement_type": "linear",  # "linear" or "circular"
             "speed": 2,  # Movement speed (pixels per frame)
@@ -364,7 +364,7 @@ level_config = {
         },
         {
             "x": 322,  # Starting x position (grid units)
-            "y": -15,  # Starting y position (grid units)
+            "y": -45,  # Starting y position (grid units)
             "platform_type": "block",  # "grass" or "block"
             "movement_type": "linear",  # "linear" or "circular"
             "speed": 2,  # Movement speed (pixels per frame)
@@ -373,12 +373,12 @@ level_config = {
         },
     ],
     "trophy_locations": [
-        (84, 0),
-        (133, -2),
-        (256, -20),
+        (84, -30),
+        (133, -32),
+        (256, -50),
     ],
     "trophy_image": "mushroom.png",
-    "exit_location": (499, 8),
+    "exit_location": (499, -22),
     "background_music": "assets/music/default.ogg",
     "background_image": "assets/backgrounds/trancefloor.png",
     "background_scroll_speed": 1,
