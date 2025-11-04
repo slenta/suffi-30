@@ -90,6 +90,11 @@ level_config = {
         (336, -44),
         (336, -42),
         (336, -41),
+        *[(i, -27) for i in range(290, 297)],
+        *[(i, -27) for i in range(300, 301)],
+        *[(i, -27) for i in range(304, 305)],
+        *[(i, -27) for i in range(308, 309)],
+        *[(i, -27) for i in range(312, 313)],
     ],
     # Extended gem locations - more rewards throughout the longer level
     "gem_locations": [
@@ -98,6 +103,7 @@ level_config = {
         (140, -40),
         (195, -17),
         (280, -10),
+        (311, -32),
     ],
     "ladder_locations": [(289, i) for i in range(-40, -16)],
     "powerup_locations": [
