@@ -9,6 +9,7 @@ Usage:
     python render_levels.py                    # Render all levels
     python render_levels.py level1.py          # Render specific level
     python render_levels.py --no-grid          # Render without grid lines
+    python render_levels.py --bg-opacity 0.5   # Render with 50% background opacity
 """
 
 import os
@@ -588,15 +589,95 @@ def draw_special_locations_with_sprites(
             )
 
 
-def render_level(level_config, output_path, show_grid=True):
-    """Render a single level configuration to a PNG image."""
+def create_background_image(level_config, width, height, opacity=0.3):
+    """Create the base image with background, mimicking pygame's rendering.
+
+    Args:
+        level_config: Level configuration dictionary
+        width: Canvas width in pixels
+        height: Canvas height in pixels
+        opacity: Background image opacity (0.0 to 1.0, default 1.0)
+    """
+    # Check if level has a background image specified
+    bg_image_path = level_config.get("background_image")
+
+    if bg_image_path:
+        # Try to load the background image
+        try:
+            # Try different possible paths
+            possible_paths = [
+                bg_image_path,
+                f"platformer/{bg_image_path}",
+                f"{bg_image_path}",
+            ]
+
+            background = None
+            for path in possible_paths:
+                if os.path.exists(path):
+                    background = Image.open(path).convert("RGBA")
+                    print(f"  Loaded background image: {path}")
+                    break
+
+            if background is not None:
+                # Create a canvas of the level size
+                canvas = Image.new("RGB", (width, height), COLORS["background"])
+
+                # Apply opacity to background if needed
+                if opacity < 1.0:
+                    # Adjust alpha channel based on opacity
+                    alpha = (
+                        background.split()[3]
+                        if background.mode == "RGBA"
+                        else Image.new("L", background.size, 255)
+                    )
+                    alpha = alpha.point(lambda p: int(p * opacity))
+                    background.putalpha(alpha)
+
+                # Get background dimensions
+                bg_width, bg_height = background.size
+
+                # Tile the background to fill the canvas (mimicking pygame's tiling behavior)
+                for y in range(0, height, bg_height):
+                    for x in range(0, width, bg_width):
+                        canvas.paste(
+                            background, (x, y), background if opacity < 1.0 else None
+                        )
+
+                return canvas
+            else:
+                print(f"  Warning: Background image not found: {bg_image_path}")
+                # Fallback to solid color
+                return Image.new("RGB", (width, height), COLORS["background"])
+
+        except Exception as e:
+            print(f"  Error loading background image: {e}")
+            # Fallback to solid color
+            return Image.new("RGB", (width, height), COLORS["background"])
+    else:
+        # No background image specified, use solid color
+        bg_color = level_config.get("background_color", COLORS["background"])
+        # Convert tuple if it's in the config
+        if isinstance(bg_color, (list, tuple)):
+            return Image.new("RGB", (width, height), tuple(bg_color))
+        return Image.new("RGB", (width, height), COLORS["background"])
+
+
+def render_level(level_config, output_path, show_grid=True, bg_opacity=0.3):
+    """Render a single level configuration to a PNG image.
+
+    Args:
+        level_config: Level configuration dictionary
+        output_path: Path to save the rendered image
+        show_grid: Whether to show grid lines
+        bg_opacity: Background image opacity (0.0 to 1.0, default 1.0)
+    """
     try:
         # Calculate image dimensions
         min_x, min_y, width, height = calculate_level_bounds(level_config)
 
-        # Create image
-        image = Image.new("RGB", (width, height), COLORS["background"])
-        draw = ImageDraw.Draw(image)
+        # Create image with background
+        image = create_background_image(level_config, width, height, bg_opacity)
+        draw = ImageDraw.Draw(image, "RGBA")
 
         # Draw grid lines (optional - light gray)
         if show_grid:
@@ -693,7 +774,7 @@ def render_level(level_config, output_path, show_grid=True):
             player_start,
             min_x,
             min_y,
-            "suffi_00.png",
+            "player/suffi.png",
             COLORS["player_start"],
         )
 
@@ -831,6 +912,12 @@ def main():
         default="platformer/assets/renders",
         help="Output directory for rendered images",
     )
+    parser.add_argument(
+        "--bg-opacity",
+        type=float,
+        default=0.3,
+        help="Background image opacity (0.0 to 1.0, default 1.0)",
+    )
 
     args = parser.parse_args()
 
@@ -870,7 +957,12 @@ def main():
         output_path = os.path.join(args.output_dir, f"{level_name}_render.png")
 
         # Render level
-        if render_level(level_config, output_path, show_grid=not args.no_grid):
+        if render_level(
+            level_config,
+            output_path,
+            show_grid=not args.no_grid,
+            bg_opacity=args.bg_opacity,
+        ):
             successful_renders += 1
 
     print(

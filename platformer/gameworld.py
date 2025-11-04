@@ -750,7 +750,9 @@ class GameWorld:
         pg.display.flip()
 
     def draw_background(self):
-        """Draw the background - either an image or solid color."""
+        """Draw the background - either an image or solid color.
+        Tiles the background at its original size, matching the level renderer behavior.
+        """
         if self.background_image:
             # Calculate parallax scrolling offset for both X and Y
             bg_offset_x = int(self.camera_offset_x * self.background_scroll_speed)
@@ -762,19 +764,10 @@ class GameWorld:
             screen_width = self.screen.get_width()
             screen_height = self.screen.get_height()
 
-            # Scale background to fit screen height if needed
-            if bg_height != screen_height:
-                scale_factor = screen_height / bg_height
-                scaled_width = int(bg_width * scale_factor)
-                self.background_image = pg.transform.scale(
-                    self.background_image, (scaled_width, screen_height)
-                )
-                bg_width = scaled_width
-                bg_height = screen_height
-
-            # Tile the background horizontally and vertically to cover the entire screen
-            start_x = -(bg_offset_x % bg_width)
-            start_y = -(bg_offset_y % bg_height)
+            # Tile the background at its original size (no scaling)
+            # This matches the level renderer behavior
+            start_x = -(bg_offset_x % bg_width) if bg_width > 0 else 0
+            start_y = -(bg_offset_y % bg_height) if bg_height > 0 else 0
 
             # Draw background tiles
             y = start_y

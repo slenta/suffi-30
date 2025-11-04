@@ -3,7 +3,7 @@ level_config = {
     "y_bounds": [-1200, 1200],  # Increased gameworld height for more vertical space
     "level_time": 300,  # Time limit in seconds (5 minutes)
     # "player_spawn": (285, 12),
-    "player_spawn": (530, -20),
+    "player_spawn": (0, -20),
     # Extended grass locations - keeping original and adding more sections
     "grass_locations": [(i, 14) for i in range(-20, 16)]
     + [(i, 14) for i in range(25, 30)]
@@ -190,7 +190,7 @@ level_config = {
             "size_multiplier": 8,
             "health": 40,
             "damage": 1,
-            "shoot_range": 200,
+            "shoot_range": 100,
             "chase_range": 0,
             "melee_damage": 100,
             "shoot_cooldown": 20,  # 60 is equal 1 second
@@ -380,8 +380,8 @@ level_config = {
     "trophy_image": "mushroom.png",
     "exit_location": (499, 8),
     "background_music": "assets/music/default.ogg",
-    # "background_image": "assets/backgrounds/level2.png",
-    "background_scroll_speed": 0.2,
+    "background_image": "assets/backgrounds/trancefloor.png",
+    "background_scroll_speed": 1,
     "alternative_backgrounds": [
         "assets/backgrounds/trancefloor.png",
     ],
