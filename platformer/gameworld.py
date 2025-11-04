@@ -772,8 +772,17 @@ class GameWorld:
 
             # Tile the background at its original size (no scaling)
             # This matches the level renderer behavior
+            # Always start from 0,0 and tile across the entire screen
+            # The offset is applied through the modulo to create seamless scrolling
             start_x = -(bg_offset_x % bg_width) if bg_width > 0 else 0
             start_y = -(bg_offset_y % bg_height) if bg_height > 0 else 0
+
+            # Debug output (can be removed later)
+            if not hasattr(self, "_bg_debug_shown"):
+                print(
+                    f"🎨 Background Debug: camera_offset_y={self.camera_offset_y:.1f}, bg_offset_y={bg_offset_y}, start_y={start_y}, bg_height={bg_height}"
+                )
+                self._bg_debug_shown = True
 
             # Draw background tiles
             y = start_y
@@ -785,93 +794,8 @@ class GameWorld:
                 y += bg_height
         else:
             # Fall back to solid color background
-            # Check for background image first
-            if "background_image" in self.level_config:
-                if not hasattr(self, "background_surface"):
-                    print(f"IMAGEPATH is: {IMAGEPATH}")
-                    print(f"Current working directory: {os.getcwd()}")
-                    print(
-                        f"Looking for background image: {self.level_config['background_image']}"
-                    )
-
-                    # Try both with and without the backgrounds folder
-                    bg_paths = [
-                        os.path.join(
-                            IMAGEPATH,
-                            "backgrounds",
-                            self.level_config["background_image"],
-                        ),
-                        os.path.join(IMAGEPATH, self.level_config["background_image"]),
-                        os.path.join(
-                            "platformer",
-                            "assets",
-                            "backgrounds",
-                            self.level_config["background_image"],
-                        ),
-                    ]
-
-                    for bg_path in bg_paths:
-                        print(f"\nTrying path: {bg_path}")
-                        print(f"File exists: {os.path.exists(bg_path)}")
-                        try:
-                            # Load the image
-                            original_bg = pg.image.load(bg_path).convert()
-                            print(
-                                f"Successfully loaded background image from: {bg_path}"
-                            )
-
-                            # Calculate scaling to maintain aspect ratio
-                            img_width, img_height = original_bg.get_size()
-                            width_ratio = WIDTH / img_width
-                            height_ratio = HEIGHT / img_height
-
-                            # Use the smaller ratio to fit screen while maintaining aspect ratio
-                            scale_ratio = max(width_ratio, height_ratio)
-                            new_width = int(img_width * scale_ratio)
-                            new_height = int(img_height * scale_ratio)
-
-                            # Scale image maintaining aspect ratio
-                            self.background_surface = pg.transform.scale(
-                                original_bg, (new_width, new_height)
-                            )
-
-                            # Create a surface for the final background
-                            final_surface = pg.Surface((WIDTH, HEIGHT))
-                            final_surface.fill(
-                                (0, 0, 0)
-                            )  # Fill with black for letterboxing
-
-                            # Calculate position to center the image
-                            x_offset = (WIDTH - new_width) // 2
-                            y_offset = (HEIGHT - new_height) // 2
-
-                            # Blit the scaled image centered
-                            final_surface.blit(
-                                self.background_surface, (x_offset, y_offset)
-                            )
-                            self.background_surface = final_surface
-                            break
-                        except Exception as e:
-                            print(f"Error loading from {bg_path}: {str(e)}")
-                            self.background_surface = None
-                            continue
-
-                if self.background_surface:
-                    # Apply parallax scrolling - background moves slower than foreground
-                    bg_x = int(-self.camera_offset_x * 0.5) % WIDTH
-                    # Draw the background twice to cover the whole screen when scrolling
-                    self.screen.blit(self.background_surface, (bg_x, 0))
-                    self.screen.blit(self.background_surface, (bg_x - WIDTH, 0))
-                else:
-                    # Fallback to color if image loading failed
-                    bg_color = self.level_config.get(
-                        "background_color", (135, 206, 235)
-                    )
-                    self.screen.fill(bg_color)
-            else:
-                # Use level-specific background color if defined, otherwise use default
-                bg_color = self.level_config.get("background_color", (135, 206, 235))
-                self.screen.fill(bg_color)
+            bg_color = self.level_config.get("background_color", (135, 206, 235))
+            self.screen.fill(bg_color)
 
     def draw_timer(self):
         """Draw the countdown timer in the top right corner."""
@@ -968,9 +892,14 @@ class GameWorld:
     def load_background_image(self):
         """Load level-specific background image."""
         self.background_image = None
-        self.background_scroll_speed = 0.5  # Default parallax scroll speed
+        self.background_scroll_speed = 1  # Default parallax scroll speed
         self.alternative_backgrounds = []  # Reset alternative backgrounds
         self.current_background_index = 0
+
+        # Load background scroll speed from config (applies to all backgrounds)
+        if "background_scroll_speed" in self.level_config:
+            self.background_scroll_speed = self.level_config["background_scroll_speed"]
+            print(f"🎨 Background scroll speed set to: {self.background_scroll_speed}")
 
         if (
             "background_image" in self.level_config
@@ -990,12 +919,6 @@ class GameWorld:
                 try:
                     self.background_image = pg.image.load(bg_path).convert()
                     print(f"🖼️ Loaded background image: {os.path.basename(bg_path)}")
-
-                    # Get optional background settings
-                    if "background_scroll_speed" in self.level_config:
-                        self.background_scroll_speed = self.level_config[
-                            "background_scroll_speed"
-                        ]
 
                 except pg.error as e:
                     print(f"❌ Error loading background image: {e}")
@@ -1045,6 +968,9 @@ class GameWorld:
                 self.background_image = self.alternative_backgrounds[
                     self.current_background_index - 1
                 ]
+                # Reset debug flag so we see the new background's position
+                if hasattr(self, "_bg_debug_shown"):
+                    delattr(self, "_bg_debug_shown")
                 # Switch to alternative music if available
                 if self.alternative_music_tracks and (
                     self.current_background_index - 1
