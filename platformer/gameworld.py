@@ -275,6 +275,9 @@ class GameWorld:
                     "can_summon_minions", False
                 ),  # Default to False - must be explicitly enabled
                 enemy_data.get("encounter_message", None),  # Optional encounter message
+                enemy_data.get(
+                    "shoot_cooldown", 60
+                ),  # Default to 60 frames (1 second at 60 FPS)
             )
             self.enemies.add(enemy)
             self.all_sprites.add(enemy)

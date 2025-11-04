@@ -124,7 +124,6 @@ For automatic deployments on push:
 
 
 ideas trancefloor:
-- dj enemy (in dj booth)
 - sub level at the bar
 - background
 - the final enemy is yourself

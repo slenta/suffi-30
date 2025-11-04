@@ -26,6 +26,7 @@ class Enemy(pg.sprite.Sprite):
         is_minion=False,  # Default to False for regular enemies
         can_summon_minions=False,  # Default to False - must be explicitly enabled in level config
         encounter_message=None,  # Optional message to display when first encountered
+        shoot_cooldown=60,  # Cooldown for shooting in frames (default: 60 = 1 second at 60 FPS)
     ):
         super().__init__()
         # Store the image path
@@ -57,6 +58,7 @@ class Enemy(pg.sprite.Sprite):
         self.melee_damage = melee_damage
         self.world = world
         self.shoot_timer = 0
+        self.shoot_cooldown = shoot_cooldown  # Store the cooldown duration
         self.can_throw_explosives = can_throw_explosives  # Add this flag
         self.is_minion = is_minion  # Store minion status
         self.can_summon_minions = can_summon_minions  # Store minion summoning ability
@@ -200,7 +202,7 @@ class Enemy(pg.sprite.Sprite):
             )
             self.world.bullets.add(bullet)
             self.world.all_sprites.add(bullet)
-            self.shoot_timer = 60  # Cooldown for shooting (e.g., 1 second at 60 FPS)
+            self.shoot_timer = self.shoot_cooldown  # Use the configured cooldown
 
         # Decrease the shoot timer
         if self.shoot_timer > 0:

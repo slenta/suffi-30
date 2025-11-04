@@ -3,7 +3,7 @@ level_config = {
     "y_bounds": [-1200, 1200],  # Increased gameworld height for more vertical space
     "level_time": 300,  # Time limit in seconds (5 minutes)
     # "player_spawn": (285, 12),
-    "player_spawn": (450, 0),
+    "player_spawn": (530, -20),
     # Extended grass locations - keeping original and adding more sections
     "grass_locations": [(i, 14) for i in range(-20, 16)]
     + [(i, 14) for i in range(25, 30)]
@@ -21,7 +21,7 @@ level_config = {
     + [(i, 14) for i in range(270, 281)]
     + [(i, 14) for i in range(282, 290)]
     + [(i, -10) for i in range(290, 420)]
-    + [(i, 10) for i in range(420, 600)],
+    + [(i, 10) for i in range(420, 500)],
     # Extended block locations - original plus new challenging platforming sections
     "block_locations": [
         # pyramid structure
@@ -85,6 +85,11 @@ level_config = {
         # Hippie Enemy
         *[(i, -6) for i in range(210, 221)],
         # Section Leiter
+        *[(i, -19) for i in range(338, 345)],
+        (337, -17),
+        (336, -14),
+        (336, -12),
+        (336, -11),
     ],
     # Extended gem locations - more rewards throughout the longer level
     "gem_locations": [
@@ -177,30 +182,31 @@ level_config = {
             "encounter_message": "BOSS FIGHT: The OKF Guardian!",
         },
         {
-            "x": 490,
-            "y": 8,
-            "image": "enemies/trance-okf.png",
+            "x": 336,
+            "y": -25,
+            "image": "enemies/trancefloor/dj-booth.png",
             "speed": 0,
             "patrol_range": 0,
-            "size_multiplier": 4,
+            "size_multiplier": 8,
             "health": 40,
             "damage": 1,
             "shoot_range": 200,
             "chase_range": 0,
-            "melee_damage": 15,
+            "melee_damage": 100,
+            "shoot_cooldown": 20,  # 60 is equal 1 second
             "can_throw_explosives": False,
         },
         {
-            "x": 550,
+            "x": 480,
             "y": 8,
-            "image": "enemies/trance-okf.png",
-            "speed": 2,
+            "image": "player/suffi.png",
+            "speed": 3,
             "patrol_range": 300,
-            "size_multiplier": 4,
-            "health": 40,
-            "damage": 5,
-            "shoot_range": 0,
-            "chase_range": 100,
+            "size_multiplier": 6,
+            "health": 200,
+            "damage": 10,
+            "shoot_range": 100,
+            "chase_range": 400,
             "melee_damage": 15,
             "can_throw_explosives": False,
             "encounter_message": "The final enemy on the trancefloor – it is yourself!",
@@ -329,6 +335,42 @@ level_config = {
             "distance": 10,  # Distance to travel (grid units for linear, radius for circular)
             "direction": "vertical",  # "horizontal" or "vertical" (for linear only)
         },
+        {
+            "x": 320,  # Starting x position (grid units)
+            "y": -19,  # Starting y position (grid units)
+            "platform_type": "block",  # "grass" or "block"
+            "movement_type": "linear",  # "linear" or "circular"
+            "speed": 2,  # Movement speed (pixels per frame)
+            "distance": 5,  # Distance to travel (grid units for linear, radius for circular)
+            "direction": "horizontal",  # "horizontal" or "vertical" (for linear only)
+        },
+        {
+            "x": 327,  # Starting x position (grid units)
+            "y": -19,  # Starting y position (grid units)
+            "platform_type": "block",  # "grass" or "block"
+            "movement_type": "linear",  # "linear" or "circular"
+            "speed": 2,  # Movement speed (pixels per frame)
+            "distance": 5,  # Distance to travel (grid units for linear, radius for circular)
+            "direction": "horizontal",  # "horizontal" or "vertical" (for linear only)
+        },
+        {
+            "x": 315,  # Starting x position (grid units)
+            "y": -15,  # Starting y position (grid units)
+            "platform_type": "block",  # "grass" or "block"
+            "movement_type": "linear",  # "linear" or "circular"
+            "speed": 2,  # Movement speed (pixels per frame)
+            "distance": 5,  # Distance to travel (grid units for linear, radius for circular)
+            "direction": "horizontal",  # "horizontal" or "vertical" (for linear only)
+        },
+        {
+            "x": 322,  # Starting x position (grid units)
+            "y": -15,  # Starting y position (grid units)
+            "platform_type": "block",  # "grass" or "block"
+            "movement_type": "linear",  # "linear" or "circular"
+            "speed": 2,  # Movement speed (pixels per frame)
+            "distance": 5,  # Distance to travel (grid units for linear, radius for circular)
+            "direction": "horizontal",  # "horizontal" or "vertical" (for linear only)
+        },
     ],
     "trophy_locations": [
         (84, 0),
@@ -336,7 +378,7 @@ level_config = {
         (256, -20),
     ],
     "trophy_image": "mushroom.png",
-    "exit_location": (590, 8),
+    "exit_location": (499, 8),
     "background_music": "assets/music/default.ogg",
     # "background_image": "assets/backgrounds/level2.png",
     "background_scroll_speed": 0.2,
