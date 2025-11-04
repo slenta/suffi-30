@@ -39,6 +39,7 @@ class Player(pg.sprite.Sprite):
         self.weapon_rect = None
         self.controls_reversed = False  # Flag for reversed controls powerup
         self.spike_damage_cooldown = 0  # Cooldown to prevent repeated spike damage
+        self.exploding_object_cooldown = 0  # Cooldown for throwing exploding objects (5 seconds at 60 FPS = 300 frames)
 
         # Ladder mechanics
         self.on_ladder = False  # Flag to track if player is on a ladder
@@ -536,6 +537,10 @@ class Player(pg.sprite.Sprite):
             if self.weapons[weapon_name] > 0:
                 self.weapons[weapon_name] -= 1
 
+        # Update exploding object cooldown
+        if self.exploding_object_cooldown > 0:
+            self.exploding_object_cooldown -= 1
+
         # Update weapon position
         self.update_weapon_position()
 
@@ -675,10 +680,14 @@ class Player(pg.sprite.Sprite):
             pg.time.delay(10)  # Delay for smooth animation
 
     def throw_exploding_object(self):
+        # Check if cooldown is active
+        if self.exploding_object_cooldown > 0:
+            return  # Can't throw yet
+
         # Determine the direction of the throw based on the player's facing direction
         direction_x = 1 if self.vx >= 0 else -1
         direction_y = 0  # Exploding objects are thrown horizontally
-        damage = 5  # Set the damage dealt by the exploding object
+        damage = 1  # Set the damage dealt by the exploding object
 
         # Create the exploding object
         exploding_object = ExplodingObject(
@@ -691,6 +700,9 @@ class Player(pg.sprite.Sprite):
         )
         self.world.bullets.add(exploding_object)
         self.world.all_sprites.add(exploding_object)
+
+        # Set cooldown to 5 seconds (300 frames at 60 FPS)
+        self.exploding_object_cooldown = 180
 
 
 ## End Class Player
