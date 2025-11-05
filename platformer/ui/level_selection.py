@@ -38,6 +38,22 @@ class LevelSelectionScreen:
         self.cursor_blink_timer = 0
         self.cursor_visible = True
 
+        # Load player sprite for cursor
+        player_sprite_path = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)),
+            "assets",
+            "images",
+            "player",
+            "suffi.png"
+        )
+        try:
+            self.cursor_sprite = pg.image.load(player_sprite_path).convert_alpha()
+            # Scale sprite to appropriate size for cursor (e.g., 32x32 or similar)
+            self.cursor_sprite = pg.transform.scale(self.cursor_sprite, (32, 32))
+        except FileNotFoundError:
+            print(f"❌ Player sprite not found at {player_sprite_path}")
+            self.cursor_sprite = None
+
         print(
             f"🎮 Level Selection Screen initialized with {len(self.available_levels)} levels"
         )
@@ -146,13 +162,18 @@ class LevelSelectionScreen:
             level_rect = level_text.get_rect(center=(screen_width // 2, y_pos))
             self.screen.blit(level_text, level_rect)
 
-            # Draw selection cursor
+            # Draw selection cursor (player sprite)
             if i == self.selected_level_index and self.cursor_visible:
-                cursor_x = level_rect.left - 30
+                cursor_x = level_rect.left - 50
                 cursor_y = y_pos
-                cursor_text = self.font_medium.render("►", True, self.cursor_color)
-                cursor_rect = cursor_text.get_rect(center=(cursor_x, cursor_y))
-                self.screen.blit(cursor_text, cursor_rect)
+                if self.cursor_sprite:
+                    cursor_rect = self.cursor_sprite.get_rect(center=(cursor_x, cursor_y))
+                    self.screen.blit(self.cursor_sprite, cursor_rect)
+                else:
+                    # Fallback to arrow if sprite not loaded
+                    cursor_text = self.font_medium.render("►", True, self.cursor_color)
+                    cursor_rect = cursor_text.get_rect(center=(cursor_x, cursor_y))
+                    self.screen.blit(cursor_text, cursor_rect)
 
         # Update display
         pg.display.flip()
