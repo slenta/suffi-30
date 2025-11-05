@@ -66,6 +66,7 @@ class Player(pg.sprite.Sprite):
         self.controls_reversed = False
         self.spike_damage_cooldown = 0
         self.exploding_object_cooldown = EXPLODING_OBJECT_COOLDOWN
+        self.damage_dealt = 0  # Track total damage dealt to enemies
 
         # Ladder mechanics
         self.on_ladder = False

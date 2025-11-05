@@ -1,0 +1,42 @@
+{
+  "test-level": [
+    {
+      "player_name": "TestPlayer",
+      "score": 44550,
+      "breakdown": {
+        "time_score": 4550,
+        "trophy_score": 20000,
+        "damage_score": 5000,
+        "life_score": 15000,
+        "total_score": 44550
+      },
+      "timestamp": "2025-11-05T11:06:30.139643"
+    }
+  ],
+  "krankenhaus": [
+    {
+      "player_name": "dave",
+      "score": 37437,
+      "breakdown": {
+        "time_score": 17437,
+        "trophy_score": 10000,
+        "damage_score": 0,
+        "life_score": 10000,
+        "total_score": 37437
+      },
+      "timestamp": "2025-11-05T11:12:32.901346"
+    },
+    {
+      "player_name": "dave",
+      "score": 36920,
+      "breakdown": {
+        "time_score": 16920,
+        "trophy_score": 10000,
+        "damage_score": 0,
+        "life_score": 10000,
+        "total_score": 36920
+      },
+      "timestamp": "2025-11-05T11:15:16.724575"
+    }
+  ]
+}

@@ -97,3 +97,30 @@ def show_level_complete_text(screen, width, height):
     text_rect = text.get_rect(center=(width // 2, height // 2))
     screen.blit(text, text_rect)
     pg.display.flip()
+
+
+def draw_score(screen, score, width):
+    """
+    Draw the current score in the bottom right corner.
+
+    Args:
+        screen: Pygame screen surface
+        score: Current score (int)
+        width: Screen width
+    """
+    font = pg.font.Font(None, 36)
+    score_text = f"Score: {score:,}"
+    score_surface = font.render(score_text, True, (255, 255, 255))
+
+    # Position in bottom right corner with some padding
+    score_rect = score_surface.get_rect()
+    score_rect.bottomright = (width - 20, screen.get_height() - 10)
+
+    # Draw semi-transparent background for better readability
+    bg_rect = score_rect.inflate(20, 10)
+    bg_surface = pg.Surface((bg_rect.width, bg_rect.height), pg.SRCALPHA)
+    bg_surface.fill((0, 0, 0, 128))
+    screen.blit(bg_surface, bg_rect.topleft)
+
+    # Draw the score
+    screen.blit(score_surface, score_rect)

@@ -58,3 +58,9 @@ FALL_SEARCH_RANGE = 10  # Grid units to search for nearest platform
 
 # Bullet constants
 EXPLOSION_RANGE = 3  # Grid units
+
+# Highscore constants
+SCORE_PER_SECOND_REMAINING = 100  # Points per second of remaining time
+SCORE_PER_TROPHY = 10000  # Points per trophy collected
+SCORE_PER_DAMAGE = 100  # Points per damage dealt to enemies
+SCORE_PER_LIFE = 5000  # Points per life (gem) remaining at level end

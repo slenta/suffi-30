@@ -20,6 +20,7 @@ from ..world.waterfall import Waterfall, WaterfallTop
 from ..config.enemy_config import get_enemy_config
 from ..config.gem_config import get_gem_config
 from ..config.trophy_config import get_trophy_config
+from .highscore_manager import HighscoreManager
 import importlib
 
 
@@ -41,6 +42,10 @@ class GameWorld:
         # Cheat code tracking
         self.cheat_buffer = ""
         self.marvin_mode = False
+
+        # Highscore system
+        self.highscore_manager = HighscoreManager()
+        self.current_score = 0
 
         # Sprite groups
         self._init_sprite_groups()
@@ -267,6 +272,8 @@ class GameWorld:
                 self.player.active_weapon = preserve_player_state.get("active_weapon")
                 # Reload the weapon image so the sprite appears
                 self.player.load_weapon_image()
+            # Restore damage dealt
+            self.player.damage_dealt = preserve_player_state.get("damage_dealt", 0)
         else:
             self.player = Player(spawn_x, spawn_y, world=self)
 
@@ -508,7 +515,30 @@ class GameWorld:
             height=HEIGHT,
             duration=60,
         )
-        show_level_complete_text(screen=self.screen, width=WIDTH, height=HEIGHT)
+        
+        # Calculate final score
+        time_remaining = self.time_remaining if self.time_remaining else 0
+        score_breakdown = self.highscore_manager.calculate_score(
+            time_remaining=time_remaining,
+            trophies_collected=self.player.trophies_collected,
+            damage_dealt=self.player.damage_dealt,
+            lives_remaining=self.player.gems,
+        )
+        
+        # Show level complete and score
+        self.show_level_complete_with_score(score_breakdown)
+        
+        # Prompt for player name and save highscore
+        player_name = self.prompt_player_name()
+        if player_name:
+            self.highscore_manager.add_highscore(
+                self.current_level_name, player_name, score_breakdown
+            )
+            print(f"💾 Highscore saved for {player_name}: {score_breakdown['total_score']:,}")
+        
+        # Show top 5 highscores
+        self.show_highscores()
+        
         # Wait until the user closes the window or presses any key
         waiting = True
         user_quit = False
@@ -548,6 +578,7 @@ class GameWorld:
                 self.player.weapons.copy() if hasattr(self.player, "weapons") else {}
             ),
             "active_weapon": getattr(self.player, "active_weapon", None),
+            "damage_dealt": getattr(self.player, "damage_dealt", 0),
         }
 
         # Determine return position (use pipe's return position or player's current position)
@@ -598,6 +629,7 @@ class GameWorld:
                 self.player.weapons.copy() if hasattr(self.player, "weapons") else {}
             ),
             "active_weapon": getattr(self.player, "active_weapon", None),
+            "damage_dealt": getattr(self.player, "damage_dealt", 0),
         }
 
         # Load parent level with return position and updated state
@@ -707,6 +739,10 @@ class GameWorld:
         if self.time_remaining is not None:
             self.draw_timer()
 
+        # Draw score (bottom right corner)
+        self.update_current_score()
+        draw_score(self.screen, self.current_score, WIDTH)
+
         # Draw Marvin Mode indicator
         if self.marvin_mode:
             font = pg.font.Font(None, 72)
@@ -797,6 +833,159 @@ class GameWorld:
 
         # Draw the timer
         self.screen.blit(timer_surface, timer_rect)
+
+    def update_current_score(self):
+        """Update the current score based on game state."""
+        time_remaining = self.time_remaining if self.time_remaining else 0
+        score_breakdown = self.highscore_manager.calculate_score(
+            time_remaining=time_remaining,
+            trophies_collected=self.player.trophies_collected,
+            damage_dealt=self.player.damage_dealt,
+            lives_remaining=self.player.gems,
+        )
+        self.current_score = score_breakdown["total_score"]
+
+    def show_level_complete_with_score(self, score_breakdown):
+        """Display level complete with score breakdown."""
+        self.screen.fill((0, 0, 0))
+        
+        # Title
+        font_title = pg.font.Font(None, 48)
+        title_text = font_title.render("Level Complete!", True, (255, 255, 255))
+        title_rect = title_text.get_rect(center=(WIDTH // 2, 20))
+        self.screen.blit(title_text, title_rect)
+        
+        # Score breakdown
+        font_normal = pg.font.Font(None, 28)
+        y_offset = 60
+        line_spacing = 32
+        
+        breakdown_lines = [
+            f"Time Bonus: {score_breakdown['time_score']:,}",
+            f"Trophy Bonus: {score_breakdown['trophy_score']:,}",
+            f"Damage Bonus: {score_breakdown['damage_score']:,}",
+            f"Lives Bonus: {score_breakdown['life_score']:,}",
+            "",
+            f"TOTAL SCORE: {score_breakdown['total_score']:,}",
+        ]
+        
+        for i, line in enumerate(breakdown_lines):
+            if line == "":
+                continue
+            color = (255, 215, 0) if "TOTAL" in line else (255, 255, 255)
+            text = font_normal.render(line, True, color)
+            text_rect = text.get_rect(center=(WIDTH // 2, y_offset + i * line_spacing))
+            self.screen.blit(text, text_rect)
+        
+        pg.display.flip()
+        pg.time.wait(2000)  # Show for 2 seconds
+
+    def prompt_player_name(self):
+        """Prompt player to enter their name for highscore."""
+        font_title = pg.font.Font(None, 40)
+        font_input = pg.font.Font(None, 36)
+        player_name = ""
+        cursor_visible = True
+        cursor_timer = 0
+        
+        entering_name = True
+        while entering_name:
+            # Handle cursor blinking
+            cursor_timer += 1
+            if cursor_timer >= 30:  # Blink every 30 frames (0.5 seconds at 60 FPS)
+                cursor_visible = not cursor_visible
+                cursor_timer = 0
+            
+            # Draw prompt
+            self.screen.fill((0, 0, 0))
+            
+            title_text = font_title.render("Enter Your Name:", True, (255, 255, 255))
+            title_rect = title_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 40))
+            self.screen.blit(title_text, title_rect)
+            
+            # Draw input box
+            input_text = player_name + ("|" if cursor_visible else " ")
+            input_surface = font_input.render(input_text, True, (255, 215, 0))
+            input_rect = input_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 10))
+            
+            # Draw box background
+            box_rect = input_rect.inflate(30, 15)
+            pg.draw.rect(self.screen, (50, 50, 50), box_rect)
+            pg.draw.rect(self.screen, (255, 255, 255), box_rect, 2)
+            
+            self.screen.blit(input_surface, input_rect)
+            
+            # Draw instruction
+            instruction_font = pg.font.Font(None, 24)
+            instruction = instruction_font.render("Press ENTER to continue", True, (200, 200, 200))
+            instruction_rect = instruction.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 100))
+            self.screen.blit(instruction, instruction_rect)
+            
+            pg.display.flip()
+            self.clock.tick(60)
+            
+            # Handle events
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    return None
+                elif event.type == pg.KEYDOWN:
+                    if event.key == pg.K_RETURN:
+                        entering_name = False
+                    elif event.key == pg.K_BACKSPACE:
+                        player_name = player_name[:-1]
+                    elif event.key == pg.K_ESCAPE:
+                        return None
+                    elif len(player_name) < 20:  # Limit name length
+                        if event.unicode.isprintable():
+                            player_name += event.unicode
+        
+        return player_name if player_name else "Anonymous"
+
+    def show_highscores(self):
+        """Display top 5 highscores for the current level."""
+        top_scores = self.highscore_manager.get_top_scores(self.current_level_name, limit=5)
+        
+        self.screen.fill((0, 0, 0))
+        
+        # Title
+        font_title = pg.font.Font(None, 48)
+        title_text = font_title.render("TOP 5 HIGHSCORES", True, (255, 215, 0))
+        title_rect = title_text.get_rect(center=(WIDTH // 2, 20))
+        self.screen.blit(title_text, title_rect)
+        
+        # Highscore list
+        font_score = pg.font.Font(None, 28)
+        y_offset = 60
+        line_spacing = 32
+        
+        if not top_scores:
+            no_scores_text = font_score.render("No highscores yet!", True, (255, 255, 255))
+            no_scores_rect = no_scores_text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+            self.screen.blit(no_scores_text, no_scores_rect)
+        else:
+            for i, entry in enumerate(top_scores):
+                rank = i + 1
+                name = entry["player_name"]
+                score = entry["score"]
+                
+                # Truncate long names
+                if len(name) > 15:
+                    name = name[:12] + "..."
+                
+                line_text = f"{rank}. {name:.<20} {score:>10,}"
+                color = (255, 215, 0) if rank == 1 else (255, 255, 255)
+                
+                text = font_score.render(line_text, True, color)
+                text_rect = text.get_rect(center=(WIDTH // 2, y_offset + i * line_spacing))
+                self.screen.blit(text, text_rect)
+        
+        # Instruction
+        instruction_font = pg.font.Font(None, 24)
+        instruction = instruction_font.render("Press any key to continue", True, (200, 200, 200))
+        instruction_rect = instruction.get_rect(center=(WIDTH // 2, HEIGHT - 15))
+        self.screen.blit(instruction, instruction_rect)
+        
+        pg.display.flip()
 
     def show_encounter_message(self, message):
         """Display an encounter message when player first sees an enemy."""
