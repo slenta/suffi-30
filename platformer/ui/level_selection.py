@@ -42,6 +42,12 @@ class LevelSelectionScreen:
             f"🎮 Level Selection Screen initialized with {len(self.available_levels)} levels"
         )
 
+        # Start menu music
+        menu_music_path = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)), "assets", "music", "menu.ogg"
+        )
+        sound_manager.play_background_music(menu_music_path, loop=True)
+
     def get_available_levels(self):
         """Get list of available levels from the levels directory (excluding sub-levels)."""
         # Go up one level from ui/ to platformer/, then into levels/
@@ -162,10 +168,14 @@ class LevelSelectionScreen:
             # Handle events
             for event in pg.event.get():
                 if event.type == pg.QUIT:
+                    # Stop menu music before quitting
+                    sound_manager.stop_music()
                     return "QUIT"
 
                 result = self.handle_input(event)
                 if result is not None:
+                    # Stop menu music before returning
+                    sound_manager.stop_music()
                     return result
 
             # Update and draw

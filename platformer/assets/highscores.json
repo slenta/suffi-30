@@ -122,5 +122,19 @@
       },
       "timestamp": "2025-11-05T11:49:07.904226"
     }
+  ],
+  "_test me": [
+    {
+      "player_name": "dave",
+      "score": 38359,
+      "breakdown": {
+        "time_score": 17359,
+        "trophy_score": 10000,
+        "damage_score": 1000,
+        "life_score": 10000,
+        "total_score": 38359
+      },
+      "timestamp": "2025-11-05T16:26:35.123083"
+    }
   ]
 }
