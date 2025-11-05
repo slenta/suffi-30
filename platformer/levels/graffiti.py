@@ -50,11 +50,10 @@ level_config = {
     "moving_platform_locations": [],
     # Add waterfall
     "waterfall_locations": [(9, y) for y in range(4, 14)],  # 10 blocks high starting at y=4
-    # Trophy to collect
+    # Trophy to collect (using centralized config)
     "trophy_locations": [
-        (45, 12),
+        {"type": "standard", "x": 45, "y": 12},
     ],
-    "trophy_image": "trophy.png",
     # Ladder locations
     "ladder_locations": [
         (5, 14),  # Bottom of ladder

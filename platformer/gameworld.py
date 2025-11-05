@@ -1,22 +1,25 @@
 import pygame as pg
 import os, sys
 from .platform_class import Platform
-from .moving_platform import MovingPlatform  # Import the MovingPlatform class
+from .moving_platform import MovingPlatform
 from .gem import Gem
 from .player import Player
 from .settings import *
-from .bullet import Bullet  # Import the Bullet class
+from .bullet import Bullet
 from .enemies import Enemy
-from .bullet import ExplodingObject  # Import the ExplodingObject class
-from .powerup import PowerUp  # Import the PowerUp class
+from .bullet import ExplodingObject
+from .powerup import PowerUp
 from .trophy import Exit, Trophy
 from .draw import *
-from .sound_manager import sound_manager  # Import the sound manager
+from .sound_manager import sound_manager
 from .weapon import WeaponPickup
-from .pipe import Pipe  # Import the Pipe class
-from .spike import Spike  # Import the Spike class
-from .ladder import Ladder, LadderTop  # Import the Ladder classes
-from .waterfall import Waterfall, WaterfallTop  # Import the Waterfall classes
+from .pipe import Pipe
+from .spike import Spike
+from .ladder import Ladder, LadderTop
+from .waterfall import Waterfall, WaterfallTop
+from .enemy_config import get_enemy_config
+from .gem_config import get_gem_config
+from .trophy_config import get_trophy_config
 import importlib
 
 
@@ -191,9 +194,25 @@ class GameWorld:
             self.platforms.add(mp)  # Add to platforms for collision detection
             self.all_sprites.add(mp)
 
-        for loc in self.level_config["gem_locations"]:
-            x, y = loc
-            g = Gem(x, y, gem_image)
+        # Load gems (supports both new template-based and legacy format)
+        for gem_data in self.level_config["gem_locations"]:
+            # Handle both tuple (x, y) format and dict {'x': x, 'y': y, 'type': ...} format
+            if isinstance(gem_data, (tuple, list)):
+                x, y = gem_data
+                # Use default gem image
+                g = Gem(x, y, gem_image)
+            else:
+                x = gem_data["x"]
+                y = gem_data["y"]
+                # If gem has a 'type' field, load from config template
+                if "type" in gem_data:
+                    config = get_gem_config(gem_data["type"])
+                    gem_img_path = os.path.join(IMAGEPATH, config["image"])
+                    gem_img = pg.image.load(gem_img_path).convert_alpha()
+                    g = Gem(x, y, gem_img)
+                else:
+                    g = Gem(x, y, gem_image)
+            
             self.items.add(g)
             self.all_sprites.add(g)
 
@@ -249,36 +268,39 @@ class GameWorld:
         self.player_sprite_group.add(self.player)
         self.all_sprites.add(self.player)
 
-        # Load enemies
+        # Load enemies (supports both new template-based and legacy detailed configs)
         for enemy_data in self.level_config["enemy_locations"]:
+            # If enemy has a 'type' field, load from config template
+            if "type" in enemy_data:
+                # New format: use enemy template with position and optional overrides
+                config = get_enemy_config(
+                    enemy_data["type"],
+                    x=enemy_data["x"],
+                    y=enemy_data["y"],
+                    **{k: v for k, v in enemy_data.items() if k not in ["type", "x", "y"]}
+                )
+            else:
+                # Legacy format: use data directly from level file
+                config = enemy_data.copy()
+            
             enemy = Enemy(
-                enemy_data["x"],  # Grid-based x-coordinate
-                enemy_data["y"],  # Grid-based y-coordinate
-                os.path.join(IMAGEPATH, enemy_data["image"]),
-                enemy_data["speed"],
-                enemy_data["patrol_range"],
-                enemy_data.get(
-                    "size_multiplier", 1
-                ),  # Default to 1 square if not specified
-                enemy_data.get("health", 1),  # Default health to 1 if not specified
-                enemy_data.get("damage", 1),  # Default damage to 1 if not specified
-                enemy_data.get("shoot_range", 5),  # Default shooting range to 5 tiles
-                self,  # Pass the GameWorld instance as the world
-                enemy_data.get("chase_range", 10),  # Default chase range to 10 tiles
-                enemy_data.get("melee_damage", 5),  # Default melee damage to 5
-                enemy_data.get(
-                    "can_throw_explosives", True
-                ),  # Default to True for regular enemies
-                enemy_data.get(
-                    "is_minion", False
-                ),  # Default to False for regular enemies
-                enemy_data.get(
-                    "can_summon_minions", False
-                ),  # Default to False - must be explicitly enabled
-                enemy_data.get("encounter_message", None),  # Optional encounter message
-                enemy_data.get(
-                    "shoot_cooldown", 60
-                ),  # Default to 60 frames (1 second at 60 FPS)
+                config["x"],
+                config["y"],
+                os.path.join(IMAGEPATH, config["image"]),
+                config["speed"],
+                config["patrol_range"],
+                config.get("size_multiplier", 1),
+                config.get("health", 1),
+                config.get("damage", 1),
+                config.get("shoot_range", 5),
+                self,
+                config.get("chase_range", 10),
+                config.get("melee_damage", 5),
+                config.get("can_throw_explosives", True),
+                config.get("is_minion", False),
+                config.get("can_summon_minions", False),
+                config.get("encounter_message", None),
+                config.get("shoot_cooldown", 60),
             )
             self.enemies.add(enemy)
             self.all_sprites.add(enemy)
@@ -294,13 +316,26 @@ class GameWorld:
             self.all_sprites.add(powerup)
             self.powerups.add(powerup)
 
-        # Load trophies and exits
+        # Load trophies (supports both new template-based and legacy format)
         self.trophies = pg.sprite.Group()
-        trophy_image_path = self.level_config.get("trophy_image", "trophy.png")
-        # Extract just the filename from the path for the Trophy class
-        trophy_filename = os.path.basename(trophy_image_path)
-        for x, y in self.level_config["trophy_locations"]:
-            trophy = Trophy(x * GRIDSIZE, y * GRIDSIZE, trophy_filename)
+        default_trophy_image = self.level_config.get("trophy_image", "trophy.png")
+        
+        for trophy_data in self.level_config["trophy_locations"]:
+            # Handle both tuple (x, y) format and dict {'x': x, 'y': y, 'type': ...} format
+            if isinstance(trophy_data, (tuple, list)):
+                x, y = trophy_data
+                trophy_image = os.path.basename(default_trophy_image)
+            else:
+                x = trophy_data["x"]
+                y = trophy_data["y"]
+                # If trophy has a 'type' field, load from config template
+                if "type" in trophy_data:
+                    config = get_trophy_config(trophy_data["type"])
+                    trophy_image = config["image"]
+                else:
+                    trophy_image = trophy_data.get("image", os.path.basename(default_trophy_image))
+            
+            trophy = Trophy(x * GRIDSIZE, y * GRIDSIZE, trophy_image)
             self.trophies.add(trophy)
             self.all_sprites.add(trophy)
         self.total_trophies = len(self.level_config["trophy_locations"])

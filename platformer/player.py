@@ -13,7 +13,7 @@ from .settings import (
 )
 from .bullet import Bullet, ExplodingObject
 from .sound_manager import sound_manager
-from .weapon_stats import WEAPON_CONFIG
+from .weapon_config import WEAPON_CONFIG
 from .constants import (
     PLAYER_KNOCKBACK_DISTANCE,
     PLAYER_KNOCKBACK_TIMER,

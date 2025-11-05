@@ -1,7 +1,7 @@
 import pygame as pg
 import os
 from .settings import IMAGEPATH, GRIDSIZE
-from .weapon_stats import WEAPON_CONFIG
+from .weapon_config import WEAPON_CONFIG
 
 
 def draw_gems(screen, player):

@@ -84,36 +84,10 @@ level_config = {
     "weapon_locations": [
         {"x": 12, "y": 10, "type": "milchflasche"},  # Erste Waffe (on stairs)
     ],
-    # Enemies
+    # Enemies (using centralized config templates)
     "enemy_locations": [
-        {
-            "x": 180,
-            "y": 13,
-            "image": "enemies/baby-erzieherin.png",  # Boss in arena center
-            "speed": 1,
-            "patrol_range": 150,
-            "size_multiplier": 4,
-            "health": 50,
-            "damage": 5,
-            "shoot_range": 0,  # Nur Melee
-            "chase_range": 10,
-            "melee_damage": 10,
-            "can_throw_explosives": False,
-        },
-        {
-            "x": 140,
-            "y": 20,
-            "image": "enemies/teddybear.png",
-            "speed": 1,
-            "patrol_range": 50,
-            "size_multiplier": 3,
-            "health": 30,
-            "damage": 5,
-            "shoot_range": 0,  # Nur Melee
-            "chase_range": 10,
-            "melee_damage": 10,
-            "can_throw_explosives": False,
-        },
+        {"type": "baby_erzieherin", "x": 180, "y": 13},  # Boss in arena center
+        {"type": "teddybear", "x": 140, "y": 20},  # Mini-boss
     ],
     # Trophies (3 total - placed as milestones)
     "trophy_locations": [

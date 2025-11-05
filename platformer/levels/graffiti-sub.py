@@ -68,30 +68,10 @@ level_config = {
     "powerup_locations": [
         {"x": 60, "y": 10, "type": 0},  # Size power-up
     ],
-    # Enemy locations - make it challenging
+    # Enemy locations (using centralized config)
     "enemy_locations": [
-        {
-            "x": 25,
-            "y": 13,
-            "image": "trump.png",
-            "speed": 1,
-            "patrol_range": 50,
-            "size_multiplier": 1,
-            "health": 2,
-            "damage": 1,
-            "shoot_range": 0,
-        },
-        {
-            "x": 50,
-            "y": 13,
-            "image": "trump.png",
-            "speed": 2,
-            "patrol_range": 80,
-            "size_multiplier": 1,
-            "health": 3,
-            "damage": 1,
-            "shoot_range": 0,
-        },
+        {"type": "trump", "x": 25, "y": 13},
+        {"type": "trump", "x": 50, "y": 13, "speed": 2, "patrol_range": 80, "health": 3},
     ],
     # Weapon locations
     "weapon_locations": [],

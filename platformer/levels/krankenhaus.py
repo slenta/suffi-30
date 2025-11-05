@@ -19,19 +19,19 @@ level_config = {
         {"x": 40, "y": 10, "type": 0},  # Power-up to make the player bigger
         {"x": 60, "y": 8, "type": 1},  # Power-up to make the player faster
     ],
+    # Enemy locations (using centralized config with overrides)
     "enemy_locations": [
         {
+            "type": "trump",
             "x": 200,
             "y": 38,
-            "image": "trump.png",
             "speed": 2,
             "patrol_range": 100,
             "size_multiplier": 2,
             "health": 7,
-            "damage": 14,  # Damage dealt by bullets
-            "shoot_range": 14,  # Shooting range in tiles
-            "chase_range": 10,  # Chasing range in tiles
-            "melee_damage": 5,  # Melee damage
+            "damage": 14,
+            "shoot_range": 14,
+            "melee_damage": 5,
         },
     ],
     "trophy_locations": [(10, 5)],
