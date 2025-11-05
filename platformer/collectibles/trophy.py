@@ -2,7 +2,7 @@
 
 import pygame as pg
 import os
-from .settings import IMAGEPATH, GRIDSIZE
+from ..config.settings import IMAGEPATH, GRIDSIZE
 
 
 class Trophy(pg.sprite.Sprite):

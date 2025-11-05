@@ -3,8 +3,8 @@
 import pygame as pg
 import os
 import random
-from .settings import IMAGEPATH, GRIDSIZE
-from .constants import (
+from ..config.settings import IMAGEPATH, GRIDSIZE
+from ..config.constants import (
     POWERUP_SPEED_INCREASE,
     POWERUP_CHAOS_SPEED_INCREASE,
     POWERUP_CHAOS_FPS,

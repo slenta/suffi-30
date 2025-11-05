@@ -3,7 +3,7 @@
 import pygame as pg
 import os
 import math
-from .settings import (
+from ..config.settings import (
     IMAGEPATH,
     GRIDSIZE,
     PLAYER_SPEED,
@@ -13,9 +13,9 @@ from .settings import (
     KEYBINDINGS,
 )
 from .bullet import Bullet, ExplodingObject
-from .sound_manager import sound_manager
-from .weapon_config import WEAPON_CONFIG
-from .constants import (
+from ..core.sound_manager import sound_manager
+from ..config.weapon_config import WEAPON_CONFIG
+from ..config.constants import (
     PLAYER_KNOCKBACK_DISTANCE,
     PLAYER_KNOCKBACK_TIMER,
     PLAYER_KNOCKBACK_STEPS,

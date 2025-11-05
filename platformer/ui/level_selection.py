@@ -7,8 +7,8 @@ Mario-style level selection screen where players can choose levels using arrow k
 import asyncio
 import pygame as pg
 import os
-from .settings import *
-from .sound_manager import sound_manager
+from ..config.settings import *
+from ..core.sound_manager import sound_manager
 
 
 class LevelSelectionScreen:
@@ -44,7 +44,8 @@ class LevelSelectionScreen:
 
     def get_available_levels(self):
         """Get list of available levels from the levels directory (excluding sub-levels)."""
-        levels_dir = os.path.join(os.path.dirname(__file__), "levels")
+        # Go up one level from ui/ to platformer/, then into levels/
+        levels_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "levels")
         available_levels = []
 
         try:

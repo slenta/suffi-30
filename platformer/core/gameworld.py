@@ -1,25 +1,25 @@
 import pygame as pg
 import os, sys
-from .platform_class import Platform
-from .moving_platform import MovingPlatform
-from .gem import Gem
-from .player import Player
-from .settings import *
-from .bullet import Bullet
-from .enemies import Enemy
-from .bullet import ExplodingObject
-from .powerup import PowerUp
-from .trophy import Exit, Trophy
+from ..world.platform_class import Platform
+from ..world.moving_platform import MovingPlatform
+from ..collectibles.gem import Gem
+from ..entities.player import Player
+from ..config.settings import *
+from ..entities.bullet import Bullet
+from ..entities.enemies import Enemy
+from ..entities.bullet import ExplodingObject
+from ..collectibles.powerup import PowerUp
+from ..collectibles.trophy import Exit, Trophy
 from .draw import *
 from .sound_manager import sound_manager
-from .weapon import WeaponPickup
-from .pipe import Pipe
-from .spike import Spike
-from .ladder import Ladder, LadderTop
-from .waterfall import Waterfall, WaterfallTop
-from .enemy_config import get_enemy_config
-from .gem_config import get_gem_config
-from .trophy_config import get_trophy_config
+from ..collectibles.weapon import WeaponPickup
+from ..world.pipe import Pipe
+from ..world.spike import Spike
+from ..world.ladder import Ladder, LadderTop
+from ..world.waterfall import Waterfall, WaterfallTop
+from ..config.enemy_config import get_enemy_config
+from ..config.gem_config import get_gem_config
+from ..config.trophy_config import get_trophy_config
 import importlib
 
 
@@ -406,8 +406,9 @@ class GameWorld:
             # Check if it's an absolute path or relative to platformer directory
             if not os.path.isabs(music_path):
                 # Try relative to platformer directory (where assets now lives)
+                # Go up from core/ to platformer/
                 music_path = os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)), music_path
+                    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), music_path
                 )
             self.original_music_track = music_path
             sound_manager.play_background_music(music_path)
@@ -416,8 +417,9 @@ class GameWorld:
         if "alternative_music_tracks" in self.level_config:
             for alt_music_path in self.level_config["alternative_music_tracks"]:
                 if not os.path.isabs(alt_music_path):
+                    # Go up from core/ to platformer/
                     alt_music_path = os.path.join(
-                        os.path.dirname(os.path.abspath(__file__)), alt_music_path
+                        os.path.dirname(os.path.dirname(os.path.abspath(__file__))), alt_music_path
                     )
 
                 if os.path.exists(alt_music_path):
@@ -844,8 +846,9 @@ class GameWorld:
         }
 
         # Load each sound effect (silently ignore missing files)
+        # Go up from core/ to platformer/
         sounds_dir = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "assets", "sounds"
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets", "sounds"
         )
         for name, filename in sound_effects.items():
             full_path = os.path.join(sounds_dir, filename)
@@ -872,8 +875,9 @@ class GameWorld:
             # Check if it's an absolute path or relative to platformer directory
             if not os.path.isabs(bg_path):
                 # Try relative to platformer directory (where assets now lives)
+                # Go up from core/ to platformer/
                 bg_path = os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)), bg_path
+                    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), bg_path
                 )
 
             # Load background image
@@ -892,8 +896,9 @@ class GameWorld:
         if "alternative_backgrounds" in self.level_config:
             for alt_bg_path in self.level_config["alternative_backgrounds"]:
                 if not os.path.isabs(alt_bg_path):
+                    # Go up from core/ to platformer/
                     alt_bg_path = os.path.join(
-                        os.path.dirname(os.path.abspath(__file__)), alt_bg_path
+                        os.path.dirname(os.path.dirname(os.path.abspath(__file__))), alt_bg_path
                     )
 
                 if os.path.exists(alt_bg_path):

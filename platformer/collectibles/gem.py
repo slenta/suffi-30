@@ -1,6 +1,6 @@
 """Gem collectible sprite."""
 
-from .base_sprites import CollectibleSprite
+from ..core.base_sprites import CollectibleSprite
 
 
 class Gem(CollectibleSprite):

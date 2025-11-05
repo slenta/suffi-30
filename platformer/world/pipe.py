@@ -4,7 +4,7 @@ Pipe class for entering sub-levels (similar to Mario green pipes).
 
 import pygame as pg
 import os
-from .settings import IMAGEPATH, GRIDSIZE
+from ..config.settings import IMAGEPATH, GRIDSIZE
 
 
 class Pipe(pg.sprite.Sprite):

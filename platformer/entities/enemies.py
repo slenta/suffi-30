@@ -4,9 +4,9 @@ import math
 import random
 import pygame as pg
 from .bullet import Bullet, ExplodingObject
-from .settings import GRIDSIZE, GRAVITY, MAX_VELOCITY, WIDTH, HEIGHT
-from .sound_manager import sound_manager
-from .constants import (
+from ..config.settings import GRIDSIZE, GRAVITY, MAX_VELOCITY, WIDTH, HEIGHT
+from ..core.sound_manager import sound_manager
+from ..config.constants import (
     ENEMY_MINION_SUMMON_CHANCE,
     ENEMY_EXPLOSIVE_THROW_CHANCE,
     ENEMY_DEATH_TIMER_MAX,

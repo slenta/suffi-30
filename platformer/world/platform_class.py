@@ -1,7 +1,7 @@
 """Platform sprite class."""
 
 import pygame as pg
-from .base_sprites import GridSprite
+from ..core.base_sprites import GridSprite
 
 
 class Platform(GridSprite):

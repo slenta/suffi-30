@@ -3,7 +3,7 @@ Base sprite classes for consistent sprite initialization.
 """
 
 import pygame as pg
-from .settings import GRIDSIZE
+from ..config.settings import GRIDSIZE
 
 
 class GridSprite(pg.sprite.Sprite):

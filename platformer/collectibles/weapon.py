@@ -1,7 +1,7 @@
 import pygame as pg
 import os
-from .settings import IMAGEPATH, GRIDSIZE
-from .weapon_config import WEAPON_CONFIG
+from ..config.settings import IMAGEPATH, GRIDSIZE
+from ..config.weapon_config import WEAPON_CONFIG
 
 
 class WeaponPickup(pg.sprite.Sprite):

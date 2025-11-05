@@ -3,10 +3,10 @@
 import pygame as pg
 import os
 import math
-from .settings import IMAGEPATH, GRIDSIZE, GRAVITY
-from .weapon_config import WEAPON_CONFIG
-from .sound_manager import sound_manager
-from .constants import (
+from ..config.settings import IMAGEPATH, GRIDSIZE, GRAVITY
+from ..config.weapon_config import WEAPON_CONFIG
+from ..core.sound_manager import sound_manager
+from ..config.constants import (
     EXPLODING_OBJECT_SPEED,
     EXPLODING_OBJECT_INITIAL_VY,
     EXPLODING_OBJECT_GRAVITY_FACTOR,

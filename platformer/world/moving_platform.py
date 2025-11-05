@@ -1,5 +1,5 @@
 import pygame as pg
-from .settings import *
+from ..config.settings import *
 
 
 class MovingPlatform(pg.sprite.Sprite):

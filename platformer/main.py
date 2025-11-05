@@ -2,9 +2,9 @@ import asyncio
 import os
 import sys
 import pygame as pg
-from .gameworld import GameWorld
-from .level_selection import LevelSelectionScreen
-from .settings import FPS, KEYBINDINGS, WIDTH, HEIGHT
+from .core.gameworld import GameWorld
+from .ui.level_selection import LevelSelectionScreen
+from .config.settings import FPS, KEYBINDINGS, WIDTH, HEIGHT
 
 
 async def get_level_to_load():
@@ -24,7 +24,7 @@ async def get_level_to_load():
     pg.display.set_caption("Level Selection - Suffi Platformer")
 
     # Load menu sound effects
-    from .sound_manager import sound_manager
+    from .core.sound_manager import sound_manager
 
     sounds_dir = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "assets", "sounds"
