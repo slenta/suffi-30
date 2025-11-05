@@ -61,6 +61,18 @@
         "total_score": 36920
       },
       "timestamp": "2025-11-05T11:15:16.724575"
+    },
+    {
+      "player_name": "haha",
+      "score": 33405,
+      "breakdown": {
+        "time_score": 17405,
+        "trophy_score": 10000,
+        "damage_score": 1000,
+        "life_score": 5000,
+        "total_score": 33405
+      },
+      "timestamp": "2025-11-05T11:49:07.904226"
     }
   ]
 }

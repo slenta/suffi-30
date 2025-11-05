@@ -73,6 +73,9 @@ class GameWorld:
         self.encounter_message_timer = 0
         self.encounter_message_duration = 180  # 3 seconds at 60 FPS
 
+        # Track collected items to prevent respawning
+        self.collected_items = set()
+
     def _init_sprite_groups(self):
         """Initialize all sprite groups."""
         self.all_sprites = pg.sprite.Group()
@@ -125,6 +128,10 @@ class GameWorld:
         """
         # Clear all sprite groups
         self._clear_sprite_groups()
+
+        # Clear collected items only if loading a different level (not during reset)
+        if self.current_level_name != level_name:
+            self.collected_items.clear()
 
         self.current_level_name = level_name
 
@@ -209,10 +216,16 @@ class GameWorld:
             if isinstance(gem_data, (tuple, list)):
                 x, y = gem_data
                 # Use default gem image
+                gem_id = f"gem_{x}_{y}"
+                if gem_id in self.collected_items:
+                    continue  # Skip already collected gems
                 g = Gem(x, y, gem_image)
             else:
                 x = gem_data["x"]
                 y = gem_data["y"]
+                gem_id = f"gem_{x}_{y}"
+                if gem_id in self.collected_items:
+                    continue  # Skip already collected gems
                 # If gem has a 'type' field, load from config template
                 if "type" in gem_data:
                     config = get_gem_config(gem_data["type"])
@@ -324,9 +337,14 @@ class GameWorld:
 
         # Load power-ups
         for powerup_data in self.level_config["powerup_locations"]:
+            x = powerup_data["x"]
+            y = powerup_data["y"]
+            powerup_id = f"powerup_{x}_{y}"
+            if powerup_id in self.collected_items:
+                continue  # Skip already collected powerups
             powerup = PowerUp(
-                powerup_data["x"] * GRIDSIZE,
-                powerup_data["y"] * GRIDSIZE,
+                x * GRIDSIZE,
+                y * GRIDSIZE,
                 powerup_data["type"],
                 self,
             )
@@ -354,6 +372,10 @@ class GameWorld:
                         "image", os.path.basename(default_trophy_image)
                     )
 
+            trophy_id = f"trophy_{x}_{y}"
+            if trophy_id in self.collected_items:
+                continue  # Skip already collected trophies
+
             trophy = Trophy(x * GRIDSIZE, y * GRIDSIZE, trophy_image)
             self.trophies.add(trophy)
             self.all_sprites.add(trophy)
@@ -365,9 +387,14 @@ class GameWorld:
 
         # Load weapon pickups
         for weapon_data in self.level_config.get("weapon_locations", []):
+            x = weapon_data["x"]
+            y = weapon_data["y"]
+            weapon_id = f"weapon_{x}_{y}"
+            if weapon_id in self.collected_items:
+                continue  # Skip already collected weapons
             weapon = WeaponPickup(
-                weapon_data["x"] * GRIDSIZE,
-                weapon_data["y"] * GRIDSIZE,
+                x * GRIDSIZE,
+                y * GRIDSIZE,
                 weapon_data["type"],
             )
             self.weapon_pickups.add(weapon)

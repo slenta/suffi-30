@@ -200,12 +200,20 @@ class Player(pg.sprite.Sprite):
     def check_items(self):
         hits = pg.sprite.spritecollide(self, self.world.items, True)
         for item in hits:
+            # Track collected item to prevent respawning
+            item_x = item.rect.centerx // GRIDSIZE
+            item_y = item.rect.centery // GRIDSIZE
+            self.world.collected_items.add(f"gem_{item_x}_{item_y}")
             item.apply(self)
             sound_manager.play_sound_effect("gem_collect")  # Play gem collection sound
 
     def check_powerups(self):
         hits = pg.sprite.spritecollide(self, self.world.powerups, True)
         for powerup in hits:
+            # Track collected powerup to prevent respawning
+            powerup_x = powerup.rect.centerx // GRIDSIZE
+            powerup_y = powerup.rect.centery // GRIDSIZE
+            self.world.collected_items.add(f"powerup_{powerup_x}_{powerup_y}")
             powerup.apply_effect(self)
             # Type 3 powerup lasts 8 seconds (480 frames at 60 FPS), others last 5 seconds (300 frames)
             duration = 240 if powerup.power_type == 3 else 480
@@ -220,6 +228,11 @@ class Player(pg.sprite.Sprite):
             sound_manager.play_sound_effect(
                 "trophy_collect"
             )  # Play trophy collection sound
+        for trophy in hits:
+            # Track collected trophy to prevent respawning
+            trophy_x = trophy.rect.centerx // GRIDSIZE
+            trophy_y = trophy.rect.centery // GRIDSIZE
+            self.world.collected_items.add(f"trophy_{trophy_x}_{trophy_y}")
         self.trophies_collected += len(hits)
 
     def check_exit(self):
@@ -310,6 +323,10 @@ class Player(pg.sprite.Sprite):
         """Check for weapon pickup collisions"""
         hits = pg.sprite.spritecollide(self, self.world.weapon_pickups, True)
         for weapon in hits:
+            # Track collected weapon to prevent respawning
+            weapon_x = weapon.rect.centerx // GRIDSIZE
+            weapon_y = weapon.rect.centery // GRIDSIZE
+            self.world.collected_items.add(f"weapon_{weapon_x}_{weapon_y}")
             self.pick_up_weapon(weapon.weapon_name)
 
     def pick_up_weapon(self, weapon_name):
