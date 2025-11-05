@@ -32,21 +32,23 @@ TROPHY_TYPES = {
 def get_trophy_config(trophy_type="standard", **overrides):
     """
     Get trophy configuration with optional overrides.
-    
+
     Args:
         trophy_type: Type of trophy from TROPHY_TYPES (default: "standard")
         **overrides: Any parameters to override (e.g., x, y, image)
-    
+
     Returns:
         Dictionary with complete trophy configuration
-    
+
     Example:
         get_trophy_config('golden', x=100, y=50)
     """
     if trophy_type not in TROPHY_TYPES:
-        raise ValueError(f"Unknown trophy type: {trophy_type}. Available types: {list(TROPHY_TYPES.keys())}")
-    
+        raise ValueError(
+            f"Unknown trophy type: {trophy_type}. Available types: {list(TROPHY_TYPES.keys())}"
+        )
+
     config = TROPHY_TYPES[trophy_type].copy()
     config.update(overrides)
-    
+
     return config

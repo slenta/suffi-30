@@ -1,4 +1,5 @@
 """Power-up collectibles with various effects."""
+
 import pygame as pg
 import os
 import random
@@ -71,7 +72,10 @@ class PowerUp(pg.sprite.Sprite):
             # Make the player bigger
             player.image = pg.transform.scale(
                 player.image,
-                (player.rect.width * POWERUP_SIZE_MULTIPLIER, player.rect.height * POWERUP_SIZE_MULTIPLIER),
+                (
+                    player.rect.width * POWERUP_SIZE_MULTIPLIER,
+                    player.rect.height * POWERUP_SIZE_MULTIPLIER,
+                ),
             )
             player.rect = player.image.get_rect(center=player.rect.center)
         elif self.power_type == 1:
@@ -99,7 +103,11 @@ class PowerUp(pg.sprite.Sprite):
         if self.power_type == 0 or self.power_type == 4:
             # Restore normal size
             player.image = pg.transform.scale(
-                player.image, (player.rect.width // POWERUP_SIZE_MULTIPLIER, player.rect.height // POWERUP_SIZE_MULTIPLIER)
+                player.image,
+                (
+                    player.rect.width // POWERUP_SIZE_MULTIPLIER,
+                    player.rect.height // POWERUP_SIZE_MULTIPLIER,
+                ),
             )
             player.rect = player.image.get_rect(center=player.rect.center)
         elif self.power_type == 1:

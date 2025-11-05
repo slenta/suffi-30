@@ -30,21 +30,23 @@ GEM_TYPES = {
 def get_gem_config(gem_type="standard", **overrides):
     """
     Get gem configuration with optional overrides.
-    
+
     Args:
         gem_type: Type of gem from GEM_TYPES (default: "standard")
         **overrides: Any parameters to override (e.g., x, y, value)
-    
+
     Returns:
         Dictionary with complete gem configuration
-    
+
     Example:
         get_gem_config('gold', x=100, y=50)
     """
     if gem_type not in GEM_TYPES:
-        raise ValueError(f"Unknown gem type: {gem_type}. Available types: {list(GEM_TYPES.keys())}")
-    
+        raise ValueError(
+            f"Unknown gem type: {gem_type}. Available types: {list(GEM_TYPES.keys())}"
+        )
+
     config = GEM_TYPES[gem_type].copy()
     config.update(overrides)
-    
+
     return config

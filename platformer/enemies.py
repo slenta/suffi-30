@@ -1,4 +1,5 @@
 """Enemy AI and behavior."""
+
 import math
 import random
 import pygame as pg
@@ -24,6 +25,7 @@ from .constants import (
 
 class Enemy(pg.sprite.Sprite):
     """Enemy sprite with AI behavior, combat, and death animations."""
+
     def __init__(
         self,
         _x,

@@ -2,6 +2,7 @@
 Game settings and configuration.
 All game-wide settings, constants, and configurations.
 """
+
 import os
 import pygame as pg
 

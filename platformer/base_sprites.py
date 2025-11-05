@@ -1,6 +1,7 @@
 """
 Base sprite classes for consistent sprite initialization.
 """
+
 import pygame as pg
 from .settings import GRIDSIZE
 

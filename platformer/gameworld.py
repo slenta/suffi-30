@@ -152,8 +152,12 @@ class GameWorld:
                 self.timer_start_ticks = None
 
         # Load common images
-        grass_image = pg.image.load(os.path.join(IMAGEPATH, "grass_02.png")).convert_alpha()
-        block_image = pg.image.load(os.path.join(IMAGEPATH, "block_00.png")).convert_alpha()
+        grass_image = pg.image.load(
+            os.path.join(IMAGEPATH, "grass_02.png")
+        ).convert_alpha()
+        block_image = pg.image.load(
+            os.path.join(IMAGEPATH, "block_00.png")
+        ).convert_alpha()
         gem_image = pg.image.load(os.path.join(IMAGEPATH, "gem.png")).convert_alpha()
 
         self.all_sprites = pg.sprite.Group()
@@ -212,7 +216,7 @@ class GameWorld:
                     g = Gem(x, y, gem_img)
                 else:
                     g = Gem(x, y, gem_image)
-            
+
             self.items.add(g)
             self.all_sprites.add(g)
 
@@ -261,6 +265,8 @@ class GameWorld:
             if "weapons" in preserve_player_state:
                 self.player.weapons = preserve_player_state["weapons"].copy()
                 self.player.active_weapon = preserve_player_state.get("active_weapon")
+                # Reload the weapon image so the sprite appears
+                self.player.load_weapon_image()
         else:
             self.player = Player(spawn_x, spawn_y, world=self)
 
@@ -277,12 +283,16 @@ class GameWorld:
                     enemy_data["type"],
                     x=enemy_data["x"],
                     y=enemy_data["y"],
-                    **{k: v for k, v in enemy_data.items() if k not in ["type", "x", "y"]}
+                    **{
+                        k: v
+                        for k, v in enemy_data.items()
+                        if k not in ["type", "x", "y"]
+                    },
                 )
             else:
                 # Legacy format: use data directly from level file
                 config = enemy_data.copy()
-            
+
             enemy = Enemy(
                 config["x"],
                 config["y"],
@@ -319,7 +329,7 @@ class GameWorld:
         # Load trophies (supports both new template-based and legacy format)
         self.trophies = pg.sprite.Group()
         default_trophy_image = self.level_config.get("trophy_image", "trophy.png")
-        
+
         for trophy_data in self.level_config["trophy_locations"]:
             # Handle both tuple (x, y) format and dict {'x': x, 'y': y, 'type': ...} format
             if isinstance(trophy_data, (tuple, list)):
@@ -333,8 +343,10 @@ class GameWorld:
                     config = get_trophy_config(trophy_data["type"])
                     trophy_image = config["image"]
                 else:
-                    trophy_image = trophy_data.get("image", os.path.basename(default_trophy_image))
-            
+                    trophy_image = trophy_data.get(
+                        "image", os.path.basename(default_trophy_image)
+                    )
+
             trophy = Trophy(x * GRIDSIZE, y * GRIDSIZE, trophy_image)
             self.trophies.add(trophy)
             self.all_sprites.add(trophy)
@@ -432,7 +444,9 @@ class GameWorld:
             "gems": self.player.gems,
             "trophies": self.player.trophies_collected,
             "health": self.player.max_health,  # Reset to full health
-            "weapons": self.player.weapons.copy() if hasattr(self.player, "weapons") else {},
+            "weapons": (
+                self.player.weapons.copy() if hasattr(self.player, "weapons") else {}
+            ),
             "active_weapon": getattr(self.player, "active_weapon", None),
         }
 

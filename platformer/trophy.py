@@ -1,4 +1,5 @@
 """Trophy and exit door sprites."""
+
 import pygame as pg
 import os
 from .settings import IMAGEPATH, GRIDSIZE

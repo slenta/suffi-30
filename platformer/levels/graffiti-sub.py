@@ -16,13 +16,22 @@ level_config = {
     # Add a distinctive pattern of blocks to form "HI"
     "block_locations": [
         # Letter H
-        (3, 8), (3, 9), (3, 10),  # Left vertical
-        (4, 9),                    # Middle
-        (5, 8), (5, 9), (5, 10),  # Right vertical
+        (3, 8),
+        (3, 9),
+        (3, 10),  # Left vertical
+        (4, 9),  # Middle
+        (5, 8),
+        (5, 9),
+        (5, 10),  # Right vertical
         # Letter I
-        (7, 8), (8, 8), (9, 8),   # Top
-        (8, 9), (8, 10),          # Middle
-        (7, 10), (8, 10), (9, 10) # Bottom
+        (7, 8),
+        (8, 8),
+        (9, 8),  # Top
+        (8, 9),
+        (8, 10),  # Middle
+        (7, 10),
+        (8, 10),
+        (9, 10),  # Bottom
     ],
     # Block locations - create a small cave-like structure
     "block_locations": [
@@ -71,7 +80,14 @@ level_config = {
     # Enemy locations (using centralized config)
     "enemy_locations": [
         {"type": "trump", "x": 25, "y": 13},
-        {"type": "trump", "x": 50, "y": 13, "speed": 2, "patrol_range": 80, "health": 3},
+        {
+            "type": "trump",
+            "x": 50,
+            "y": 13,
+            "speed": 2,
+            "patrol_range": 80,
+            "health": 3,
+        },
     ],
     # Weapon locations
     "weapon_locations": [],

@@ -1,4 +1,5 @@
 """Gem collectible sprite."""
+
 from .base_sprites import CollectibleSprite
 
 

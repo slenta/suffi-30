@@ -159,24 +159,26 @@ ENEMY_TYPES = {
 def get_enemy_config(enemy_type, **overrides):
     """
     Get enemy configuration with optional overrides.
-    
+
     Args:
         enemy_type: Type of enemy from ENEMY_TYPES
         **overrides: Any parameters to override (e.g., x, y, health, speed)
-    
+
     Returns:
         Dictionary with complete enemy configuration
-    
+
     Example:
         get_enemy_config('trance_totem', x=100, y=50, health=30)
     """
     if enemy_type not in ENEMY_TYPES:
-        raise ValueError(f"Unknown enemy type: {enemy_type}. Available types: {list(ENEMY_TYPES.keys())}")
-    
+        raise ValueError(
+            f"Unknown enemy type: {enemy_type}. Available types: {list(ENEMY_TYPES.keys())}"
+        )
+
     # Start with the template
     config = ENEMY_TYPES[enemy_type].copy()
-    
+
     # Apply overrides
     config.update(overrides)
-    
+
     return config

@@ -1,4 +1,5 @@
 """Player character class with movement, combat, and interaction."""
+
 import pygame as pg
 import os
 import math

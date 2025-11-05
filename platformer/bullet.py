@@ -1,4 +1,5 @@
 """Bullet and exploding object projectiles."""
+
 import pygame as pg
 import os
 import math
@@ -15,6 +16,7 @@ from .constants import (
 
 class Bullet(pg.sprite.Sprite):
     """Projectile fired by weapons."""
+
     def __init__(
         self,
         x,

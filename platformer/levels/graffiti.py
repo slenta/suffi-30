@@ -49,7 +49,9 @@ level_config = {
     # No moving platforms
     "moving_platform_locations": [],
     # Add waterfall
-    "waterfall_locations": [(9, y) for y in range(4, 14)],  # 10 blocks high starting at y=4
+    "waterfall_locations": [
+        (9, y) for y in range(4, 14)
+    ],  # 10 blocks high starting at y=4
     # Trophy to collect (using centralized config)
     "trophy_locations": [
         {"type": "standard", "x": 45, "y": 12},
