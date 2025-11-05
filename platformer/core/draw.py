@@ -82,7 +82,7 @@ def draw_trophies(screen, player, total_trophies, trophy_image_path="trophy.png"
 def draw_health_bar(screen, player, width, height, max_health):
     bar_width = width
     bar_height = height
-    bar_x = screen.get_width() - bar_width - 20
+    bar_x = screen.get_width() - bar_width - 200
     bar_y = 10
     fill_width = int((player.health / max_health) * bar_width)
     pg.draw.rect(screen, (100, 100, 100), (bar_x, bar_y, bar_width, bar_height))

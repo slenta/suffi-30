@@ -39,6 +39,18 @@
       "timestamp": "2025-11-05T11:25:51.825790"
     },
     {
+      "player_name": "asdf ",
+      "score": 38399,
+      "breakdown": {
+        "time_score": 17399,
+        "trophy_score": 10000,
+        "damage_score": 1000,
+        "life_score": 10000,
+        "total_score": 38399
+      },
+      "timestamp": "2025-11-05T12:00:41.137650"
+    },
+    {
       "player_name": "hallo",
       "score": 38252,
       "breakdown": {
@@ -51,6 +63,18 @@
       "timestamp": "2025-11-05T11:56:42.880633"
     },
     {
+      "player_name": "asfd",
+      "score": 37954,
+      "breakdown": {
+        "time_score": 16954,
+        "trophy_score": 10000,
+        "damage_score": 1000,
+        "life_score": 10000,
+        "total_score": 37954
+      },
+      "timestamp": "2025-11-05T11:59:35.420077"
+    },
+    {
       "player_name": "dave",
       "score": 37437,
       "breakdown": {
@@ -61,6 +85,18 @@
         "total_score": 37437
       },
       "timestamp": "2025-11-05T11:12:32.901346"
+    },
+    {
+      "player_name": "test",
+      "score": 37400,
+      "breakdown": {
+        "time_score": 17400,
+        "trophy_score": 10000,
+        "damage_score": 0,
+        "life_score": 10000,
+        "total_score": 37400
+      },
+      "timestamp": "2025-11-05T12:01:26.731565"
     },
     {
       "player_name": "dave",

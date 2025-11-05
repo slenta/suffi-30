@@ -743,7 +743,7 @@ class GameWorld:
             self.background_scroll_speed,
             self.camera_offset_x,
             self.camera_offset_y,
-            self.level_config.get("background_color", (135, 206, 235))
+            self.level_config.get("background_color", (135, 206, 235)),
         )
 
         # Draw all sprites with the camera offset
@@ -945,11 +945,11 @@ class GameWorld:
                 name = entry["player_name"]
                 score = entry["score"]
 
-                # Truncate long names
-                if len(name) > 15:
-                    name = name[:12] + "..."
+                # Truncate long names to fit in 20 character field
+                if len(name) > 20:
+                    name = name[:17] + "..."
 
-                line_text = f"{rank}. {name:.<20} {score:>10,}"
+                line_text = f"{rank}. {name: <20} {score:>10,}"
                 color = (255, 255, 255)
 
                 text = font_score.render(line_text, True, color)
