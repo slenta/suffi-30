@@ -1,7 +1,14 @@
+"""Power-up collectibles with various effects."""
 import pygame as pg
 import os
 import random
-from .settings import IMAGEPATH, GRIDSIZE  # Ensure GRIDSIZE and IMAGSIZE are imported
+from .settings import IMAGEPATH, GRIDSIZE
+from .constants import (
+    POWERUP_SPEED_INCREASE,
+    POWERUP_CHAOS_SPEED_INCREASE,
+    POWERUP_CHAOS_FPS,
+    POWERUP_SIZE_MULTIPLIER,
+)
 
 
 class PowerUp(pg.sprite.Sprite):
@@ -59,15 +66,17 @@ class PowerUp(pg.sprite.Sprite):
         self.rect.center = (x, y)
 
     def apply_effect(self, player):
+        """Apply power-up effect to player."""
         if self.power_type == 0 or self.power_type == 4:
             # Make the player bigger
             player.image = pg.transform.scale(
-                player.image, (player.rect.width * 2, player.rect.height * 2)
+                player.image,
+                (player.rect.width * POWERUP_SIZE_MULTIPLIER, player.rect.height * POWERUP_SIZE_MULTIPLIER),
             )
             player.rect = player.image.get_rect(center=player.rect.center)
         elif self.power_type == 1:
             # Make the player faster
-            player.speed += 4  # Increase player's speed
+            player.speed += POWERUP_SPEED_INCREASE
         elif self.power_type == 2:
             # Change the background
             self.world.change_background()
@@ -76,31 +85,30 @@ class PowerUp(pg.sprite.Sprite):
             if random.random() < 0.5:
                 # Option A: Reverse controls + slow FPS
                 player.controls_reversed = True
-                self.world.set_fps(10)
+                self.world.set_fps(POWERUP_CHAOS_FPS)
                 self.fps_changed = True
                 self.speed_changed = False
             else:
                 # Option B: Speed increase
-                player.speed += 6
+                player.speed += POWERUP_CHAOS_SPEED_INCREASE
                 self.speed_changed = True
                 self.fps_changed = False
 
     def power_down(self, player):
+        """Remove power-up effect from player."""
         if self.power_type == 0 or self.power_type == 4:
-            # Restore normal size (assuming player.normal_size exists)
+            # Restore normal size
             player.image = pg.transform.scale(
-                player.image, (player.rect.width // 2, player.rect.height // 2)
+                player.image, (player.rect.width // POWERUP_SIZE_MULTIPLIER, player.rect.height // POWERUP_SIZE_MULTIPLIER)
             )
             player.rect = player.image.get_rect(center=player.rect.center)
         elif self.power_type == 1:
-            # Restore normal speed (assuming player.normal_speed exists)
-            player.speed -= 4
+            # Restore normal speed
+            player.speed -= POWERUP_SPEED_INCREASE
         elif self.power_type == 3:
             # Restore effects based on what was activated
             if self.fps_changed:
-                # Was Option A: restore controls and FPS
                 player.controls_reversed = False
                 self.world.reset_fps()
             if self.speed_changed:
-                # Was Option B: restore speed
-                player.speed -= 6
+                player.speed -= POWERUP_CHAOS_SPEED_INCREASE

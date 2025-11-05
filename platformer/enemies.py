@@ -1,13 +1,29 @@
+"""Enemy AI and behavior."""
 import math
 import random
 import pygame as pg
-from .bullet import Bullet  # Import the Bullet class
-from .settings import *
-from .bullet import ExplodingObject
-from .sound_manager import sound_manager  # Import the sound manager
+from .bullet import Bullet, ExplodingObject
+from .settings import GRIDSIZE, GRAVITY, MAX_VELOCITY, WIDTH, HEIGHT
+from .sound_manager import sound_manager
+from .constants import (
+    ENEMY_MINION_SUMMON_CHANCE,
+    ENEMY_EXPLOSIVE_THROW_CHANCE,
+    ENEMY_DEATH_TIMER_MAX,
+    ENEMY_DEATH_INITIAL_VY,
+    ENEMY_DEATH_ROTATION_SPEED_MIN,
+    ENEMY_DEATH_ROTATION_SPEED_MAX,
+    ENEMY_MINION_SIZE,
+    ENEMY_MINION_HEALTH,
+    ENEMY_MINION_DAMAGE,
+    ENEMY_MINION_MELEE_DAMAGE,
+    ENEMY_MINION_PATROL_RANGE,
+    ENEMY_MINION_SHOOT_RANGE,
+    ENEMY_MINION_CHASE_RANGE,
+)
 
 
 class Enemy(pg.sprite.Sprite):
+    """Enemy sprite with AI behavior, combat, and death animations."""
     def __init__(
         self,
         _x,
@@ -270,54 +286,50 @@ class Enemy(pg.sprite.Sprite):
         pg.draw.rect(screen, (255, 255, 255), (bar_x, bar_y, bar_width, bar_height), 1)
 
     def summon_minion(self, player):
-        # Only summon minions if this enemy has the ability enabled
-        if not self.can_summon_minions:
+        """Summon a smaller minion enemy (if ability is enabled)."""
+        if not self.can_summon_minions or self.health <= 0:
             return
 
-        # Check if the enemy is alive and the player is within one game width
         distance_to_player = abs(player.rect.centerx - self.rect.centerx)
 
-        if (
-            self.health > 0
-            and distance_to_player <= WIDTH
-            and random.random() < 0.001  # 0.1% chance per frame to summon a minion
-        ):
+        if distance_to_player <= WIDTH and random.random() < ENEMY_MINION_SUMMON_CHANCE:
             minion = Enemy(
                 self.rect.x // GRIDSIZE,
                 self.rect.y // GRIDSIZE,
-                _image_path=self.image_path,  # Use the same image
+                _image_path=self.image_path,
                 speed=self.speed,
-                patrol_range=50,  # Smaller patrol range for minions
-                size_multiplier=0.5,  # Smaller size for minions
-                health=3,  # Lower health for minions
-                damage=1,  # Lower damage for minions
-                shoot_range=3,  # Shorter shooting range
+                patrol_range=ENEMY_MINION_PATROL_RANGE,
+                size_multiplier=ENEMY_MINION_SIZE,
+                health=ENEMY_MINION_HEALTH,
+                damage=ENEMY_MINION_DAMAGE,
+                shoot_range=ENEMY_MINION_SHOOT_RANGE,
                 world=self.world,
-                chase_range=5,  # Smaller chase range
-                melee_damage=2,  # Lower melee damage
-                can_throw_explosives=False,  # Minions cannot throw explosives
+                chase_range=ENEMY_MINION_CHASE_RANGE,
+                melee_damage=ENEMY_MINION_MELEE_DAMAGE,
+                can_throw_explosives=False,
+                is_minion=True,
             )
             self.world.enemies.add(minion)
             self.world.all_sprites.add(minion)
 
     def throw_exploding_object(self, player):
-        if not self.can_throw_explosives:  # Minions cannot throw explosives
+        """Throw an exploding object at the player (if ability is enabled)."""
+        if not self.can_throw_explosives:
             return
 
-        if random.random() < 0.01:  # 1% chance per frame to throw an object
+        if random.random() < ENEMY_EXPLOSIVE_THROW_CHANCE:
             direction_x = player.rect.centerx - self.rect.centerx
             direction_y = player.rect.centery - self.rect.centery
             magnitude = math.hypot(direction_x, direction_y)
-            direction_x /= magnitude  # Normalize the direction vector
+            direction_x /= magnitude
             direction_y /= magnitude
 
-            # Create the exploding object
             exploding_object = ExplodingObject(
                 self.rect.centerx,
                 self.rect.centery - 15,
                 direction_x,
                 direction_y,
-                damage=20,  # Explosion damage
+                damage=20,
                 world=self.world,
             )
             self.world.bullets.add(exploding_object)
@@ -359,12 +371,13 @@ class Enemy(pg.sprite.Sprite):
         )
 
     def start_death_animation(self):
-        """Initialize the death animation (Mario-style tumble)"""
+        """Initialize the death animation (Mario-style tumble)."""
         self.is_dying = True
-        self.vy = -12  # Initial upward velocity (bounce up when killed)
-        # Randomize tumble direction slightly
+        self.vy = ENEMY_DEATH_INITIAL_VY
         self.death_horizontal_velocity = random.choice([-3, 3])
-        self.death_rotation_speed = random.randint(12, 18)
+        self.death_rotation_speed = random.randint(
+            ENEMY_DEATH_ROTATION_SPEED_MIN, ENEMY_DEATH_ROTATION_SPEED_MAX
+        )
 
     def update_death_animation(self):
         """Handle the tumbling death animation"""
@@ -393,7 +406,5 @@ class Enemy(pg.sprite.Sprite):
         self.death_timer += 1
 
         # Remove enemy after falling off screen or after timeout
-        if (
-            self.rect.top > HEIGHT + 100 or self.death_timer > 300
-        ):  # 5 seconds at 60 FPS
+        if self.rect.top > HEIGHT + 100 or self.death_timer > ENEMY_DEATH_TIMER_MAX:
             self.kill()

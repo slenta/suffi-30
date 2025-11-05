@@ -1,43 +1,48 @@
+"""
+Game settings and configuration.
+All game-wide settings, constants, and configurations.
+"""
 import os
 import pygame as pg
 
-## Settings
+# === Display Settings ===
 GRIDSIZE = 18
 GRID_WIDTH = 40
 GRID_HEIGHT = 15
 WIDTH, HEIGHT = GRID_WIDTH * GRIDSIZE, GRID_HEIGHT * GRIDSIZE
 TITLE = "suffisuffzich 3000"
-FPS = 60  # Frames per second
+FPS = 60
+
+# === Player Settings ===
 PLAYER_WIDTH = 24
 PLAYER_HEIGHT = 24
 PLAYER_START_X, PLAYER_START_Y = 5, 1
 PLAYER_SPEED = 3
+
+# === Weapon Settings ===
 BULLET_SPEED = 6
 
-# Physikalische Konstanten
+# === Physics Constants ===
 GRAVITY = 0.5
 MAX_VELOCITY = 18
 JUMP_POWER = 10
 
-## Hier wird der Pfad zum Verzeichnis der Assets gesetzt
-# Updated to use centralized assets directory
+# === Asset Paths ===
 IMAGEPATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets/images")
 
-## Farben
-BG_COLOR = (65, 166, 246)  # Himmelblau
+# === Colors ===
+BG_COLOR = (65, 166, 246)  # Sky blue
 
-# Centralized keybindings (use pygame key constants)
-# Change these to rebind controls project-wide.
+# === Keybindings ===
+# Centralized keybindings using pygame key constants
 KEYBINDINGS = {
     "left": pg.K_LEFT,
     "right": pg.K_RIGHT,
     "jump": pg.K_UP,
-    # Action keys
-    "shoot": pg.K_f,  # shoot bullet (F)
-    "throw": pg.K_e,  # throw exploding object (E)
+    "shoot": pg.K_f,
+    "throw": pg.K_e,
     "quit": pg.K_ESCAPE,
 }
 
-# Cheat code settings
-CHEAT_CODE = "mfg"  # The cheat code to activate Marvin Mode
-MARVIN_MODE_ENABLED = False  # Will be toggled when cheat code is entered
+# === Cheat Code Settings ===
+CHEAT_CODE = "mfg"  # Activates Marvin Mode

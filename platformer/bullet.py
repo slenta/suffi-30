@@ -1,12 +1,20 @@
+"""Bullet and exploding object projectiles."""
 import pygame as pg
 import os
-from .settings import *
-from .weapon_stats import WEAPON_CONFIG
-from .sound_manager import sound_manager  # Import the sound manager
 import math
+from .settings import IMAGEPATH, GRIDSIZE, GRAVITY
+from .weapon_stats import WEAPON_CONFIG
+from .sound_manager import sound_manager
+from .constants import (
+    EXPLODING_OBJECT_SPEED,
+    EXPLODING_OBJECT_INITIAL_VY,
+    EXPLODING_OBJECT_GRAVITY_FACTOR,
+    EXPLOSION_RANGE,
+)
 
 
 class Bullet(pg.sprite.Sprite):
+    """Projectile fired by weapons."""
     def __init__(
         self,
         x,
@@ -63,29 +71,28 @@ class Bullet(pg.sprite.Sprite):
 
 
 class ExplodingObject(pg.sprite.Sprite):
+    """Throwable explosive object that damages enemies and player in radius."""
+
     def __init__(self, x, y, direction_x, direction_y, damage, world, *groups):
         super().__init__(*groups)
-        self.image = pg.Surface((15, 15))  # Size of the exploding object
-        self.image.fill((255, 165, 0))  # Orange color for the object
+        self.image = pg.Surface((15, 15))
+        self.image.fill((255, 165, 0))  # Orange
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         self.direction_x = direction_x
         self.direction_y = direction_y
-        self.speed = 3  # Slower speed for the exploding object
-        self.vy = -3  # Vertical velocity
+        self.speed = EXPLODING_OBJECT_SPEED
+        self.vy = EXPLODING_OBJECT_INITIAL_VY
         self.damage = damage
         self.world = world
-        self.explosion_range = 3 * GRIDSIZE  # Explosion range in pixels (3 tiles)
+        self.explosion_range = EXPLOSION_RANGE * GRIDSIZE
 
     def update(self):
-        # Apply horizontal movement
+        """Update position and check for collision."""
         self.rect.x += self.direction_x * self.speed
-
-        # Apply gravity
-        self.vy += GRAVITY * 0.2
+        self.vy += GRAVITY * EXPLODING_OBJECT_GRAVITY_FACTOR
         self.rect.y += self.vy
 
-        # Check for collisions with platforms (blocks)
         if pg.sprite.spritecollideany(self, self.world.platforms):
             self.explode()
 

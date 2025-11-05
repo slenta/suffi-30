@@ -22,23 +22,51 @@ import importlib
 
 ## Class GameWorld
 class GameWorld:
+    """Main game world class that manages all game objects, levels, and game state."""
 
     def __init__(self):
-        # Pygame und das Fenster initialisieren
+        # Initialize pygame and window
         pg.init()
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
         self.keep_going = True
         self.game_over_flag = False
-        self.current_fps = FPS  # Track current FPS for powerup effects
-        self.return_to_level_selection = False  # Flag to return to level selection
+        self.current_fps = FPS
+        self.return_to_level_selection = False
 
         # Cheat code tracking
-        self.cheat_buffer = ""  # Buffer to store typed characters
-        self.marvin_mode = False  # Marvin mode state
+        self.cheat_buffer = ""
+        self.marvin_mode = False
 
         # Sprite groups
+        self._init_sprite_groups()
+
+        # Camera
+        self.camera_offset_x = 0
+        self.camera_offset_y = 0
+
+        # Level bounds
+        self.x_bounds = [-600, 3000]
+        self.y_bounds = [-200, 300]
+
+        # Level stack for sub-levels
+        self.level_stack = []
+        self.current_level_name = None
+
+        # Timer system
+        self.level_time_limit = None
+        self.time_remaining = None
+        self.timer_start_ticks = None
+        self.parent_time_remaining = None
+
+        # Encounter message system
+        self.encounter_message = None
+        self.encounter_message_timer = 0
+        self.encounter_message_duration = 180  # 3 seconds at 60 FPS
+
+    def _init_sprite_groups(self):
+        """Initialize all sprite groups."""
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
         self.moving_platforms = pg.sprite.Group()
@@ -55,32 +83,26 @@ class GameWorld:
         self.waterfalls = pg.sprite.Group()
         self.waterfall_tops = pg.sprite.Group()
 
-        # Camera
-        self.camera_offset_x = 0
-        self.camera_offset_y = 0
-
-        # Level bounds
-        self.x_bounds = [-600, 3000]
-        self.y_bounds = [-200, 300]
-
-        # Level stack for sub-levels (stores tuples of level_name, player_state, return_position)
-        self.level_stack = []
-        self.current_level_name = None
-
-        # Timer system
-        self.level_time_limit = None  # Time limit in seconds (None = no limit)
-        self.time_remaining = None  # Current time remaining in seconds
-        self.timer_start_ticks = None  # Pygame ticks when timer started
-        self.parent_time_remaining = (
-            None  # Store parent level's time when entering sub-level
-        )
-
-        # Encounter message system
-        self.encounter_message = None  # Current message to display
-        self.encounter_message_timer = 0  # Timer for how long to display message
-        self.encounter_message_duration = (
-            180  # Duration in frames (3 seconds at 60 FPS)
-        )
+    def _clear_sprite_groups(self):
+        """Clear all sprite groups."""
+        for group in [
+            self.all_sprites,
+            self.platforms,
+            self.moving_platforms,
+            self.gems,
+            self.enemies,
+            self.bullets,
+            self.powerups,
+            self.trophies,
+            self.weapon_pickups,
+            self.pipes,
+            self.spikes,
+            self.ladders,
+            self.ladder_tops,
+            self.waterfalls,
+            self.waterfall_tops,
+        ]:
+            group.empty()
 
     def load_level(
         self, level_name, player_spawn_override=None, preserve_player_state=None
@@ -94,44 +116,27 @@ class GameWorld:
             preserve_player_state: Optional dict with player state (gems, trophies, health, weapons)
         """
         # Clear all sprite groups
-        self.all_sprites.empty()
-        self.platforms.empty()
-        self.moving_platforms.empty()
-        self.gems.empty()
-        self.enemies.empty()
-        self.bullets.empty()
-        self.powerups.empty()
-        self.trophies.empty()
-        self.weapon_pickups.empty()
-        self.pipes.empty()
-        self.spikes.empty()
-        self.ladders.empty()
-        self.ladder_tops.empty()
+        self._clear_sprite_groups()
 
-        # Store current level name
         self.current_level_name = level_name
 
-        # Dynamically import the level configuration
+        # Import level configuration
         self.level_module = importlib.import_module(f"platformer.levels.{level_name}")
         self.level_config = self.level_module.level_config
 
-        # Load ground boundaries
+        # Set level boundaries
         self.ground_start = self.level_config["x_bounds"][0]
         self.ground_end = self.level_config["x_bounds"][1]
         self.bottom = self.level_config["y_bounds"][0]
         self.top = self.level_config["y_bounds"][1]
 
         # Initialize timer system
-        # If we're in a sub-level, continue the parent's timer
-        if self.level_stack:
+        if self.level_stack and self.parent_time_remaining is not None:
             # Sub-level: inherit parent's remaining time
-            if self.parent_time_remaining is not None:
-                self.time_remaining = self.parent_time_remaining
-                self.timer_start_ticks = pg.time.get_ticks()
-                self.level_time_limit = None  # Sub-level doesn't have its own limit
-                print(
-                    f"⏱️ Sub-level continuing timer: {self.time_remaining:.1f}s remaining"
-                )
+            self.time_remaining = self.parent_time_remaining
+            self.timer_start_ticks = pg.time.get_ticks()
+            self.level_time_limit = None
+            print(f"⏱️ Sub-level continuing timer: {self.time_remaining:.1f}s remaining")
         else:
             # Main level: initialize timer from level config
             self.level_time_limit = self.level_config.get("level_time", None)
@@ -143,13 +148,9 @@ class GameWorld:
                 self.time_remaining = None
                 self.timer_start_ticks = None
 
-        # Load sprites
-        grass_image = pg.image.load(
-            os.path.join(IMAGEPATH, "grass_02.png")
-        ).convert_alpha()
-        block_image = pg.image.load(
-            os.path.join(IMAGEPATH, "block_00.png")
-        ).convert_alpha()
+        # Load common images
+        grass_image = pg.image.load(os.path.join(IMAGEPATH, "grass_02.png")).convert_alpha()
+        block_image = pg.image.load(os.path.join(IMAGEPATH, "block_00.png")).convert_alpha()
         gem_image = pg.image.load(os.path.join(IMAGEPATH, "gem.png")).convert_alpha()
 
         self.all_sprites = pg.sprite.Group()
@@ -387,109 +388,21 @@ class GameWorld:
         self.load_sound_effects()
 
     def reset(self):
-        # Neustart oder Status zurücksetzen
-        # Hier werden alle Elemente der GameWorld initialisiert
-        ## Load Assets
-        grass_image = pg.image.load(
-            os.path.join(IMAGEPATH, "grass_02.png")
-        ).convert_alpha()
-        block_image = pg.image.load(
-            os.path.join(IMAGEPATH, "block_00.png")
-        ).convert_alpha()
-        gem_image = pg.image.load(os.path.join(IMAGEPATH, "gem.png")).convert_alpha()
+        """Reset the current level to initial state while preserving player progress."""
+        if not self.current_level_name:
+            return
 
-        self.all_sprites = pg.sprite.Group()
-        self.platforms = pg.sprite.Group()
-        self.moving_platforms = pg.sprite.Group()
+        # Save player gems and trophies before reset
+        player_state = {
+            "gems": self.player.gems,
+            "trophies": self.player.trophies_collected,
+            "health": self.player.max_health,  # Reset to full health
+            "weapons": self.player.weapons.copy() if hasattr(self.player, "weapons") else {},
+            "active_weapon": getattr(self.player, "active_weapon", None),
+        }
 
-        for loc in self.level_config["grass_locations"]:
-            x, y = loc
-            p = Platform(x, y, grass_image)
-            self.platforms.add(p)
-            self.all_sprites.add(p)
-
-        for loc in self.level_config["block_locations"]:
-            x, y = loc
-            p = Platform(x, y, block_image)
-            self.platforms.add(p)
-            self.all_sprites.add(p)
-
-        # Load moving platforms
-        for moving_data in self.level_config.get("moving_platform_locations", []):
-            # Determine which image to use
-            platform_image = (
-                grass_image
-                if moving_data.get("platform_type", "block") == "grass"
-                else block_image
-            )
-
-            mp = MovingPlatform(
-                moving_data["x"],
-                moving_data["y"],
-                platform_image,
-                moving_data.get("movement_type", "linear"),
-                moving_data.get("speed", 1),
-                moving_data.get("distance", 5),
-                moving_data.get("direction", "horizontal"),
-            )
-            self.moving_platforms.add(mp)
-            self.platforms.add(mp)  # Add to platforms for collision detection
-            self.all_sprites.add(mp)
-
-        for item in self.items:
-            self.items.add(item)
-            self.all_sprites.add(item)
-
-        # Load weapon pickups
-        for weapon_data in self.level_config.get("weapon_locations", []):
-            weapon = WeaponPickup(
-                weapon_data["x"] * GRIDSIZE,
-                weapon_data["y"] * GRIDSIZE,
-                weapon_data["type"],
-            )
-            self.weapon_pickups.add(weapon)
-            self.all_sprites.add(weapon)
-
-        # Load enemies
-        for enemy in self.enemies:
-            enemy.reset_position()
-            self.all_sprites.add(enemy)
-
-        for powerup in self.powerups:
-            self.all_sprites.add(powerup)
-
-        for trophy in self.trophies:
-            self.all_sprites.add(trophy)
-
-        for weapon in self.weapon_pickups:
-            self.all_sprites.add(weapon)
-
-        # Re-add pipes
-        for pipe in self.pipes:
-            self.all_sprites.add(pipe)
-
-        # Re-add spikes
-        for spike in self.spikes:
-            self.all_sprites.add(spike)
-
-        self.all_sprites.add(self.exit)
-
-        # Use level-specific player spawn point if defined, otherwise use default
-        player_spawn = self.level_config.get(
-            "player_spawn", (PLAYER_START_X, PLAYER_START_Y)
-        )
-        spawn_x, spawn_y = player_spawn
-
-        self.player = Player(
-            spawn_x,
-            spawn_y,
-            world=self,
-            start_gems=self.player_gems,
-            trophies_collected=self.player.trophies_collected,
-        )
-        self.player_sprite_group = pg.sprite.GroupSingle()
-        self.player_sprite_group.add(self.player)
-        self.all_sprites.add(self.player)
+        # Reload the current level with preserved player state
+        self.load_level(self.current_level_name, preserve_player_state=player_state)
 
     def events(self):
         for event in pg.event.get():
@@ -1000,25 +913,20 @@ class GameWorld:
         print(f"🕐 FPS reset to {FPS}")
 
     def on_timer_expired(self):
-        """Called when the level timer reaches zero. Currently a placeholder."""
+        """Called when the level timer reaches zero."""
         # TODO: Implement timer expiration logic (e.g., lose life, restart level, etc.)
         print("⏱️ Timer expired! (placeholder function)")
-        pass
 
     def start_screen(self):
-        pass
-
-    def win_screen(self):
+        """Hook for displaying start screen. Currently unused."""
         pass
 
     def loose_screen(self):
+        """Called when player loses a life. Stores gems for reset."""
         self.player_gems = self.player.gems
-        pass
 
     def game_over(self):
-        print("Bye, Bye, Baby!")
+        """Called when game is over. Exits the game."""
+        print("Game Over!")
         pg.quit()
         sys.exit()
-
-
-## Ende Class GameWorld

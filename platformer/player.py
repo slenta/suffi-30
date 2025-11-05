@@ -1,14 +1,39 @@
+"""Player character class with movement, combat, and interaction."""
 import pygame as pg
 import os
-from .settings import *
+import math
+from .settings import (
+    IMAGEPATH,
+    GRIDSIZE,
+    PLAYER_SPEED,
+    JUMP_POWER,
+    GRAVITY,
+    MAX_VELOCITY,
+    KEYBINDINGS,
+)
 from .bullet import Bullet, ExplodingObject
 from .sound_manager import sound_manager
 from .weapon_stats import WEAPON_CONFIG
-import math
+from .constants import (
+    PLAYER_KNOCKBACK_DISTANCE,
+    PLAYER_KNOCKBACK_TIMER,
+    PLAYER_KNOCKBACK_STEPS,
+    PLAYER_KNOCKBACK_LIFT,
+    SPIKE_KNOCKBACK_DISTANCE,
+    SPIKE_DAMAGE_COOLDOWN,
+    EXPLODING_OBJECT_COOLDOWN,
+    EXPLODING_OBJECT_DAMAGE,
+    LADDER_MOVE_SPEED,
+    WATERFALL_MOVE_SPEED,
+    MELEE_ATTACK_DURATION,
+    WEAPON_SCALE_FACTOR,
+    FALL_DEATH_THRESHOLD,
+    FALL_SEARCH_RANGE,
+)
 
 
-## Class Player
 class Player(pg.sprite.Sprite):
+    """Player character with movement, combat, and world interaction."""
 
     def __init__(self, _x, _y, world, start_gems=0, trophies_collected=0, health=80):
         super().__init__()
@@ -37,24 +62,24 @@ class Player(pg.sprite.Sprite):
         self.active_weapon = None
         self.weapon_image = None
         self.weapon_rect = None
-        self.controls_reversed = False  # Flag for reversed controls powerup
-        self.spike_damage_cooldown = 0  # Cooldown to prevent repeated spike damage
-        self.exploding_object_cooldown = 0  # Cooldown for throwing exploding objects (5 seconds at 60 FPS = 300 frames)
+        self.controls_reversed = False
+        self.spike_damage_cooldown = 0
+        self.exploding_object_cooldown = EXPLODING_OBJECT_COOLDOWN
 
         # Ladder mechanics
-        self.on_ladder = False  # Flag to track if player is on a ladder
-        self.ladder_grip = False  # Flag to track if player is gripping the ladder
-        self.ladder_move_speed = 2  # Speed when moving on ladder
+        self.on_ladder = False
+        self.ladder_grip = False
+        self.ladder_move_speed = LADDER_MOVE_SPEED
 
         # Waterfall mechanics
-        self.in_waterfall = False  # Flag to track if player is in waterfall
-        self.waterfall_grip = False  # Flag to track if player is gripping waterfall
-        self.waterfall_move_speed = 2  # Speed when moving in waterfall
+        self.in_waterfall = False
+        self.waterfall_grip = False
+        self.waterfall_move_speed = WATERFALL_MOVE_SPEED
 
         # Melee attack animation
         self.is_attacking = False
         self.attack_frame = 0
-        self.attack_duration = 15  # frames for swing animation
+        self.attack_duration = MELEE_ATTACK_DURATION
 
     def jump(self):
         self.rect.y += 2
@@ -104,7 +129,7 @@ class Player(pg.sprite.Sprite):
         if platform_hits:
             standing_on_platform = platform_hits[0]
 
-        # Horizonfale Kollision
+        # Horizontal collision
         self.rect.x += self.vx
         hits = pg.sprite.spritecollide(self, self.world.platforms, False)
         for hit in hits:
@@ -116,7 +141,7 @@ class Player(pg.sprite.Sprite):
             elif self.vx < 0:
                 self.rect.left = hit.rect.right
 
-        # Vertikale Kollision
+        # Vertical collision
         self.rect.y += self.vy
         hits = pg.sprite.spritecollide(self, self.world.platforms, False)
         for hit in hits:
@@ -142,14 +167,11 @@ class Player(pg.sprite.Sprite):
 
     def check_fall_death(self):
         """Check if player has fallen too far below the nearest platform."""
-        # Find the lowest platform below or near the player's horizontal position
         nearest_platform_bottom = None
-        search_range = GRIDSIZE * 10  # Search within 10 tiles horizontally
+        search_range = GRIDSIZE * FALL_SEARCH_RANGE
 
         for platform in self.world.platforms:
-            # Check if platform is within horizontal range
             if abs(platform.rect.centerx - self.rect.centerx) <= search_range:
-                # Check if platform is below the player
                 if platform.rect.top >= self.rect.top:
                     if (
                         nearest_platform_bottom is None
@@ -157,16 +179,12 @@ class Player(pg.sprite.Sprite):
                     ):
                         nearest_platform_bottom = platform.rect.top
 
-        # If we found a platform below, check if player fell too far below it
         if nearest_platform_bottom is not None:
-            death_threshold = (
-                nearest_platform_bottom + GRIDSIZE * 3
-            )  # 3 tiles below platform
+            death_threshold = nearest_platform_bottom + GRIDSIZE * FALL_DEATH_THRESHOLD
             if self.rect.top > death_threshold:
                 self.loose()
         else:
-            # No platform found nearby - use global bottom boundary as fallback
-            if self.rect.y > self.world.top + GRIDSIZE * 3:
+            if self.rect.y > self.world.top + GRIDSIZE * FALL_DEATH_THRESHOLD:
                 self.loose()
 
     def check_edges(self):
@@ -233,20 +251,17 @@ class Player(pg.sprite.Sprite):
             if spike.check_collision(self):
                 # Take damage from the spike
                 self.take_damage(spike.damage)
-                # Apply knockback away from the spike
                 self.apply_spike_knockback(spike)
-                # Set cooldown to prevent repeated damage
-                self.spike_damage_cooldown = 30  # ~0.5 seconds at 60 FPS
-                break  # Only process one spike hit per frame
+                self.spike_damage_cooldown = SPIKE_DAMAGE_COOLDOWN
+                break
 
     def apply_spike_knockback(self, spike):
-        """Apply knockback effect when hit by spikes - push player back 2-3 blocks."""
+        """Apply knockback effect when hit by spikes."""
         if not self.is_knocked_back:
             self.is_knocked_back = True
-            self.knockback_timer = 20  # Brief invulnerability period
+            self.knockback_timer = 20
 
-            # Knockback distance (2.5 blocks)
-            knockback_distance = GRIDSIZE * 2.5
+            knockback_distance = GRIDSIZE * SPIKE_KNOCKBACK_DISTANCE
 
             # Push player in opposite direction of spike
             if spike.direction == "up":
@@ -314,10 +329,9 @@ class Player(pg.sprite.Sprite):
 
         image_path = os.path.join(IMAGEPATH, weapon_data["image"])
         loaded_image = pg.image.load(image_path).convert_alpha()
-        # Scale weapon to be smaller (1/3 of player size)
         weapon_size = (
-            weapon_data["size"] * GRIDSIZE // 2,
-            weapon_data["size"] * GRIDSIZE // 2,
+            int(weapon_data["size"] * GRIDSIZE * WEAPON_SCALE_FACTOR),
+            int(weapon_data["size"] * GRIDSIZE * WEAPON_SCALE_FACTOR),
         )
         self.weapon_image = pg.transform.scale(loaded_image, weapon_size)
 
@@ -618,12 +632,9 @@ class Player(pg.sprite.Sprite):
 
             # Start knockback
             self.is_knocked_back = True
-            self.knockback_timer = (
-                30  # Incapacitated for 30 frames (~0.5 seconds at 60 FPS)
-            )
+            self.knockback_timer = PLAYER_KNOCKBACK_TIMER
 
-            # Determine the direction to throw the player
-            knockback_distance = GRIDSIZE * 6
+            knockback_distance = GRIDSIZE * PLAYER_KNOCKBACK_DISTANCE
             if self.vx > 0:  # Moving right
                 self.knockback_direction = -1  # Throw left
             elif self.vx < 0:  # Moving left
@@ -634,14 +645,13 @@ class Player(pg.sprite.Sprite):
             self.knockback(knockback_distance)
 
     def knockback(self, distance):
-        # Smoothly move the player during knockback
-        steps = 30  # Number of steps for the knockback animation
+        """Smoothly move the player during knockback animation."""
+        steps = PLAYER_KNOCKBACK_STEPS
         step_distance = distance // steps
 
         for _ in range(steps):
-            # Apply horizontal knockback
             self.rect.x += self.knockback_direction * step_distance
-            self.rect.y -= 2  # Slightly lift the player during knockback
+            self.rect.y -= PLAYER_KNOCKBACK_LIFT
 
             # Check for horizontal collisions
             hits = pg.sprite.spritecollide(self, self.world.platforms, False)
@@ -680,29 +690,22 @@ class Player(pg.sprite.Sprite):
             pg.time.delay(10)  # Delay for smooth animation
 
     def throw_exploding_object(self):
-        # Check if cooldown is active
+        """Throw an exploding object if cooldown has elapsed."""
         if self.exploding_object_cooldown > 0:
-            return  # Can't throw yet
+            return
 
-        # Determine the direction of the throw based on the player's facing direction
         direction_x = 1 if self.vx >= 0 else -1
-        direction_y = 0  # Exploding objects are thrown horizontally
-        damage = 1  # Set the damage dealt by the exploding object
+        direction_y = 0
 
-        # Create the exploding object
         exploding_object = ExplodingObject(
             self.rect.centerx,
             self.rect.centery,
             direction_x,
             direction_y,
-            damage,
+            EXPLODING_OBJECT_DAMAGE,
             self.world,
         )
         self.world.bullets.add(exploding_object)
         self.world.all_sprites.add(exploding_object)
 
-        # Set cooldown to 5 seconds (300 frames at 60 FPS)
-        self.exploding_object_cooldown = 180
-
-
-## End Class Player
+        self.exploding_object_cooldown = EXPLODING_OBJECT_COOLDOWN
