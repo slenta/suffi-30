@@ -15,6 +15,18 @@
   ],
   "krankenhaus": [
     {
+      "player_name": "highscorer",
+      "score": 53213,
+      "breakdown": {
+        "time_score": 17213,
+        "trophy_score": 20000,
+        "damage_score": 1000,
+        "life_score": 15000,
+        "total_score": 53213
+      },
+      "timestamp": "2025-11-05T11:30:59.173674"
+    },
+    {
       "player_name": "dave",
       "score": 38400,
       "breakdown": {

@@ -837,10 +837,10 @@ class GameWorld:
         self.screen.blit(timer_surface, timer_rect)
 
     def update_current_score(self):
-        """Update the current score based on game state."""
-        time_remaining = self.time_remaining if self.time_remaining else 0
+        """Update the current score based on game state (excluding time bonus)."""
+        # Don't include time remaining in the running score - only add it at level completion
         score_breakdown = self.highscore_manager.calculate_score(
-            time_remaining=time_remaining,
+            time_remaining=0,  # Time bonus only added at the end
             trophies_collected=self.player.trophies_collected,
             damage_dealt=self.player.damage_dealt,
             lives_remaining=self.player.gems,
