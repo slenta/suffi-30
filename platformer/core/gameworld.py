@@ -515,7 +515,7 @@ class GameWorld:
             height=HEIGHT,
             duration=60,
         )
-        
+
         # Calculate final score
         time_remaining = self.time_remaining if self.time_remaining else 0
         score_breakdown = self.highscore_manager.calculate_score(
@@ -524,21 +524,23 @@ class GameWorld:
             damage_dealt=self.player.damage_dealt,
             lives_remaining=self.player.gems,
         )
-        
+
         # Show level complete and score
         self.show_level_complete_with_score(score_breakdown)
-        
+
         # Prompt for player name and save highscore
         player_name = self.prompt_player_name()
         if player_name:
             self.highscore_manager.add_highscore(
                 self.current_level_name, player_name, score_breakdown
             )
-            print(f"💾 Highscore saved for {player_name}: {score_breakdown['total_score']:,}")
-        
+            print(
+                f"💾 Highscore saved for {player_name}: {score_breakdown['total_score']:,}"
+            )
+
         # Show top 5 highscores
         self.show_highscores()
-        
+
         # Wait until the user closes the window or presses any key
         waiting = True
         user_quit = False
@@ -848,18 +850,18 @@ class GameWorld:
     def show_level_complete_with_score(self, score_breakdown):
         """Display level complete with score breakdown."""
         self.screen.fill((0, 0, 0))
-        
+
         # Title
         font_title = pg.font.Font(None, 48)
         title_text = font_title.render("Level Complete!", True, (255, 255, 255))
         title_rect = title_text.get_rect(center=(WIDTH // 2, 20))
         self.screen.blit(title_text, title_rect)
-        
+
         # Score breakdown
         font_normal = pg.font.Font(None, 28)
         y_offset = 60
         line_spacing = 32
-        
+
         breakdown_lines = [
             f"Time Bonus: {score_breakdown['time_score']:,}",
             f"Trophy Bonus: {score_breakdown['trophy_score']:,}",
@@ -868,7 +870,7 @@ class GameWorld:
             "",
             f"TOTAL SCORE: {score_breakdown['total_score']:,}",
         ]
-        
+
         for i, line in enumerate(breakdown_lines):
             if line == "":
                 continue
@@ -876,9 +878,26 @@ class GameWorld:
             text = font_normal.render(line, True, color)
             text_rect = text.get_rect(center=(WIDTH // 2, y_offset + i * line_spacing))
             self.screen.blit(text, text_rect)
-        
+
+        # Draw instruction at bottom
+        instruction_font = pg.font.Font(None, 24)
+        instruction = instruction_font.render(
+            "Press any key to continue", True, (200, 200, 200)
+        )
+        instruction_rect = instruction.get_rect(center=(WIDTH // 2, HEIGHT - 15))
+        self.screen.blit(instruction, instruction_rect)
+
         pg.display.flip()
-        pg.time.wait(2000)  # Show for 2 seconds
+
+        # Wait for key press
+        waiting = True
+        while waiting:
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    waiting = False
+                elif event.type == pg.KEYDOWN:
+                    waiting = False
+            self.clock.tick(60)
 
     def prompt_player_name(self):
         """Prompt player to enter their name for highscore."""
@@ -887,7 +906,7 @@ class GameWorld:
         player_name = ""
         cursor_visible = True
         cursor_timer = 0
-        
+
         entering_name = True
         while entering_name:
             # Handle cursor blinking
@@ -895,35 +914,39 @@ class GameWorld:
             if cursor_timer >= 30:  # Blink every 30 frames (0.5 seconds at 60 FPS)
                 cursor_visible = not cursor_visible
                 cursor_timer = 0
-            
+
             # Draw prompt
             self.screen.fill((0, 0, 0))
-            
+
             title_text = font_title.render("Enter Your Name:", True, (255, 255, 255))
             title_rect = title_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 40))
             self.screen.blit(title_text, title_rect)
-            
+
             # Draw input box
             input_text = player_name + ("|" if cursor_visible else " ")
             input_surface = font_input.render(input_text, True, (255, 215, 0))
             input_rect = input_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 10))
-            
+
             # Draw box background
             box_rect = input_rect.inflate(30, 15)
             pg.draw.rect(self.screen, (50, 50, 50), box_rect)
             pg.draw.rect(self.screen, (255, 255, 255), box_rect, 2)
-            
+
             self.screen.blit(input_surface, input_rect)
-            
+
             # Draw instruction
             instruction_font = pg.font.Font(None, 24)
-            instruction = instruction_font.render("Press ENTER to continue", True, (200, 200, 200))
-            instruction_rect = instruction.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 100))
+            instruction = instruction_font.render(
+                "Press ENTER to continue", True, (200, 200, 200)
+            )
+            instruction_rect = instruction.get_rect(
+                center=(WIDTH // 2, HEIGHT // 2 + 100)
+            )
             self.screen.blit(instruction, instruction_rect)
-            
+
             pg.display.flip()
             self.clock.tick(60)
-            
+
             # Handle events
             for event in pg.event.get():
                 if event.type == pg.QUIT:
@@ -938,28 +961,32 @@ class GameWorld:
                     elif len(player_name) < 20:  # Limit name length
                         if event.unicode.isprintable():
                             player_name += event.unicode
-        
+
         return player_name if player_name else "Anonymous"
 
     def show_highscores(self):
         """Display top 5 highscores for the current level."""
-        top_scores = self.highscore_manager.get_top_scores(self.current_level_name, limit=5)
-        
+        top_scores = self.highscore_manager.get_top_scores(
+            self.current_level_name, limit=5
+        )
+
         self.screen.fill((0, 0, 0))
-        
+
         # Title
         font_title = pg.font.Font(None, 48)
         title_text = font_title.render("TOP 5 HIGHSCORES", True, (255, 215, 0))
         title_rect = title_text.get_rect(center=(WIDTH // 2, 20))
         self.screen.blit(title_text, title_rect)
-        
+
         # Highscore list
         font_score = pg.font.Font(None, 28)
         y_offset = 60
         line_spacing = 32
-        
+
         if not top_scores:
-            no_scores_text = font_score.render("No highscores yet!", True, (255, 255, 255))
+            no_scores_text = font_score.render(
+                "No highscores yet!", True, (255, 255, 255)
+            )
             no_scores_rect = no_scores_text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
             self.screen.blit(no_scores_text, no_scores_rect)
         else:
@@ -967,24 +994,28 @@ class GameWorld:
                 rank = i + 1
                 name = entry["player_name"]
                 score = entry["score"]
-                
+
                 # Truncate long names
                 if len(name) > 15:
                     name = name[:12] + "..."
-                
+
                 line_text = f"{rank}. {name:.<20} {score:>10,}"
                 color = (255, 215, 0) if rank == 1 else (255, 255, 255)
-                
+
                 text = font_score.render(line_text, True, color)
-                text_rect = text.get_rect(center=(WIDTH // 2, y_offset + i * line_spacing))
+                text_rect = text.get_rect(
+                    center=(WIDTH // 2, y_offset + i * line_spacing)
+                )
                 self.screen.blit(text, text_rect)
-        
+
         # Instruction
         instruction_font = pg.font.Font(None, 24)
-        instruction = instruction_font.render("Press any key to continue", True, (200, 200, 200))
+        instruction = instruction_font.render(
+            "Press any key to continue", True, (200, 200, 200)
+        )
         instruction_rect = instruction.get_rect(center=(WIDTH // 2, HEIGHT - 15))
         self.screen.blit(instruction, instruction_rect)
-        
+
         pg.display.flip()
 
     def show_encounter_message(self, message):

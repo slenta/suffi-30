@@ -236,11 +236,11 @@ class Enemy(pg.sprite.Sprite):
     def take_damage(self, damage):
         sound_manager.play_sound_effect("enemy_hit")  # Play enemy hit sound
         self.health -= damage
-        
+
         # Track damage dealt by player for scoring
-        if hasattr(self.world, 'player') and hasattr(self.world.player, 'damage_dealt'):
+        if hasattr(self.world, "player") and hasattr(self.world.player, "damage_dealt"):
             self.world.player.damage_dealt += damage
-        
+
         if self.health <= 0:
             self.start_death_animation()
 

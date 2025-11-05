@@ -16,6 +16,18 @@
   "krankenhaus": [
     {
       "player_name": "dave",
+      "score": 38400,
+      "breakdown": {
+        "time_score": 17400,
+        "trophy_score": 10000,
+        "damage_score": 1000,
+        "life_score": 10000,
+        "total_score": 38400
+      },
+      "timestamp": "2025-11-05T11:25:51.825790"
+    },
+    {
+      "player_name": "dave",
       "score": 37437,
       "breakdown": {
         "time_score": 17437,
