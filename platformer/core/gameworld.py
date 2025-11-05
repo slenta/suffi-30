@@ -408,7 +408,8 @@ class GameWorld:
                 # Try relative to platformer directory (where assets now lives)
                 # Go up from core/ to platformer/
                 music_path = os.path.join(
-                    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), music_path
+                    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                    music_path,
                 )
             self.original_music_track = music_path
             sound_manager.play_background_music(music_path)
@@ -419,7 +420,8 @@ class GameWorld:
                 if not os.path.isabs(alt_music_path):
                     # Go up from core/ to platformer/
                     alt_music_path = os.path.join(
-                        os.path.dirname(os.path.dirname(os.path.abspath(__file__))), alt_music_path
+                        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                        alt_music_path,
                     )
 
                 if os.path.exists(alt_music_path):
@@ -848,7 +850,9 @@ class GameWorld:
         # Load each sound effect (silently ignore missing files)
         # Go up from core/ to platformer/
         sounds_dir = os.path.join(
-            os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets", "sounds"
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "assets",
+            "sounds",
         )
         for name, filename in sound_effects.items():
             full_path = os.path.join(sounds_dir, filename)
@@ -898,7 +902,8 @@ class GameWorld:
                 if not os.path.isabs(alt_bg_path):
                     # Go up from core/ to platformer/
                     alt_bg_path = os.path.join(
-                        os.path.dirname(os.path.dirname(os.path.abspath(__file__))), alt_bg_path
+                        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                        alt_bg_path,
                     )
 
                 if os.path.exists(alt_bg_path):

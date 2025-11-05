@@ -30,7 +30,9 @@ JUMP_POWER = 10
 
 # === Asset Paths ===
 # Go up from config/ to platformer/, then to assets/images
-IMAGEPATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets/images")
+IMAGEPATH = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets/images"
+)
 
 # === Colors ===
 BG_COLOR = (65, 166, 246)  # Sky blue
