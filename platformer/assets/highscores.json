@@ -39,6 +39,18 @@
       "timestamp": "2025-11-05T11:25:51.825790"
     },
     {
+      "player_name": "hallo",
+      "score": 38252,
+      "breakdown": {
+        "time_score": 17252,
+        "trophy_score": 10000,
+        "damage_score": 1000,
+        "life_score": 10000,
+        "total_score": 38252
+      },
+      "timestamp": "2025-11-05T11:56:42.880633"
+    },
+    {
       "player_name": "dave",
       "score": 37437,
       "breakdown": {

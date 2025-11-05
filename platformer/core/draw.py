@@ -1,3 +1,18 @@
+"""
+Drawing utility functions for the game.
+
+This module contains pure drawing functions that render various game elements.
+These functions are stateless and can be called from anywhere with the appropriate parameters.
+
+Functions are organized into categories:
+- HUD elements: gems, trophies, health bars, score, timer
+- Screen effects: fade transitions, encounter messages, Marvin mode indicator
+- Background rendering: parallax scrolling background
+- UI screens: level complete text (legacy)
+
+For game state-dependent drawing orchestration, see GameWorld.draw() in gameworld.py.
+"""
+
 import pygame as pg
 import os
 from ..config.settings import IMAGEPATH, GRIDSIZE
@@ -124,3 +139,146 @@ def draw_score(screen, score, width):
 
     # Draw the score
     screen.blit(score_surface, score_rect)
+
+
+def draw_timer(screen, time_remaining, width):
+    """
+    Draw the countdown timer in the top right corner.
+
+    Args:
+        screen: Pygame screen surface
+        time_remaining: Time remaining in seconds (float)
+        width: Screen width
+    """
+    if time_remaining is None:
+        return
+
+    # Format time as MM:SS
+    minutes = int(time_remaining // 60)
+    seconds = int(time_remaining % 60)
+    time_text = f"{minutes:02d}:{seconds:02d}"
+
+    # Choose color based on remaining time
+    if time_remaining <= 10:
+        color = (255, 0, 0)  # Red when less than 10 seconds
+    elif time_remaining <= 30:
+        color = (255, 165, 0)  # Orange when less than 30 seconds
+    else:
+        color = (255, 255, 255)  # White otherwise
+
+    # Render the timer text
+    font = pg.font.Font(None, 48)
+    timer_surface = font.render(time_text, True, color)
+
+    # Position in top right corner with some padding
+    timer_rect = timer_surface.get_rect()
+    timer_rect.topright = (width - 20, 10)
+
+    # Draw semi-transparent background for better readability
+    bg_rect = timer_rect.inflate(20, 10)
+    bg_surface = pg.Surface((bg_rect.width, bg_rect.height), pg.SRCALPHA)
+    bg_surface.fill((0, 0, 0, 128))
+    screen.blit(bg_surface, bg_rect.topleft)
+
+    # Draw the timer
+    screen.blit(timer_surface, timer_rect)
+
+
+def draw_encounter_message(screen, message, width, height):
+    """
+    Draw an encounter message in yellow at the center of the screen.
+
+    Args:
+        screen: Pygame screen surface
+        message: Message text to display
+        width: Screen width
+        height: Screen height
+    """
+    if not message:
+        return
+
+    # Render the message in yellow
+    font = pg.font.Font(None, 36)
+    message_surface = font.render(message, True, (255, 255, 0))
+
+    # Position at center of screen
+    message_rect = message_surface.get_rect()
+    message_rect.center = (width // 2, height // 2)
+
+    # Draw semi-transparent black background for better readability
+    bg_rect = message_rect.inflate(40, 20)
+    bg_surface = pg.Surface((bg_rect.width, bg_rect.height), pg.SRCALPHA)
+    bg_surface.fill((0, 0, 0, 180))
+    screen.blit(bg_surface, bg_rect.topleft)
+
+    # Draw the message
+    screen.blit(message_surface, message_rect)
+
+
+def draw_marvin_mode(screen, width):
+    """
+    Draw the Marvin Mode indicator (MFG) at the top center.
+
+    Args:
+        screen: Pygame screen surface
+        width: Screen width
+    """
+    font = pg.font.Font(None, 72)
+    marvin_text = font.render("MFG", True, (255, 215, 0))  # Gold color
+    text_rect = marvin_text.get_rect(center=(width // 2, 40))
+
+    # Add a semi-transparent black background for better readability
+    bg_rect = text_rect.inflate(20, 10)
+    bg_surface = pg.Surface((bg_rect.width, bg_rect.height), pg.SRCALPHA)
+    bg_surface.fill((0, 0, 0, 128))
+    screen.blit(bg_surface, bg_rect.topleft)
+    screen.blit(marvin_text, text_rect)
+
+
+def draw_background(
+    screen,
+    background_image,
+    background_scroll_speed,
+    camera_offset_x,
+    camera_offset_y,
+    background_color=(135, 206, 235),
+):
+    """
+    Draw the background - either an image or solid color.
+    Tiles the background at its original size with parallax scrolling.
+
+    Args:
+        screen: Pygame screen surface
+        background_image: Pygame surface of the background image (None for solid color)
+        background_scroll_speed: Parallax scroll speed multiplier
+        camera_offset_x: Camera X offset
+        camera_offset_y: Camera Y offset
+        background_color: RGB tuple for solid color fallback
+    """
+    if background_image:
+        # Calculate parallax scrolling offset for both X and Y
+        bg_offset_x = int(camera_offset_x * background_scroll_speed)
+        bg_offset_y = int(camera_offset_y * background_scroll_speed)
+
+        # Get background and screen dimensions
+        bg_width = background_image.get_width()
+        bg_height = background_image.get_height()
+        screen_width = screen.get_width()
+        screen_height = screen.get_height()
+
+        # Tile the background at its original size (no scaling)
+        # The offset is applied through the modulo to create seamless scrolling
+        start_x = -(bg_offset_x % bg_width) if bg_width > 0 else 0
+        start_y = -(bg_offset_y % bg_height) if bg_height > 0 else 0
+
+        # Draw background tiles
+        y = start_y
+        while y < screen_height:
+            x = start_x
+            while x < screen_width:
+                screen.blit(background_image, (x, y))
+                x += bg_width
+            y += bg_height
+    else:
+        # Fall back to solid color background
+        screen.fill(background_color)

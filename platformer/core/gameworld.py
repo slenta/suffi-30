@@ -737,7 +737,14 @@ class GameWorld:
 
     def draw(self):
         # Draw background
-        self.draw_background()
+        draw_background(
+            self.screen,
+            self.background_image,
+            self.background_scroll_speed,
+            self.camera_offset_x,
+            self.camera_offset_y,
+            self.level_config.get("background_color", (135, 206, 235))
+        )
 
         # Draw all sprites with the camera offset
         for sprite in self.all_sprites:
@@ -762,11 +769,12 @@ class GameWorld:
         draw_health_bar(self.screen, self.player, 200, 20, self.player.max_health)
 
         # Draw encounter message (if active)
-        self.draw_encounter_message()
+        if self.encounter_message_timer > 0 and self.encounter_message:
+            draw_encounter_message(self.screen, self.encounter_message, WIDTH, HEIGHT)
+            self.encounter_message_timer -= 1
 
         # Draw timer (top right corner)
-        if self.time_remaining is not None:
-            self.draw_timer()
+        draw_timer(self.screen, self.time_remaining, WIDTH)
 
         # Draw score (bottom right corner)
         self.update_current_score()
@@ -774,94 +782,9 @@ class GameWorld:
 
         # Draw Marvin Mode indicator
         if self.marvin_mode:
-            font = pg.font.Font(None, 72)
-            marvin_text = font.render("MFG", True, (255, 215, 0))  # Gold color
-            text_rect = marvin_text.get_rect(center=(WIDTH // 2, 40))
-            # Add a semi-transparent black background for better readability
-            bg_rect = text_rect.inflate(20, 10)
-            bg_surface = pg.Surface((bg_rect.width, bg_rect.height), pg.SRCALPHA)
-            bg_surface.fill((0, 0, 0, 128))
-            self.screen.blit(bg_surface, bg_rect.topleft)
-            self.screen.blit(marvin_text, text_rect)
+            draw_marvin_mode(self.screen, WIDTH)
 
         pg.display.flip()
-
-    def draw_background(self):
-        """Draw the background - either an image or solid color.
-        Tiles the background at its original size, matching the level renderer behavior.
-        """
-        if self.background_image:
-            # Calculate parallax scrolling offset for both X and Y
-            bg_offset_x = int(self.camera_offset_x * self.background_scroll_speed)
-            bg_offset_y = int(self.camera_offset_y * self.background_scroll_speed)
-
-            # Get background and screen dimensions
-            bg_width = self.background_image.get_width()
-            bg_height = self.background_image.get_height()
-            screen_width = self.screen.get_width()
-            screen_height = self.screen.get_height()
-
-            # Tile the background at its original size (no scaling)
-            # This matches the level renderer behavior
-            # Always start from 0,0 and tile across the entire screen
-            # The offset is applied through the modulo to create seamless scrolling
-            start_x = -(bg_offset_x % bg_width) if bg_width > 0 else 0
-            start_y = -(bg_offset_y % bg_height) if bg_height > 0 else 0
-
-            # Debug output (can be removed later)
-            if not hasattr(self, "_bg_debug_shown"):
-                print(
-                    f"🎨 Background Debug: camera_offset_y={self.camera_offset_y:.1f}, bg_offset_y={bg_offset_y}, start_y={start_y}, bg_height={bg_height}"
-                )
-                self._bg_debug_shown = True
-
-            # Draw background tiles
-            y = start_y
-            while y < screen_height:
-                x = start_x
-                while x < screen_width:
-                    self.screen.blit(self.background_image, (x, y))
-                    x += bg_width
-                y += bg_height
-        else:
-            # Fall back to solid color background
-            bg_color = self.level_config.get("background_color", (135, 206, 235))
-            self.screen.fill(bg_color)
-
-    def draw_timer(self):
-        """Draw the countdown timer in the top right corner."""
-        if self.time_remaining is None:
-            return
-
-        # Format time as MM:SS
-        minutes = int(self.time_remaining // 60)
-        seconds = int(self.time_remaining % 60)
-        time_text = f"{minutes:02d}:{seconds:02d}"
-
-        # Choose color based on remaining time
-        if self.time_remaining <= 10:
-            color = (255, 0, 0)  # Red when less than 10 seconds
-        elif self.time_remaining <= 30:
-            color = (255, 165, 0)  # Orange when less than 30 seconds
-        else:
-            color = (255, 255, 255)  # White otherwise
-
-        # Render the timer text
-        font = pg.font.Font(None, 48)
-        timer_surface = font.render(time_text, True, color)
-
-        # Position in top right corner with some padding
-        timer_rect = timer_surface.get_rect()
-        timer_rect.topright = (WIDTH - 20, 10)
-
-        # Draw semi-transparent background for better readability
-        bg_rect = timer_rect.inflate(20, 10)
-        bg_surface = pg.Surface((bg_rect.width, bg_rect.height), pg.SRCALPHA)
-        bg_surface.fill((0, 0, 0, 128))
-        self.screen.blit(bg_surface, bg_rect.topleft)
-
-        # Draw the timer
-        self.screen.blit(timer_surface, timer_rect)
 
     def update_current_score(self):
         """Update the current score based on game state (excluding time bonus)."""
@@ -1027,7 +950,7 @@ class GameWorld:
                     name = name[:12] + "..."
 
                 line_text = f"{rank}. {name:.<20} {score:>10,}"
-                color = (255, 215, 0) if rank == 1 else (255, 255, 255)
+                color = (255, 255, 255)
 
                 text = font_score.render(line_text, True, color)
                 text_rect = text.get_rect(
@@ -1049,33 +972,6 @@ class GameWorld:
         """Display an encounter message when player first sees an enemy."""
         self.encounter_message = message
         self.encounter_message_timer = self.encounter_message_duration
-
-    def draw_encounter_message(self):
-        """Draw the encounter message in yellow at the center of the screen."""
-        if self.encounter_message_timer <= 0 or not self.encounter_message:
-            return
-
-        # Render the message in yellow
-        font = pg.font.Font(None, 36)
-        message_surface = font.render(self.encounter_message, True, (255, 255, 0))
-
-        # Position at center of screen
-        message_rect = message_surface.get_rect()
-        message_rect.center = (WIDTH // 2, HEIGHT // 2)
-
-        # Draw semi-transparent black background for better readability
-        bg_rect = message_rect.inflate(40, 20)
-        bg_surface = pg.Surface((bg_rect.width, bg_rect.height), pg.SRCALPHA)
-        bg_surface.fill((0, 0, 0, 180))
-        self.screen.blit(bg_surface, bg_rect.topleft)
-
-        # Draw the message
-        self.screen.blit(message_surface, message_rect)
-
-        # Decrease the timer
-        self.encounter_message_timer -= 1
-
-    pass
 
     def load_sound_effects(self):
         """Load common sound effects for the game."""
