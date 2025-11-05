@@ -44,7 +44,7 @@ class LevelSelectionScreen:
             "assets",
             "images",
             "player",
-            "suffi.png"
+            "suffi.png",
         )
         try:
             self.cursor_sprite = pg.image.load(player_sprite_path).convert_alpha()
@@ -167,7 +167,9 @@ class LevelSelectionScreen:
                 cursor_x = level_rect.left - 50
                 cursor_y = y_pos
                 if self.cursor_sprite:
-                    cursor_rect = self.cursor_sprite.get_rect(center=(cursor_x, cursor_y))
+                    cursor_rect = self.cursor_sprite.get_rect(
+                        center=(cursor_x, cursor_y)
+                    )
                     self.screen.blit(self.cursor_sprite, cursor_rect)
                 else:
                     # Fallback to arrow if sprite not loaded
