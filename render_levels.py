@@ -129,9 +129,10 @@ def calculate_level_bounds(level_config):
     all_x_coords = []
     all_y_coords = []
 
-    # Add player start position
-    all_x_coords.extend([5])  # PLAYER_START_X from settings
-    all_y_coords.extend([1])  # PLAYER_START_Y from settings
+    # Add player start position from level config
+    player_spawn = level_config.get("player_spawn", (5, 1))
+    all_x_coords.extend([player_spawn[0]])
+    all_y_coords.extend([player_spawn[1]])
 
     # Collect grass locations
     grass_locations = level_config.get("grass_locations", [])
@@ -793,7 +794,9 @@ def render_level(level_config, output_path, show_grid=True, bg_opacity=0.3):
         draw_waterfalls_with_sprites(draw, image, waterfall_locations, min_x, min_y)
 
         # Draw player start position using actual sprites
-        player_start = [(5, 1)]  # From PLAYER_START_X, PLAYER_START_Y in settings
+        # Use player_spawn from level config, fallback to default (5, 1) if not specified
+        player_spawn = level_config.get("player_spawn", (5, 1))
+        player_start = [player_spawn]
         draw_special_locations_with_sprites(
             draw,
             image,
