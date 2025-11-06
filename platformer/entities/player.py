@@ -243,10 +243,10 @@ class Player(pg.sprite.Sprite):
         self.trophies_collected += len(hits)
 
     def check_exit(self):
-        if self.trophies_collected == self.world.total_trophies:
-            self.world.exit.open()
-            # All trophies collected
-        if pg.sprite.collide_rect(self, self.world.exit) and self.world.exit.is_open:
+        # Exit is always open - no need to collect all trophies
+        self.world.exit.open()
+
+        if pg.sprite.collide_rect(self, self.world.exit):
             sound_manager.play_sound_effect(
                 "level_complete"
             )  # Play level complete sound
@@ -264,6 +264,10 @@ class Player(pg.sprite.Sprite):
 
     def check_spikes(self):
         """Check if player collides with spikes and take damage."""
+        # Invincible in marvin mode
+        if self.world.marvin_mode:
+            return
+
         # Decrease spike damage cooldown
         if self.spike_damage_cooldown > 0:
             self.spike_damage_cooldown -= 1
@@ -311,6 +315,10 @@ class Player(pg.sprite.Sprite):
             del self.active_powerups[ptype]
 
     def take_damage(self, damage):
+        # Invincible in marvin mode
+        if self.world.marvin_mode:
+            return
+
         sound_manager.play_sound_effect("player_hurt")  # Play hurt sound
         self.health -= damage
         if self.health <= 0:
@@ -318,6 +326,11 @@ class Player(pg.sprite.Sprite):
             self.loose()  # Call the loose function when health is 0
 
     def loose(self):
+        # In marvin mode, respawn without losing a life
+        if self.world.marvin_mode:
+            self.world.reset()
+            return
+
         sound_manager.play_sound_effect("player_death")  # Play death/fall sound
         if self.gems >= 1:
             self.gems -= 1
@@ -651,6 +664,10 @@ class Player(pg.sprite.Sprite):
             # Bounce the player up
             self.vy = -10
             sound_manager.play_sound_effect("jump")  # Play bounce sound
+            return
+
+        # Invincible in marvin mode - no damage or knockback
+        if self.world.marvin_mode:
             return
 
         # Otherwise, take damage from collision

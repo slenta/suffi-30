@@ -42,6 +42,7 @@ class GameWorld:
         # Cheat code tracking
         self.cheat_buffer = ""
         self.marvin_mode = False
+        self.marvin_mode_ever_used = False  # Track if cheat was ever used
 
         # Highscore system
         self.highscore_manager = HighscoreManager()
@@ -102,6 +103,18 @@ class GameWorld:
 
     def _clear_sprite_groups(self):
         """Clear all sprite groups."""
+        # Before clearing enemies, track any that are dying so they don't respawn
+        for enemy in self.enemies:
+            if hasattr(enemy, "is_dying") and enemy.is_dying:
+                # Enemy is in the middle of dying - ensure it's tracked as killed
+                if hasattr(enemy, "enemy_id") and not getattr(
+                    enemy, "is_minion", False
+                ):
+                    self.killed_enemies.add(enemy.enemy_id)
+                    print(
+                        f"💀 Tracked dying enemy before group clear: {enemy.enemy_id}"
+                    )
+
         for group in [
             self.all_sprites,
             self.platforms,
@@ -587,8 +600,26 @@ class GameWorld:
             "active_weapon": getattr(self.player, "active_weapon", None),
         }
 
+        # Always preserve the timer during reset (whether in parent or sub-level)
+        # This ensures the timer continues from where it left off
+        if self.time_remaining is not None:
+            self.parent_time_remaining = self.time_remaining
+            if self.level_stack:
+                print(
+                    f"⏱️ Preserving timer during sub-level reset: {self.time_remaining:.1f}s"
+                )
+            else:
+                print(
+                    f"⏱️ Preserving timer during parent level reset: {self.time_remaining:.1f}s"
+                )
+
         # Reload the current level with preserved player state
-        self.load_level(self.current_level_name, preserve_player_state=player_state)
+        # Mark as sub-level transition if we're in a sub-level to preserve killed enemies/items
+        self.load_level(
+            self.current_level_name,
+            preserve_player_state=player_state,
+            is_sub_level_transition=bool(self.level_stack),  # True if in sub-level
+        )
 
     def events(self):
         for event in pg.event.get():
@@ -613,6 +644,7 @@ class GameWorld:
                         self.marvin_mode = not self.marvin_mode  # Toggle Marvin mode
                         self.cheat_buffer = ""  # Clear buffer after activation
                         if self.marvin_mode:
+                            self.marvin_mode_ever_used = True  # Mark cheat as used
                             print("🎮 MARVIN MODE ACTIVATED! 🎮")
                             sound_manager.play_sound_effect("powerup_collect")
                         else:
@@ -641,6 +673,15 @@ class GameWorld:
             height=HEIGHT,
             duration=60,
         )
+
+        # Check if player used cheat mode
+        if self.marvin_mode_ever_used:
+            # Show cheat screen instead of highscore
+            self.show_cheat_screen()
+            # Return to level selection
+            self.keep_going = False
+            self.return_to_level_selection = True
+            return
 
         # Calculate final score
         time_remaining = self.time_remaining if self.time_remaining else 0
@@ -1074,6 +1115,85 @@ class GameWorld:
 
         pg.display.flip()
 
+    def show_cheat_screen(self):
+        """Display cheat screen when player used marvin mode."""
+        self.screen.fill((0, 0, 0))
+
+        # Title
+        font_title = pg.font.Font(None, 72)
+        title_text = font_title.render("You cheated.", True, (255, 165, 0))
+        title_rect = title_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 60))
+        self.screen.blit(title_text, title_rect)
+
+        # Message
+        font_message = pg.font.Font(None, 36)
+        message_text = font_message.render(
+            "No highscore for you...", True, (255, 255, 255)
+        )
+        message_rect = message_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 20))
+        self.screen.blit(message_text, message_rect)
+
+        # Instruction
+        instruction_font = pg.font.Font(None, 24)
+        instruction = instruction_font.render(
+            "Press any key to return to level selection", True, (200, 200, 200)
+        )
+        instruction_rect = instruction.get_rect(center=(WIDTH // 2, HEIGHT - 15))
+        self.screen.blit(instruction, instruction_rect)
+
+        pg.display.flip()
+
+        # Wait for key press
+        waiting = True
+        while waiting:
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    waiting = False
+                elif event.type == pg.KEYDOWN:
+                    waiting = False
+            self.clock.tick(60)
+
+    def show_game_over_screen(self):
+        """Display game over screen."""
+        self.screen.fill((0, 0, 0))
+
+        # Title
+        font_title = pg.font.Font(None, 72)
+        title_text = font_title.render("GAME OVER", True, (255, 0, 0))
+        title_rect = title_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 60))
+        self.screen.blit(title_text, title_rect)
+
+        # Message
+        font_message = pg.font.Font(None, 32)
+        message_text = font_message.render(
+            "Better luck next time! No highscore for you...", True, (255, 255, 255)
+        )
+        message_rect = message_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 20))
+        self.screen.blit(message_text, message_rect)
+
+        # Instruction
+        instruction_font = pg.font.Font(None, 24)
+        instruction = instruction_font.render(
+            "Press any key to return to level selection", True, (200, 200, 200)
+        )
+        instruction_rect = instruction.get_rect(center=(WIDTH // 2, HEIGHT - 15))
+        self.screen.blit(instruction, instruction_rect)
+
+        pg.display.flip()
+
+        # Wait for key press
+        waiting = True
+        while waiting:
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    waiting = False
+                    self.return_to_level_selection = (
+                        False  # User wants to quit entirely
+                    )
+                elif event.type == pg.KEYDOWN:
+                    waiting = False
+            self.clock.tick(60)
+
     def show_encounter_message(self, message):
         """Display an encounter message when player first sees an enemy."""
         self.encounter_message = message
@@ -1234,7 +1354,21 @@ class GameWorld:
         self.player_gems = self.player.gems
 
     def game_over(self):
-        """Called when game is over. Exits the game."""
-        print("Game Over!")
-        pg.quit()
-        sys.exit()
+        """Called when game is over. Returns to level selection screen."""
+        print("Game Over! Returning to level selection...")
+
+        # Display game over screen
+        fade_to_black(
+            screen=self.screen,
+            draw_callback=self.draw,
+            width=WIDTH,
+            height=HEIGHT,
+            duration=60,
+        )
+
+        # Show game over message
+        self.show_game_over_screen()
+
+        # Set flags to return to level selection
+        self.keep_going = False
+        self.return_to_level_selection = True
