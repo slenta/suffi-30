@@ -443,7 +443,41 @@ class GameWorld:
             trophy = Trophy(x * GRIDSIZE, y * GRIDSIZE, trophy_image)
             self.trophies.add(trophy)
             self.all_sprites.add(trophy)
-        self.total_trophies = len(self.level_config["trophy_locations"])
+
+        # Set trophy count for this level
+        current_level_trophy_count = len(self.level_config["trophy_locations"])
+
+        # Calculate global trophy count (parent + all sub-levels)
+        if not self.level_stack:  # We're in the main/parent level
+            # Calculate total trophies from parent and all sub-levels
+            self.global_total_trophies = current_level_trophy_count
+
+            # Add trophies from sub-levels
+            for pipe_data in self.level_config.get("pipe_locations", []):
+                sub_level_name = pipe_data["sub_level"]
+                try:
+                    sub_level_module = importlib.import_module(
+                        f"platformer.levels.{sub_level_name}"
+                    )
+                    sub_level_config = sub_level_module.level_config
+                    self.global_total_trophies += len(
+                        sub_level_config.get("trophy_locations", [])
+                    )
+                except Exception as e:
+                    print(
+                        f"⚠️ Could not load sub-level {sub_level_name} for trophy count: {e}"
+                    )
+
+            print(
+                f"🏆 Global trophy count: {self.global_total_trophies} (parent: {current_level_trophy_count})"
+            )
+
+        # Use global trophy count for display
+        self.total_trophies = (
+            self.global_total_trophies
+            if self.global_total_trophies > 0
+            else current_level_trophy_count
+        )
 
         exit_x, exit_y = self.level_config["exit_location"]
         self.exit = Exit(exit_x * GRIDSIZE, exit_y * GRIDSIZE)
