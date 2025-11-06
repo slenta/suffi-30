@@ -34,6 +34,13 @@ IMAGEPATH = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets/images"
 )
 
+# Font path
+TITLE_FONT = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+    "assets/fonts/The Duke of Prunes.ttf",
+    # "assets/fonts/Ketchum.otf",
+)
+
 # === Colors ===
 BG_COLOR = (65, 166, 246)  # Sky blue
 

@@ -3,7 +3,7 @@ level_config = {
     "y_bounds": [-1230, 1170],  # Increased gameworld height for more vertical space
     "level_time": 300,  # Time limit in seconds (5 minutes)
     # "player_spawn": (285, 12),
-    "player_spawn": (450, -30),
+    "player_spawn": (210, -35),
     # Extended grass locations - keeping original and adding more sections
     "grass_locations": [(i, -16) for i in range(-20, 16)]
     + [(i, -16) for i in range(25, 30)]
@@ -310,6 +310,17 @@ level_config = {
     ],
     "trophy_image": "mushroom.png",
     "exit_location": (499, -22),
+    # Pipe configuration - this is the important part!
+    "pipe_locations": [
+        {
+            "x": 219,  # X position in grid units (where the pipe appears)
+            "y": -38,  # Y position in grid units (top of the pipe - pipe is 2 units tall, so bottom will be at y=14)
+            "sub_level": "trancefloor-sub",  # Name of the sub-level file (without .py extension)
+            "return_x": 219,  # Where player spawns when returning (grid units)
+            "return_y": -38,  # Y position when returning (grid units)
+            "direction": "down",  # Direction to press: "down", "up", "left", or "right"
+        },
+    ],
     "background_music": "assets/music/default.ogg",
     # "background_image": "assets/backgrounds/trancefloor.png",
     "background_scroll_speed": 1,

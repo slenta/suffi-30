@@ -16,7 +16,7 @@ class LevelSelectionScreen:
 
     def __init__(self, screen):
         self.screen = screen
-        self.font_large = pg.font.Font(None, 64)
+        self.font_large = pg.font.Font(TITLE_FONT, 40)
         self.font_medium = pg.font.Font(None, 32)
         self.font_small = pg.font.Font(None, 16)
 
@@ -53,6 +53,20 @@ class LevelSelectionScreen:
         except FileNotFoundError:
             print(f"❌ Player sprite not found at {player_sprite_path}")
             self.cursor_sprite = None
+
+        # Load player sprite for bottom animation (running across screen)
+        try:
+            self.running_sprite = pg.image.load(player_sprite_path).convert_alpha()
+            # Scale sprite for bottom animation (bigger than cursor)
+            self.running_sprite = pg.transform.scale(self.running_sprite, (24, 24))
+        except FileNotFoundError:
+            print(f"❌ Running sprite not found at {player_sprite_path}")
+            self.running_sprite = None
+
+        # Animation variables for running sprite
+        self.running_sprite_x = -60  # Start off-screen to the left
+        self.running_sprite_speed = 2  # Pixels per frame
+        self.screen_width = screen.get_width()
 
         print(
             f"🎮 Level Selection Screen initialized with {len(self.available_levels)} levels"
@@ -130,6 +144,13 @@ class LevelSelectionScreen:
             self.cursor_visible = not self.cursor_visible
             self.cursor_blink_timer = 0
 
+        # Update running sprite position
+        self.running_sprite_x += self.running_sprite_speed
+
+        # Reset position when sprite goes off-screen to the right
+        if self.running_sprite_x > self.screen_width + 60:
+            self.running_sprite_x = -60
+
     def draw(self):
         """Draw the level selection screen."""
         # Clear screen with background color
@@ -176,6 +197,14 @@ class LevelSelectionScreen:
                     cursor_text = self.font_medium.render("►", True, self.cursor_color)
                     cursor_rect = cursor_text.get_rect(center=(cursor_x, cursor_y))
                     self.screen.blit(cursor_text, cursor_rect)
+
+        # Draw running sprite at the bottom of the screen
+        if self.running_sprite:
+            running_sprite_y = screen_height - 20  # Position near bottom
+            running_sprite_rect = self.running_sprite.get_rect(
+                center=(self.running_sprite_x, running_sprite_y)
+            )
+            self.screen.blit(self.running_sprite, running_sprite_rect)
 
         # Update display
         pg.display.flip()

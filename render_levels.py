@@ -19,6 +19,16 @@ from PIL import Image, ImageDraw, ImageFont
 import glob
 import argparse
 
+# Add platformer directory to path to import enemy config
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "platformer"))
+try:
+    from config.enemy_config import ENEMY_TYPES
+except ImportError:
+    print(
+        "Warning: Could not import enemy_config, enemy sprites may not render correctly"
+    )
+    ENEMY_TYPES = {}
+
 # Game constants (from settings.py)
 GRIDSIZE = 18
 DEFAULT_TILE_SIZE = 18
@@ -489,11 +499,28 @@ def draw_moving_platforms_with_sprites(draw, image, platform_locations, min_x, m
 
 
 def draw_enemies_with_sprites(draw, image, enemy_locations, min_x, min_y):
-    """Draw enemies using actual sprites."""
+    """Draw enemies using actual sprites from enemy config."""
     for enemy in enemy_locations:
         x, y = enemy["x"], enemy["y"]
-        enemy_image_name = enemy.get("image", "trump.png")
-        size_mult = enemy.get("size_multiplier", 1)
+
+        # Check if enemy has a type field that references enemy config
+        enemy_type = enemy.get("type")
+        if enemy_type and enemy_type in ENEMY_TYPES:
+            # Get config from ENEMY_TYPES and merge with any overrides from level
+            enemy_config = ENEMY_TYPES[enemy_type].copy()
+            # Override with any custom values from the level config
+            for key, value in enemy.items():
+                if key not in ["x", "y", "type"]:  # Don't override position or type
+                    enemy_config[key] = value
+
+            enemy_image_name = enemy_config.get("image", "trump.png")
+            size_mult = enemy_config.get("size_multiplier", 1)
+            patrol_range = enemy_config.get("patrol_range", 50)
+        else:
+            # Fallback to direct values if no type specified or type not found
+            enemy_image_name = enemy.get("image", "trump.png")
+            size_mult = enemy.get("size_multiplier", 1)
+            patrol_range = enemy.get("patrol_range", 50)
 
         img_x, img_y = world_to_image_coords(x, y, min_x, min_y)
 
@@ -506,7 +533,6 @@ def draw_enemies_with_sprites(draw, image, enemy_locations, min_x, min_y):
         image.paste(enemy_image, (center_x, center_y), enemy_image)
 
         # Add patrol range visualization (optional thin line)
-        patrol_range = enemy.get("patrol_range", 50)
         patrol_pixels = patrol_range
         center_sprite_x = center_x + enemy_size // 2
         center_sprite_y = center_y + enemy_size + 5
