@@ -76,6 +76,12 @@ class GameWorld:
         # Track collected items to prevent respawning
         self.collected_items = set()
 
+        # Track killed enemies to prevent respawning
+        self.killed_enemies = set()
+
+        # Global trophy count (parent + sub-levels combined)
+        self.global_total_trophies = 0
+
     def _init_sprite_groups(self):
         """Initialize all sprite groups."""
         self.all_sprites = pg.sprite.Group()
@@ -116,7 +122,11 @@ class GameWorld:
             group.empty()
 
     def load_level(
-        self, level_name, player_spawn_override=None, preserve_player_state=None
+        self,
+        level_name,
+        player_spawn_override=None,
+        preserve_player_state=None,
+        is_sub_level_transition=False,
     ):
         """
         Load a level by name.
@@ -125,13 +135,33 @@ class GameWorld:
             level_name: Name of the level to load
             player_spawn_override: Optional (x, y) tuple to override spawn position
             preserve_player_state: Optional dict with player state (gems, trophies, health, weapons)
+            is_sub_level_transition: True if entering or exiting a sub-level
         """
         # Clear all sprite groups
         self._clear_sprite_groups()
 
-        # Clear collected items only if loading a different level (not during reset)
-        if self.current_level_name != level_name:
+        # Only clear collected items and killed enemies if loading a truly different level
+        # (not a sub-level transition and not the same level during reset)
+        is_same_level = self.current_level_name == level_name
+
+        print(f"🔍 load_level: current={self.current_level_name}, new={level_name}")
+        print(
+            f"🔍 is_same_level={is_same_level}, is_sub_level_transition={is_sub_level_transition}"
+        )
+        print(f"🔍 collected_items count: {len(self.collected_items)}")
+        print(f"🔍 killed_enemies count: {len(self.killed_enemies)}")
+
+        if not is_sub_level_transition and not is_same_level:
+            # Starting a completely new level - clear all tracking
             self.collected_items.clear()
+            self.killed_enemies.clear()
+            print("🧹 Cleared collected items and killed enemies for new level")
+        elif is_sub_level_transition:
+            print(
+                "🔄 Sub-level transition: preserving collected items and killed enemies"
+            )
+        else:
+            print("♻️ Same level reload: preserving collected items and killed enemies")
 
         self.current_level_name = level_name
 
@@ -146,12 +176,23 @@ class GameWorld:
         self.top = self.level_config["y_bounds"][1]
 
         # Initialize timer system
-        if self.level_stack and self.parent_time_remaining is not None:
-            # Sub-level: inherit parent's remaining time
+        if self.parent_time_remaining is not None:
+            # Continuing from sub-level or parent level: inherit remaining time
             self.time_remaining = self.parent_time_remaining
             self.timer_start_ticks = pg.time.get_ticks()
             self.level_time_limit = None
-            print(f"⏱️ Sub-level continuing timer: {self.time_remaining:.1f}s remaining")
+            self.parent_time_remaining = None  # Clear it after using
+            print(f"⏱️ Continuing timer: {self.time_remaining:.1f}s remaining")
+        elif self.level_stack:
+            # Shouldn't happen, but safety check
+            print("⚠️ In sub-level but no parent_time_remaining set")
+            self.level_time_limit = self.level_config.get("level_time", None)
+            if self.level_time_limit is not None:
+                self.time_remaining = float(self.level_time_limit)
+                self.timer_start_ticks = pg.time.get_ticks()
+            else:
+                self.time_remaining = None
+                self.timer_start_ticks = None
         else:
             # Main level: initialize timer from level config
             self.level_time_limit = self.level_config.get("level_time", None)
@@ -216,16 +257,20 @@ class GameWorld:
             if isinstance(gem_data, (tuple, list)):
                 x, y = gem_data
                 # Use default gem image
-                gem_id = f"gem_{x}_{y}"
+                gem_id = f"{level_name}_gem_{x}_{y}"
                 if gem_id in self.collected_items:
+                    print(f"⏭️  Skipping already collected gem: {gem_id}")
                     continue  # Skip already collected gems
+                print(f"💎 Loading gem at ({x}, {y}) - ID: {gem_id}")
                 g = Gem(x, y, gem_image)
             else:
                 x = gem_data["x"]
                 y = gem_data["y"]
-                gem_id = f"gem_{x}_{y}"
+                gem_id = f"{level_name}_gem_{x}_{y}"
                 if gem_id in self.collected_items:
+                    print(f"⏭️  Skipping already collected gem: {gem_id}")
                     continue  # Skip already collected gems
+                print(f"💎 Loading gem at ({x}, {y}) - ID: {gem_id}")
                 # If gem has a 'type' field, load from config template
                 if "type" in gem_data:
                     config = get_gem_config(gem_data["type"])
@@ -271,14 +316,21 @@ class GameWorld:
 
         # Create player with preserved state if provided
         if preserve_player_state:
+            # Get the preserved max_health, or use default if not present
+            max_health = preserve_player_state.get("max_health", 100)
+            current_health = preserve_player_state.get("health", max_health)
+
             self.player = Player(
                 spawn_x,
                 spawn_y,
                 world=self,
                 start_gems=preserve_player_state.get("gems", 0),
                 trophies_collected=preserve_player_state.get("trophies", 0),
-                health=preserve_player_state.get("health", 100),
+                health=max_health,  # This sets max_health
             )
+            # Set the actual current health separately
+            self.player.health = current_health
+
             # Restore weapons
             if "weapons" in preserve_player_state:
                 self.player.weapons = preserve_player_state["weapons"].copy()
@@ -313,6 +365,16 @@ class GameWorld:
                 # Legacy format: use data directly from level file
                 config = enemy_data.copy()
 
+            # Create unique enemy ID based on level name and position
+            enemy_id = f"{level_name}_enemy_{config['x']}_{config['y']}"
+            if enemy_id in self.killed_enemies:
+                print(f"⏭️  Skipping already killed enemy: {enemy_id}")
+                continue  # Skip already killed enemies
+
+            print(
+                f"👾 Loading enemy at ({config['x']}, {config['y']}) - ID: {enemy_id}"
+            )
+
             enemy = Enemy(
                 config["x"],
                 config["y"],
@@ -332,6 +394,8 @@ class GameWorld:
                 config.get("encounter_message", None),
                 config.get("shoot_cooldown", 60),
             )
+            # Store the enemy ID for tracking when killed
+            enemy.enemy_id = enemy_id
             self.enemies.add(enemy)
             self.all_sprites.add(enemy)
 
@@ -339,7 +403,7 @@ class GameWorld:
         for powerup_data in self.level_config["powerup_locations"]:
             x = powerup_data["x"]
             y = powerup_data["y"]
-            powerup_id = f"powerup_{x}_{y}"
+            powerup_id = f"{level_name}_powerup_{x}_{y}"
             if powerup_id in self.collected_items:
                 continue  # Skip already collected powerups
             powerup = PowerUp(
@@ -372,7 +436,7 @@ class GameWorld:
                         "image", os.path.basename(default_trophy_image)
                     )
 
-            trophy_id = f"trophy_{x}_{y}"
+            trophy_id = f"{level_name}_trophy_{x}_{y}"
             if trophy_id in self.collected_items:
                 continue  # Skip already collected trophies
 
@@ -389,7 +453,7 @@ class GameWorld:
         for weapon_data in self.level_config.get("weapon_locations", []):
             x = weapon_data["x"]
             y = weapon_data["y"]
-            weapon_id = f"weapon_{x}_{y}"
+            weapon_id = f"{level_name}_weapon_{x}_{y}"
             if weapon_id in self.collected_items:
                 continue  # Skip already collected weapons
             weapon = WeaponPickup(
@@ -482,6 +546,7 @@ class GameWorld:
             "gems": self.player.gems,
             "trophies": self.player.trophies_collected,
             "health": self.player.max_health,  # Reset to full health
+            "max_health": self.player.max_health,
             "weapons": (
                 self.player.weapons.copy() if hasattr(self.player, "weapons") else {}
             ),
@@ -603,6 +668,7 @@ class GameWorld:
             "gems": self.player.gems,
             "trophies": self.player.trophies_collected,
             "health": self.player.health,
+            "max_health": self.player.max_health,
             "weapons": (
                 self.player.weapons.copy() if hasattr(self.player, "weapons") else {}
             ),
@@ -629,8 +695,12 @@ class GameWorld:
             }
         )
 
-        # Load the sub-level (preserve player state)
-        self.load_level(pipe.sub_level_name, preserve_player_state=player_state)
+        # Load the sub-level (preserve player state and mark as sub-level transition)
+        self.load_level(
+            pipe.sub_level_name,
+            preserve_player_state=player_state,
+            is_sub_level_transition=True,
+        )
 
         # Play a sound effect (optional)
         sound_manager.play_sound_effect("jump")
@@ -654,6 +724,7 @@ class GameWorld:
             "gems": self.player.gems,
             "trophies": self.player.trophies_collected,
             "health": self.player.health,
+            "max_health": self.player.max_health,
             "weapons": (
                 self.player.weapons.copy() if hasattr(self.player, "weapons") else {}
             ),
@@ -661,17 +732,18 @@ class GameWorld:
             "damage_dealt": getattr(self.player, "damage_dealt", 0),
         }
 
-        # Load parent level with return position and updated state
+        # Set parent_time_remaining before loading so load_level can use it
+        if current_time is not None:
+            self.parent_time_remaining = current_time
+            print(f"⏱️ Timer will continue: {current_time:.1f}s remaining")
+
+        # Load parent level with return position, updated state, and mark as sub-level transition
         self.load_level(
             parent_level["level_name"],
             player_spawn_override=parent_level["return_position"],
             preserve_player_state=current_state,
+            is_sub_level_transition=True,
         )
-
-        # Restore the timer that was counting down
-        if current_time is not None:
-            self.parent_time_remaining = current_time
-            print(f"⏱️ Restoring parent timer: {current_time:.1f}s")
 
         # Play a sound effect (optional)
         sound_manager.play_sound_effect("jump")

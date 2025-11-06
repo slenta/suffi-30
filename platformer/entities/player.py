@@ -203,7 +203,10 @@ class Player(pg.sprite.Sprite):
             # Track collected item to prevent respawning
             item_x = item.rect.centerx // GRIDSIZE
             item_y = item.rect.centery // GRIDSIZE
-            self.world.collected_items.add(f"gem_{item_x}_{item_y}")
+            gem_id = f"{self.world.current_level_name}_gem_{item_x}_{item_y}"
+            self.world.collected_items.add(gem_id)
+            print(f"💎 Collected gem at ({item_x}, {item_y}) - ID: {gem_id}")
+            print(f"📋 Currently collected items: {self.world.collected_items}")
             item.apply(self)
             sound_manager.play_sound_effect("gem_collect")  # Play gem collection sound
 
@@ -213,7 +216,9 @@ class Player(pg.sprite.Sprite):
             # Track collected powerup to prevent respawning
             powerup_x = powerup.rect.centerx // GRIDSIZE
             powerup_y = powerup.rect.centery // GRIDSIZE
-            self.world.collected_items.add(f"powerup_{powerup_x}_{powerup_y}")
+            self.world.collected_items.add(
+                f"{self.world.current_level_name}_powerup_{powerup_x}_{powerup_y}"
+            )
             powerup.apply_effect(self)
             # Type 3 powerup lasts 8 seconds (480 frames at 60 FPS), others last 5 seconds (300 frames)
             duration = 240 if powerup.power_type == 3 else 480
@@ -232,7 +237,9 @@ class Player(pg.sprite.Sprite):
             # Track collected trophy to prevent respawning
             trophy_x = trophy.rect.centerx // GRIDSIZE
             trophy_y = trophy.rect.centery // GRIDSIZE
-            self.world.collected_items.add(f"trophy_{trophy_x}_{trophy_y}")
+            self.world.collected_items.add(
+                f"{self.world.current_level_name}_trophy_{trophy_x}_{trophy_y}"
+            )
         self.trophies_collected += len(hits)
 
     def check_exit(self):
@@ -326,7 +333,9 @@ class Player(pg.sprite.Sprite):
             # Track collected weapon to prevent respawning
             weapon_x = weapon.rect.centerx // GRIDSIZE
             weapon_y = weapon.rect.centery // GRIDSIZE
-            self.world.collected_items.add(f"weapon_{weapon_x}_{weapon_y}")
+            self.world.collected_items.add(
+                f"{self.world.current_level_name}_weapon_{weapon_x}_{weapon_y}"
+            )
             self.pick_up_weapon(weapon.weapon_name)
 
     def pick_up_weapon(self, weapon_name):

@@ -414,4 +414,12 @@ class Enemy(pg.sprite.Sprite):
 
         # Remove enemy after falling off screen or after timeout
         if self.rect.top > HEIGHT + 100 or self.death_timer > ENEMY_DEATH_TIMER_MAX:
+            # Track this enemy as killed in the world (only for non-minions)
+            if self.world and hasattr(self, "enemy_id") and not self.is_minion:
+                self.world.killed_enemies.add(self.enemy_id)
+                print(f"💀 Enemy {self.enemy_id} killed and tracked")
+            elif not hasattr(self, "enemy_id"):
+                print(f"⚠️ Enemy died but has no enemy_id attribute!")
+            elif self.is_minion:
+                print(f"⏩ Minion died (not tracked)")
             self.kill()
