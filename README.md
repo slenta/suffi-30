@@ -46,29 +46,44 @@ Deploy to Vercel for production hosting with highscore API:
 
 ### Prerequisites
 1. Install Vercel CLI: `npm install -g vercel`
-2. Create a [Vercel account](https://vercel.com)
+2. Install pygbag: `pip install pygbag`
+3. Create a [Vercel account](https://vercel.com)
+4. Login to Vercel: `vercel login`
 
-### Deployment Steps
+### Automated Deployment
 
-1. **Login to Vercel:**
+Simply run the deployment script:
 ```bash
-vercel login
+./deploy.sh
 ```
 
-2. **Deploy:**
+This script will:
+1. Build the web version with pygbag
+2. Copy files to the `public/` directory
+3. Commit and push changes to GitHub
+4. Deploy to Vercel production
+
+### Manual Deployment Steps
+
+If you prefer manual deployment:
+
+1. **Build web version:**
 ```bash
-vercel
+python -m pygbag --PYBUILD 3.12 --build .
 ```
 
-Follow the prompts:
-- Set up and deploy? `Y`
-- Which scope? Choose your account
-- Link to existing project? `N` (first time)
-- Project name: `suffi-30`
-- In which directory is your code located? `./`
-
-3. **Production deployment:**
+2. **Copy to public directory:**
 ```bash
+rm -rf public
+mkdir -p public
+cp -r build/web/* public/
+```
+
+3. **Deploy to Vercel:**
+```bash
+git add public
+git commit -m "Update web build"
+git push
 vercel --prod
 ```
 
