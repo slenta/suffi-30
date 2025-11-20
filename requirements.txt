@@ -1,2 +1,4 @@
 pygame==2.5.2
 pygbag==0.8.7
+psycopg2-binary==2.9.9
+python-dotenv==1.0.0

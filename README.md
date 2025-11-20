@@ -1,12 +1,26 @@
 # suffi-30
 level up through suffisuffzich's life by playing this simple jump n run game
 
-# Quick start (local development):
+## Quick start (local development):
 ```bash
 python play.py                    # Show level selection screen
-python play.py trancefloor             # Play level trancefloor directly
+python play.py trancefloor        # Play level trancefloor directly
 python play.py --list-levels      # List all available levels
 ```
+
+## Highscore Storage
+
+The game supports **Vercel Postgres** for persistent highscore storage across all players:
+
+- **Local play**: Can use either Vercel Postgres (recommended) or JSON file storage
+- **Web deployment**: Uses Vercel Postgres for shared global highscores
+
+**Quick setup:**
+```bash
+./setup.sh  # Automated setup script
+```
+
+For detailed instructions, see **[POSTGRES_SETUP.md](POSTGRES_SETUP.md)**
 
 # Web Deployment with Pygbag
 
@@ -81,15 +95,20 @@ Content-Type: application/json
 
 ### Optional: Add Database
 
-For persistent highscore storage, add Vercel Postgres or KV:
+For persistent highscore storage:
 
-```bash
-# Install Vercel Postgres
-vercel link
-vercel env pull .env.local
-```
+1. **Create Vercel Postgres database** in your Vercel dashboard
+2. **Copy connection string** from database settings
+3. **Add environment variable** to Vercel project:
+   ```bash
+   vercel env add POSTGRES_URL
+   ```
+4. **Run migration** (locally or via Vercel):
+   ```bash
+   python migrate_db.py
+   ```
 
-Then uncomment the database code in `api/highscores.py`.
+See **[POSTGRES_SETUP.md](POSTGRES_SETUP.md)** for complete instructions.
 
 ### GitHub Integration
 

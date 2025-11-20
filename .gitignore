@@ -12,6 +12,10 @@ dist/
 venv/
 ENV/
 
+# Environment variables
+.env
+.env.local
+
 # Pygbag build files
 build/
 
@@ -26,3 +30,4 @@ build/
 *.swp
 *.swo
 *~
+.vercel
