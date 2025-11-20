@@ -14,7 +14,7 @@ level_config = {
     "powerup_locations": [],
     # Enemy locations (using centralized config with overrides)
     "enemy_locations": [
-        {"type": "trump", "x": 40, "y": -5},
+        {"type": "presslufthanna", "x": 120, "y": -5},
     ],
     "trophy_locations": [(50, -25)],
     "trophy_image": "trophy.png",  # Path to trophy image (relative to assets/images)
@@ -22,7 +22,7 @@ level_config = {
     "moving_platform_locations": [],
     "exit_location": (148, -1),
     "spike_locations": [],
-    "background_music": "assets/music/level1.ogg",  # Path relative to game root
-    "background_image": "assets/backgrounds/level1_bg.png",  # Path to background image
+    # "background_music": "assets/music/level1.ogg",  # Path relative to game root
+    # "background_image": "assets/backgrounds/level1_bg.png",  # Path to background image
     "background_scroll_speed": 1,  # Optional: parallax scrolling speed (0.0 = static, 1.0 = moves with camera)
 }

@@ -406,6 +406,7 @@ class GameWorld:
                 config.get("can_summon_minions", False),
                 config.get("encounter_message", None),
                 config.get("shoot_cooldown", 60),
+                config.get("spawn_on_death", None),
             )
             # Store the enemy ID for tracking when killed
             enemy.enemy_id = enemy_id

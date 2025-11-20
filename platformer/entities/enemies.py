@@ -45,6 +45,7 @@ class Enemy(pg.sprite.Sprite):
         can_summon_minions=False,  # Default to False - must be explicitly enabled in level config
         encounter_message=None,  # Optional message to display when first encountered
         shoot_cooldown=60,  # Cooldown for shooting in frames (default: 60 = 1 second at 60 FPS)
+        spawn_on_death=None,  # Optional dict with enemy config to spawn on death
     ):
         super().__init__()
         # Store the image path
@@ -80,6 +81,7 @@ class Enemy(pg.sprite.Sprite):
         self.can_throw_explosives = can_throw_explosives  # Add this flag
         self.is_minion = is_minion  # Store minion status
         self.can_summon_minions = can_summon_minions  # Store minion summoning ability
+        self.spawn_on_death = spawn_on_death  # Enemy config to spawn on death
 
         # Encounter message attributes
         self.encounter_message = encounter_message  # Message to display
@@ -377,6 +379,62 @@ class Enemy(pg.sprite.Sprite):
             and -margin <= screen_y <= HEIGHT + margin
         )
 
+    def spawn_replacement_enemy(self):
+        """Spawn a new enemy at this enemy's position when it dies."""
+        import os
+        from ..config.enemy_config import get_enemy_config
+        from ..config.settings import IMAGEPATH
+
+        print(
+            f"🔍 spawn_replacement_enemy called. spawn_on_death config: {self.spawn_on_death}"
+        )
+
+        # Get the enemy type and any overrides from spawn_on_death config
+        spawn_config = self.spawn_on_death.copy()
+        enemy_type = spawn_config.pop("type")
+
+        print(f"🔍 Enemy type to spawn: {enemy_type}")
+        print(f"🔍 Additional config: {spawn_config}")
+
+        # Get base config for the new enemy type
+        new_enemy_config = get_enemy_config(enemy_type, **spawn_config)
+
+        print(f"🔍 Full enemy config: {new_enemy_config}")
+
+        # Create the new enemy at the current death position (not original spawn)
+        new_enemy = Enemy(
+            self.rect.x // GRIDSIZE,
+            self.rect.y // GRIDSIZE,
+            _image_path=os.path.join(IMAGEPATH, new_enemy_config["image"]),
+            speed=new_enemy_config["speed"],
+            patrol_range=new_enemy_config["patrol_range"],
+            size_multiplier=new_enemy_config["size_multiplier"],
+            health=new_enemy_config["health"],
+            damage=new_enemy_config["damage"],
+            shoot_range=new_enemy_config["shoot_range"],
+            world=self.world,
+            chase_range=new_enemy_config["chase_range"],
+            melee_damage=new_enemy_config["melee_damage"],
+            can_throw_explosives=new_enemy_config.get("can_throw_explosives", True),
+            can_summon_minions=new_enemy_config.get("can_summon_minions", False),
+            encounter_message=new_enemy_config.get("encounter_message"),
+            shoot_cooldown=new_enemy_config.get("shoot_cooldown", 60),
+            spawn_on_death=new_enemy_config.get("spawn_on_death"),
+        )
+
+        print(
+            f"🔍 New enemy created at ({self.rect.x // GRIDSIZE}, {self.rect.y // GRIDSIZE})"
+        )
+
+        # Add to world sprite groups
+        self.world.enemies.add(new_enemy)
+        self.world.all_sprites.add(new_enemy)
+
+        print(
+            f"🔄 Spawned {enemy_type} at death position ({self.rect.x // GRIDSIZE}, {self.rect.y // GRIDSIZE})"
+        )
+        print(f"🔍 Total enemies in world now: {len(self.world.enemies)}")
+
     def start_death_animation(self):
         """Initialize the death animation (Mario-style tumble)."""
         self.is_dying = True
@@ -385,6 +443,10 @@ class Enemy(pg.sprite.Sprite):
         self.death_rotation_speed = random.randint(
             ENEMY_DEATH_ROTATION_SPEED_MIN, ENEMY_DEATH_ROTATION_SPEED_MAX
         )
+
+        # Spawn replacement enemy immediately at death position (before falling off screen)
+        if self.spawn_on_death and self.world:
+            self.spawn_replacement_enemy()
 
     def update_death_animation(self):
         """Handle the tumbling death animation"""
