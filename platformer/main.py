@@ -31,9 +31,19 @@ async def get_level_to_load():
     # Only init pygame if not already initialized (Pygbag handles this)
     if not pg.get_init():
         pg.init()
+
+    # Wait for display to be ready (important for pygbag)
     screen = pg.display.get_surface()
+    retry_count = 0
+    while screen is None and retry_count < 10:
+        await asyncio.sleep(0.1)  # Wait for pygbag to initialize display
+        screen = pg.display.get_surface()
+        retry_count += 1
+
     if screen is None:
+        print("⚠️ Display not ready from pygbag, creating new surface")
         screen = pg.display.set_mode((WIDTH, HEIGHT))
+
     pg.display.set_caption("Level Selection - Suffi Platformer")
 
     # Load menu sound effects
@@ -72,6 +82,21 @@ async def get_level_to_load():
 
 # Main game loop
 async def main():
+    print("🎮 Starting main game loop...")
+
+    # Ensure pygame is initialized (important for pygbag)
+    if not pg.get_init():
+        pg.init()
+
+    # Wait for display to be ready in pygbag environment
+    if sys.platform == "emscripten":
+        print("🌐 Detected pygbag/emscripten environment, waiting for display...")
+        retry_count = 0
+        while pg.display.get_surface() is None and retry_count < 20:
+            await asyncio.sleep(0.1)
+            retry_count += 1
+        print(f"✅ Display ready after {retry_count} retries")
+
     # Main game loop - allows returning to level selection after completing a level
     while True:
         # Initialize the game world
@@ -120,9 +145,4 @@ async def main():
 
 # Run the game when executed directly
 if __name__ == "__main__":
-    if sys.platform == "emscripten":
-        # Pygbag environment - schedule the coroutine
-        asyncio.ensure_future(main())
-    else:
-        # Local development - use asyncio.run
-        asyncio.run(main())
+    asyncio.run(main())
