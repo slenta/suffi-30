@@ -1,5 +1,6 @@
 import pygame as pg
 import os, sys
+import asyncio
 from ..world.platform_class import Platform
 from ..world.moving_platform import MovingPlatform
 from ..collectibles.gem import Gem
@@ -36,6 +37,7 @@ class GameWorld:
         self.clock = pg.time.Clock()
         self.keep_going = True
         self.game_over_flag = False
+        self.level_complete_flag = False  # Flag for async level completion
         self.current_fps = FPS
         self.return_to_level_selection = False
 
@@ -659,7 +661,7 @@ class GameWorld:
                 elif event.key == pg.K_e:
                     self.player.throw_exploding_object()
 
-    def level_complete(self):
+    async def level_complete(self):
         # Check if we're in a sub-level
         if self.level_stack:
             # Return to parent level
@@ -667,7 +669,7 @@ class GameWorld:
             return
 
         # Otherwise, normal level completion
-        fade_to_black(
+        await fade_to_black(
             screen=self.screen,
             draw_callback=self.draw,
             width=WIDTH,
@@ -678,7 +680,7 @@ class GameWorld:
         # Check if player used cheat mode
         if self.marvin_mode_ever_used:
             # Show cheat screen instead of highscore
-            self.show_cheat_screen()
+            await self.show_cheat_screen()
             # Return to level selection
             self.keep_going = False
             self.return_to_level_selection = True
@@ -694,25 +696,29 @@ class GameWorld:
         )
 
         # Show level complete and score
-        self.show_level_complete_with_score(score_breakdown)
+        await self.show_level_complete_with_score(score_breakdown)
 
         # Prompt for player name and save highscore
-        player_name = self.prompt_player_name()
+        player_name = await self.prompt_player_name()
         if player_name:
-            self.highscore_manager.add_highscore(
+            result = self.highscore_manager.add_highscore(
                 self.current_level_name, player_name, score_breakdown
             )
+            # Handle both sync and async results
+            if self.highscore_manager.use_http:
+                await result
             print(
                 f"💾 Highscore saved for {player_name}: {score_breakdown['total_score']:,}"
             )
 
         # Show top 5 highscores
-        self.show_highscores()
+        await self.show_highscores()
 
         # Wait until the user closes the window or presses any key
         waiting = True
         user_quit = False
         while waiting:
+            await asyncio.sleep(0)  # Yield control to browser
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     waiting = False
@@ -945,7 +951,7 @@ class GameWorld:
         )
         self.current_score = score_breakdown["total_score"]
 
-    def show_level_complete_with_score(self, score_breakdown):
+    async def show_level_complete_with_score(self, score_breakdown):
         """Display level complete with score breakdown."""
         self.screen.fill((0, 0, 0))
 
@@ -990,6 +996,7 @@ class GameWorld:
         # Wait for key press
         waiting = True
         while waiting:
+            await asyncio.sleep(0)  # Yield control to browser
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     waiting = False
@@ -997,7 +1004,7 @@ class GameWorld:
                     waiting = False
             self.clock.tick(60)
 
-    def prompt_player_name(self):
+    async def prompt_player_name(self):
         """Prompt player to enter their name for highscore."""
         font_title = pg.font.Font(None, 40)
         font_input = pg.font.Font(None, 36)
@@ -1007,6 +1014,7 @@ class GameWorld:
 
         entering_name = True
         while entering_name:
+            await asyncio.sleep(0)  # Yield control to browser
             # Handle cursor blinking
             cursor_timer += 1
             if cursor_timer >= 30:  # Blink every 30 frames (0.5 seconds at 60 FPS)
@@ -1062,11 +1070,14 @@ class GameWorld:
 
         return player_name if player_name else "Anonymous"
 
-    def show_highscores(self):
+    async def show_highscores(self):
         """Display top 5 highscores for the current level."""
-        top_scores = self.highscore_manager.get_top_scores(
-            self.current_level_name, limit=5
-        )
+        result = self.highscore_manager.get_top_scores(self.current_level_name, limit=5)
+        # Handle both sync and async results
+        if self.highscore_manager.use_http:
+            top_scores = await result
+        else:
+            top_scores = result
 
         self.screen.fill((0, 0, 0))
 
@@ -1115,8 +1126,9 @@ class GameWorld:
         self.screen.blit(instruction, instruction_rect)
 
         pg.display.flip()
+        await asyncio.sleep(0)  # Yield control to browser
 
-    def show_cheat_screen(self):
+    async def show_cheat_screen(self):
         """Display cheat screen when player used marvin mode."""
         self.screen.fill((0, 0, 0))
 
@@ -1147,6 +1159,7 @@ class GameWorld:
         # Wait for key press
         waiting = True
         while waiting:
+            await asyncio.sleep(0)  # Yield control to browser
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     waiting = False
@@ -1154,7 +1167,7 @@ class GameWorld:
                     waiting = False
             self.clock.tick(60)
 
-    def show_game_over_screen(self):
+    async def show_game_over_screen(self):
         """Display game over screen."""
         self.screen.fill((0, 0, 0))
 
@@ -1185,6 +1198,7 @@ class GameWorld:
         # Wait for key press
         waiting = True
         while waiting:
+            await asyncio.sleep(0)  # Yield control to browser
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     waiting = False
@@ -1354,12 +1368,12 @@ class GameWorld:
         """Called when player loses a life. Stores gems for reset."""
         self.player_gems = self.player.gems
 
-    def game_over(self):
+    async def game_over(self):
         """Called when game is over. Returns to level selection screen."""
         print("Game Over! Returning to level selection...")
 
         # Display game over screen
-        fade_to_black(
+        await fade_to_black(
             screen=self.screen,
             draw_callback=self.draw,
             width=WIDTH,
@@ -1368,7 +1382,7 @@ class GameWorld:
         )
 
         # Show game over message
-        self.show_game_over_screen()
+        await self.show_game_over_screen()
 
         # Set flags to return to level selection
         self.keep_going = False

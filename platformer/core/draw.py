@@ -90,10 +90,13 @@ def draw_health_bar(screen, player, width, height, max_health):
     pg.draw.rect(screen, (255, 255, 255), (bar_x, bar_y, bar_width, bar_height), 2)
 
 
-def fade_to_black(screen, draw_callback, width, height, duration=60):
+async def fade_to_black(screen, draw_callback, width, height, duration=60):
     """Fade the screen to black from the center outward over 'duration' frames."""
+    import asyncio
+
     clock = pg.time.Clock()
     for frame in range(duration):
+        await asyncio.sleep(0)  # Yield control to browser
         draw_callback()
         max_radius = int((width**2 + height**2) ** 0.5 // 2)
         radius = int((frame / duration) * max_radius)

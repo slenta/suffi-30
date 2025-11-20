@@ -57,6 +57,8 @@ class Player(pg.sprite.Sprite):
         self.world = world
         self.knockback_timer = 0  # Timer to track incapacitation
         self.is_knocked_back = False  # Flag to indicate knockback state
+        self.knockback_animation_steps = 0  # Counter for knockback animation
+        self.knockback_step_distance = 0  # Distance per knockback step
         self.active_powerups = {}
         self.trophies_collected = trophies_collected
         self.weapons = {}  # {weapon_name: cooldown_timer}
@@ -250,7 +252,7 @@ class Player(pg.sprite.Sprite):
             sound_manager.play_sound_effect(
                 "level_complete"
             )  # Play level complete sound
-            self.world.level_complete()
+            self.world.level_complete_flag = True
 
     def check_pipes(self):
         """Check if player is trying to enter a pipe."""
@@ -337,7 +339,7 @@ class Player(pg.sprite.Sprite):
             self.world.loose_screen()
             self.world.reset()
         else:
-            self.world.game_over()
+            self.world.game_over_flag = True
 
     def check_weapons(self):
         """Check for weapon pickup collisions"""
@@ -553,6 +555,9 @@ class Player(pg.sprite.Sprite):
             self.waterfall_grip = False
 
     def update(self):
+        # Update knockback animation if active
+        self.update_knockback_animation()
+
         if self.knockback_timer > 0:
             self.knockback_timer -= 1  # Decrease knockback timer
         else:
@@ -704,49 +709,51 @@ class Player(pg.sprite.Sprite):
             self.knockback(knockback_distance)
 
     def knockback(self, distance):
-        """Smoothly move the player during knockback animation."""
+        """Start knockback animation (non-blocking, updates each frame)."""
         steps = PLAYER_KNOCKBACK_STEPS
-        step_distance = distance // steps
+        self.knockback_step_distance = distance // steps
+        self.knockback_animation_steps = steps
+        # Initial upward velocity for knockback
+        self.vy = -PLAYER_KNOCKBACK_LIFT
 
-        for _ in range(steps):
-            self.rect.x += self.knockback_direction * step_distance
-            self.rect.y -= PLAYER_KNOCKBACK_LIFT
+    def update_knockback_animation(self):
+        """Update knockback animation each frame (called from update())."""
+        if self.knockback_animation_steps <= 0:
+            return
 
-            # Check for horizontal collisions
-            hits = pg.sprite.spritecollide(self, self.world.platforms, False)
-            for hit in hits:
-                if self.knockback_direction > 0:  # Moving right
-                    self.rect.right = hit.rect.left
-                elif self.knockback_direction < 0:  # Moving left
-                    self.rect.left = hit.rect.right
+        # Move horizontally
+        self.rect.x += self.knockback_direction * self.knockback_step_distance
 
-            # Apply gravity during knockback
-            self.vy += GRAVITY
-            if self.vy > MAX_VELOCITY:
-                self.vy = MAX_VELOCITY
+        # Check for horizontal collisions
+        hits = pg.sprite.spritecollide(self, self.world.platforms, False)
+        for hit in hits:
+            if self.knockback_direction > 0:  # Moving right
+                self.rect.right = hit.rect.left
+            elif self.knockback_direction < 0:  # Moving left
+                self.rect.left = hit.rect.right
 
-            # Apply vertical movement
-            self.rect.y += self.vy
+        # Apply gravity during knockback
+        self.vy += GRAVITY
+        if self.vy > MAX_VELOCITY:
+            self.vy = MAX_VELOCITY
 
-            # Check for vertical collisions
-            hits = pg.sprite.spritecollide(self, self.world.platforms, False)
-            for hit in hits:
-                if self.vy > 0:  # Falling
-                    self.rect.bottom = hit.rect.top
-                elif self.vy < 0:  # Jumping
-                    self.rect.top = hit.rect.bottom
-                self.vy = 0  # Stop vertical movement on collision
+        # Apply vertical movement
+        self.rect.y += self.vy
 
-            # Ensure the player doesn't move out of bounds
-            self.check_edges()
+        # Check for vertical collisions
+        hits = pg.sprite.spritecollide(self, self.world.platforms, False)
+        for hit in hits:
+            if self.vy > 0:  # Falling
+                self.rect.bottom = hit.rect.top
+            elif self.vy < 0:  # Jumping
+                self.rect.top = hit.rect.bottom
+            self.vy = 0  # Stop vertical movement on collision
 
-            # Update the camera to follow the player
-            self.world.update_camera()
+        # Ensure the player doesn't move out of bounds
+        self.check_edges()
 
-            # Redraw the game world to show the knockback animation
-            self.world.draw()
-            pg.display.flip()
-            pg.time.delay(10)  # Delay for smooth animation
+        # Decrement animation counter
+        self.knockback_animation_steps -= 1
 
     def throw_exploding_object(self):
         """Throw an exploding object if cooldown has elapsed."""

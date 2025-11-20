@@ -71,9 +71,20 @@ async def main():
             world.events()  # All event handling happens here
             world.update()
             world.draw()
-            await asyncio.sleep(0)  # Ensures smooth async operation
 
-        # Check if we should return to level selection or quit
+            # Check for level completion (needs to be async)
+            if world.level_complete_flag:
+                world.level_complete_flag = False  # Reset flag
+                await world.level_complete()
+
+            # Check for game over (needs to be async)
+            if world.game_over_flag:
+                world.game_over_flag = False  # Reset flag
+                await world.game_over()
+
+            await asyncio.sleep(
+                0
+            )  # Ensures smooth async operation        # Check if we should return to level selection or quit
         print(
             f"🔍 DEBUG: return_to_level_selection = {world.return_to_level_selection}"
         )

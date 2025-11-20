@@ -1,6 +1,7 @@
 """Highscore management system for tracking and persisting player scores."""
 
 import os
+import sys
 import json
 from datetime import datetime
 from ..config.constants import (
@@ -10,42 +11,67 @@ from ..config.constants import (
     SCORE_PER_LIFE,
 )
 
-try:
-    from .database import DatabaseConnection, is_postgres_available
+# Detect if running in web/pygbag environment
+IS_WEB_BUILD = sys.platform == "emscripten"
 
-    POSTGRES_AVAILABLE = True
-except ImportError:
+# Import appropriate backend
+if IS_WEB_BUILD:
+    # Web builds use HTTP API client
+    from .http_highscore_client import HTTPHighscoreClient
+
     POSTGRES_AVAILABLE = False
-    print("⚠️ PostgreSQL support not available. Using JSON file storage.")
+    HTTP_CLIENT_AVAILABLE = True
+    print("🌐 Running in web environment - using HTTP API for highscores")
+else:
+    # Desktop builds can use direct PostgreSQL connection
+    HTTP_CLIENT_AVAILABLE = False
+    try:
+        from .database import DatabaseConnection, is_postgres_available
+
+        POSTGRES_AVAILABLE = True
+    except ImportError:
+        POSTGRES_AVAILABLE = False
+        print("⚠️ PostgreSQL support not available. Using JSON file storage.")
 
 
 class HighscoreManager:
     """Manages highscores including calculation, storage, and retrieval."""
 
-    def __init__(self, highscore_file=None, use_postgres=True):
+    def __init__(self, highscore_file=None, use_postgres=True, api_base_url=None):
         """
         Initialize the highscore manager.
 
         Args:
             highscore_file: Path to the highscore file. If None, uses default location.
             use_postgres: Whether to use PostgreSQL if available (default: True).
+            api_base_url: Base URL for HTTP API (used in web builds).
         """
-        # Determine storage backend
-        self.use_postgres = (
-            use_postgres and POSTGRES_AVAILABLE and is_postgres_available()
-        )
+        # Determine storage backend based on environment
+        if IS_WEB_BUILD:
+            # Web builds always use HTTP API
+            self.use_postgres = False
+            self.use_http = True
+            self.http_client = HTTPHighscoreClient(api_base_url)
+            print("✅ Using HTTP API for highscore storage")
+        else:
+            # Desktop builds can use PostgreSQL or JSON
+            self.use_http = False
+            self.use_postgres = (
+                use_postgres and POSTGRES_AVAILABLE and is_postgres_available()
+            )
 
-        if self.use_postgres:
-            print("✅ Using PostgreSQL for highscore storage")
-            # Initialize connection pool
-            try:
-                DatabaseConnection.initialize_pool()
-            except Exception as e:
-                print(f"⚠️ Failed to initialize PostgreSQL: {e}")
-                print("⚠️ Falling back to JSON file storage")
-                self.use_postgres = False
+            if self.use_postgres:
+                print("✅ Using PostgreSQL for highscore storage")
+                # Initialize connection pool
+                try:
+                    DatabaseConnection.initialize_pool()
+                except Exception as e:
+                    print(f"⚠️ Failed to initialize PostgreSQL: {e}")
+                    print("⚠️ Falling back to JSON file storage")
+                    self.use_postgres = False
 
-        if not self.use_postgres:
+        # Setup JSON fallback for non-web, non-postgres scenarios
+        if not self.use_http and not self.use_postgres:
             print("📝 Using JSON file for highscore storage")
             if highscore_file is None:
                 # Default to assets/highscores.json
@@ -118,10 +144,19 @@ class HighscoreManager:
             player_name: Name of the player
             score_breakdown: Dictionary with score details from calculate_score()
         """
-        if self.use_postgres:
+        if self.use_http:
+            # Web builds use async HTTP - return coroutine
+            return self._add_highscore_http(level_name, player_name, score_breakdown)
+        elif self.use_postgres:
             self._add_highscore_postgres(level_name, player_name, score_breakdown)
         else:
             self._add_highscore_json(level_name, player_name, score_breakdown)
+
+    async def _add_highscore_http(self, level_name, player_name, score_breakdown):
+        """Add highscore via HTTP API (async)."""
+        return await self.http_client.add_highscore(
+            level_name, player_name, score_breakdown
+        )
 
     def _add_highscore_json(self, level_name, player_name, score_breakdown):
         """Add highscore to JSON file."""
@@ -190,12 +225,19 @@ class HighscoreManager:
             limit: Maximum number of scores to return (default: 5)
 
         Returns:
-            List of score entries (dictionaries)
+            List of score entries (dictionaries) or coroutine for web builds
         """
-        if self.use_postgres:
+        if self.use_http:
+            # Web builds use async HTTP - return coroutine
+            return self._get_top_scores_http(level_name, limit)
+        elif self.use_postgres:
             return self._get_top_scores_postgres(level_name, limit)
         else:
             return self._get_top_scores_json(level_name, limit)
+
+    async def _get_top_scores_http(self, level_name, limit=5):
+        """Get top scores via HTTP API (async)."""
+        return await self.http_client.get_top_scores(level_name, limit)
 
     def _get_top_scores_json(self, level_name, limit=5):
         """Get top scores from JSON file."""
@@ -259,12 +301,19 @@ class HighscoreManager:
             score: The score to check
 
         Returns:
-            Boolean indicating if this is a top 10 score
+            Boolean indicating if this is a top 10 score, or coroutine for web builds
         """
-        if self.use_postgres:
+        if self.use_http:
+            # Web builds use async HTTP - return coroutine
+            return self._is_highscore_http(level_name, score)
+        elif self.use_postgres:
             return self._is_highscore_postgres(level_name, score)
         else:
             return self._is_highscore_json(level_name, score)
+
+    async def _is_highscore_http(self, level_name, score):
+        """Check if score is a highscore via HTTP API (async)."""
+        return await self.http_client.is_highscore(level_name, score)
 
     def _is_highscore_json(self, level_name, score):
         """Check if score is a highscore using JSON data."""

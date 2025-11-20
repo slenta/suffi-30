@@ -1,3 +1,4 @@
+# Python artifacts
 __pycache__/
 *.pyc
 *.pyo
@@ -10,8 +11,23 @@ dist/
 .venv/
 venv/
 ENV/
+
+# Editor files
 .DS_Store
 *.swp
 *.swo
 .vscode/
 .idea/
+
+# Build artifacts (Vercel will build this)
+build/
+
+# Assets - design files not needed for build
+*.afdesign
+*.ftpp
+
+# Documentation
+README.md
+POSTGRES_SETUP.md
+level-plan.txt
+deploy.sh

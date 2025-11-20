@@ -1,12 +1,28 @@
 # Vercel Postgres Setup Guide
 
-This guide explains how to set up Vercel Postgres for highscore storage in both local development and production environments.
+This guide explains how to set up Vercel Postgres for highscore storage in both local development and production environments, including web builds (pygbag).
 
 ## Overview
 
-The game now supports two storage backends for highscores:
-- **PostgreSQL** (via Vercel Postgres) - Recommended for both local and production
+The game now supports multiple storage backends for highscores depending on the environment:
+
+### Desktop/Local Development (`python play.py`)
+- **PostgreSQL** (via direct connection) - Primary option for best performance
 - **JSON file** - Automatic fallback if PostgreSQL is not available
+
+### Web Builds (pygbag/Vercel deployment)
+- **PostgreSQL** (via HTTP API) - Browser-based games cannot connect directly to databases, so they use serverless API endpoints
+- **JSON file** - Fallback if API is unavailable (embedded in the web build)
+
+## Architecture
+
+```
+Desktop Build:
+Game → DatabaseConnection → PostgreSQL
+
+Web Build (pygbag):
+Game (in browser) → HTTP API (/api/highscores) → PostgreSQL
+```
 
 ## Prerequisites
 
@@ -92,18 +108,30 @@ vercel --prod
 
 ## How It Works
 
-The `HighscoreManager` class automatically:
-1. Checks if PostgreSQL is available (via environment variable)
-2. If available and connection successful → uses PostgreSQL
-3. If not available → falls back to JSON file storage
+### Desktop/Local Development (`python play.py`)
 
-### Local Development
-- Set `POSTGRES_URL` in `.env` → uses Vercel Postgres
+The `HighscoreManager` class automatically:
+1. Detects it's running in a desktop environment
+2. Checks if PostgreSQL is available (via environment variable)
+3. If available and connection successful → uses direct PostgreSQL connection
+4. If not available → falls back to JSON file storage
+
+**Local Development:**
+- Set `POSTGRES_URL` in `.env` → uses Vercel Postgres directly
 - No `.env` file → uses local JSON file (`platformer/assets/highscores.json`)
 
-### Production (Vercel)
-- Environment variable set on Vercel → uses Vercel Postgres
-- No environment variable → uses JSON file
+### Web Builds (pygbag/Vercel)
+
+For web builds, direct database connections are not possible due to browser security restrictions. Instead:
+
+1. Detects it's running in emscripten/WebAssembly environment
+2. Uses HTTP API client to communicate with serverless functions
+3. Serverless functions (`/api/highscores`) handle database operations
+4. Falls back to embedded JSON if API is unavailable
+
+**Production (Vercel):**
+- Web build → uses `/api/highscores` endpoint → PostgreSQL
+- API requires `POSTGRES_URL` environment variable set in Vercel project settings
 
 ## Database Schema
 
