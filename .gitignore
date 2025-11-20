@@ -18,6 +18,7 @@ ENV/
 
 # Pygbag build files
 public/
+build/
 
 # macOS
 .DS_Store
