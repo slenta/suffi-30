@@ -1,11 +1,10 @@
 """
-Entry point for the Suffi Platformer game.
-This file is used when running the package with `python -m platformer`
-or when building with Pygbag.
+Entry point when running as: python -m platformer
+This is only used for local development, not for Pygbag.
 """
 
 import asyncio
 from .main import main
 
-# For Pygbag compatibility
+# Local development only
 asyncio.run(main())

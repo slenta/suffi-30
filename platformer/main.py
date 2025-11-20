@@ -2,9 +2,18 @@ import asyncio
 import os
 import sys
 import pygame as pg
-from .core.gameworld import GameWorld
-from .ui.level_selection import LevelSelectionScreen
-from .config.settings import FPS, KEYBINDINGS, WIDTH, HEIGHT
+
+# Use absolute imports for Pygbag compatibility
+try:
+    # Try relative imports first (for local development)
+    from .core.gameworld import GameWorld
+    from .ui.level_selection import LevelSelectionScreen
+    from .config.settings import FPS, KEYBINDINGS, WIDTH, HEIGHT
+except ImportError:
+    # Fall back to absolute imports (for Pygbag)
+    from core.gameworld import GameWorld
+    from ui.level_selection import LevelSelectionScreen
+    from config.settings import FPS, KEYBINDINGS, WIDTH, HEIGHT
 
 
 async def get_level_to_load():
@@ -19,12 +28,19 @@ async def get_level_to_load():
 
     # Show level selection screen
     print("🎮 Starting level selection screen...")
-    pg.init()
-    screen = pg.display.set_mode((WIDTH, HEIGHT))
+    # Only init pygame if not already initialized (Pygbag handles this)
+    if not pg.get_init():
+        pg.init()
+    screen = pg.display.get_surface()
+    if screen is None:
+        screen = pg.display.set_mode((WIDTH, HEIGHT))
     pg.display.set_caption("Level Selection - Suffi Platformer")
 
     # Load menu sound effects
-    from .core.sound_manager import sound_manager
+    try:
+        from .core.sound_manager import sound_manager
+    except ImportError:
+        from core.sound_manager import sound_manager
 
     sounds_dir = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "assets", "sounds"
@@ -102,7 +118,11 @@ async def main():
     sys.exit()
 
 
-# Run the game only when executed directly (for local development)
-# Note: pygbag will call main() directly, so we don't want this to run during import
+# Run the game when executed directly
 if __name__ == "__main__":
-    asyncio.run(main())
+    if sys.platform == "emscripten":
+        # Pygbag environment - schedule the coroutine
+        asyncio.ensure_future(main())
+    else:
+        # Local development - use asyncio.run
+        asyncio.run(main())

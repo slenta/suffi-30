@@ -1,6 +1,6 @@
 {
-  "buildCommand": "pip install pygbag && cd platformer && python -m pygbag --build --archive .",
-  "outputDirectory": "platformer/build/web",
+  "buildCommand": "pip install pygbag && python -m pygbag --build .",
+  "outputDirectory": "build/web",
   "installCommand": "echo 'Dependencies installed in buildCommand'",
   "headers": [
     {

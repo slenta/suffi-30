@@ -31,8 +31,13 @@ class GameWorld:
 
     def __init__(self):
         # Initialize pygame and window
-        pg.init()
-        self.screen = pg.display.set_mode((WIDTH, HEIGHT))
+        # Only init pygame if not already initialized (Pygbag handles this)
+        if not pg.get_init():
+            pg.init()
+        # Get existing display surface if available (Pygbag creates it)
+        self.screen = pg.display.get_surface()
+        if self.screen is None:
+            self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
         self.keep_going = True
