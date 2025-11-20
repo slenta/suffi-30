@@ -15,7 +15,7 @@ level_config = {
     "powerup_locations": [],
     # Enemy locations (using centralized config with overrides)
     "enemy_locations": [
-        {"type": "presslufthanna", "x": 40, "y": -5},
+        {"type": "druide", "x": 40, "y": -5},
     ],
     "trophy_locations": [(10, 10)],
     "trophy_image": "trophy.png",  # Path to trophy image (relative to assets/images)

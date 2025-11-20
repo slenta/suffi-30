@@ -154,13 +154,13 @@ ENEMY_TYPES = {
         "encounter_message": None,
         "shoot_cooldown": 60,
     },
-    "presslufthanna": {
-        "name": "Presslufthanna",
+    "druide": {
+        "name": "Druide",
         "image": "enemies/trancefloor/plh.png",
         "speed": 1,
         "patrol_range": 50,
         "size_multiplier": 4,
-        "health": 10,
+        "health": 50,
         "damage": 5,
         "shoot_range": 5,
         "chase_range": 50,

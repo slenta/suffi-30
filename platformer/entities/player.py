@@ -661,8 +661,22 @@ class Player(pg.sprite.Sprite):
                 # Regular enemy: deal 10 damage
                 enemy_hit.take_damage(10)
 
+            # Determine which direction to push the enemy based on where player jumped from
+            player_relative_x = self.rect.centerx - enemy_hit.rect.centerx
+
             # Bounce the player up
             self.vy = -10
+
+            # Push enemy in the opposite direction of the jump
+            if player_relative_x < 0:
+                # Player jumped from the left side, push enemy to the right
+                if hasattr(enemy_hit, "rect"):
+                    enemy_hit.rect.x += 100
+            else:
+                # Player jumped from the right side, push enemy to the left
+                if hasattr(enemy_hit, "rect"):
+                    enemy_hit.rect.x -= 100
+
             sound_manager.play_sound_effect("jump")  # Play bounce sound
             return
 
