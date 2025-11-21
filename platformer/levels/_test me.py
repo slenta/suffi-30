@@ -15,13 +15,15 @@ level_config = {
     "powerup_locations": [],
     # Enemy locations (using centralized config with overrides)
     "enemy_locations": [
-        {"type": "druide", "x": 40, "y": -5},
+        # {"type": "druide", "x": 40, "y": -5},
     ],
     "trophy_locations": [(10, 10)],
     "trophy_image": "trophy.png",  # Path to trophy image (relative to assets/images)
-    # Moving platform locations
+    "weapon_locations": [
+        {"x": 9, "y": 13, "type": "wasserpistole"},  # Erste Waffe
+    ],
     "moving_platform_locations": [],
-    "exit_location": (50, 13),
+    "exit_location": (20, 13),
     "spike_locations": [],
     "background_music": "assets/music/level1.ogg",  # Path relative to game root
     "background_image": "assets/backgrounds/level1_bg.png",  # Path to background image

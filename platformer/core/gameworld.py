@@ -21,6 +21,7 @@ from ..world.waterfall import Waterfall, WaterfallTop
 from ..config.enemy_config import get_enemy_config
 from ..config.gem_config import get_gem_config
 from ..config.trophy_config import get_trophy_config
+from ..config.api_config import API_BASE_URL
 from .highscore_manager import HighscoreManager
 import importlib
 
@@ -52,7 +53,7 @@ class GameWorld:
         self.marvin_mode_ever_used = False  # Track if cheat was ever used
 
         # Highscore system
-        self.highscore_manager = HighscoreManager()
+        self.highscore_manager = HighscoreManager(api_base_url=API_BASE_URL)
         self.current_score = 0
 
         # Sprite groups

@@ -16,6 +16,7 @@ python play.py --list-levels      # List all available levels
 python -m pygbag --PYBUILD 3.12 .
 # This builds and serves the game with a custom template on http://localhost:8000
 python -m pygbag --PYBUILD 3.12 --template custom.tmpl .
+python -m pygbag --PYBUILD 3.12 --build --template custom.tmpl .
 ```
 
 ## Play online via vercel

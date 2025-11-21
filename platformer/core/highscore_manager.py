@@ -48,11 +48,60 @@ class HighscoreManager:
         """
         # Determine storage backend based on environment
         if IS_WEB_BUILD:
-            # Web builds always use HTTP API
+            # Web builds can use HTTP API or localStorage fallback
             self.use_postgres = False
-            self.use_http = True
+
+            # Debug output to browser console
+            try:
+                import platform
+
+                platform.window.console.log(
+                    "[HIGHSCORE] Initializing in web environment"
+                )
+                platform.window.console.log(
+                    f"[HIGHSCORE] api_base_url = {api_base_url}"
+                )
+            except:
+                pass
+
             self.http_client = HTTPHighscoreClient(api_base_url)
-            print("✅ Using HTTP API for highscore storage")
+
+            # Check if API is available (None means localhost without config)
+            api_url = self.http_client._get_api_url()
+
+            try:
+                import platform
+
+                platform.window.console.log(f"[HIGHSCORE] Detected API URL: {api_url}")
+            except:
+                pass
+
+            if api_url is not None:
+                self.use_http = True
+                print(f"✅ Using HTTP API for highscore storage: {api_url}")
+                try:
+                    import platform
+
+                    platform.window.console.log("[HIGHSCORE] Using HTTP API")
+                except:
+                    pass
+            else:
+                # Fallback to localStorage (only for localhost)
+                self.use_http = False
+                try:
+                    import platform
+
+                    platform.window.console.log(
+                        "[HIGHSCORE] Falling back to localStorage"
+                    )
+                except:
+                    pass
+                from .http_highscore_client import LocalStorageHighscoreClient
+
+                self.http_client = LocalStorageHighscoreClient()
+                print(
+                    "✅ Using localStorage for highscore storage (API not configured)"
+                )
         else:
             # Desktop builds can use PostgreSQL or JSON
             self.use_http = False
