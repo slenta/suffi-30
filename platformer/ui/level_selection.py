@@ -17,8 +17,15 @@ class LevelSelectionScreen:
     def __init__(self, screen):
         self.screen = screen
         self.font_large = pg.font.Font(TITLE_FONT, 40)
-        self.font_medium = pg.font.Font(None, 32)
-        self.font_small = pg.font.Font(None, 16)
+        # Load Ketchum font for level names
+        ketchum_font_path = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)),
+            "assets",
+            "fonts",
+            "Ketchum.otf",
+        )
+        self.font_medium = pg.font.Font(ketchum_font_path, 24)
+        self.font_small = pg.font.Font(ketchum_font_path, 16)
 
         # Get available levels
         self.available_levels = self.get_available_levels()
@@ -28,11 +35,11 @@ class LevelSelectionScreen:
         )
 
         # Colors
-        self.bg_color = (128, 0, 128)  # Dark blue
-        self.title_color = (255, 255, 255)  # White
-        self.level_color = (200, 200, 200)  # Light gray
-        self.selected_color = (255, 255, 0)  # Yellow
-        self.cursor_color = (255, 100, 100)  # Red
+        self.bg_color = (128, 0, 128)
+        self.title_color = (1, 255, 245)
+        self.level_color = (200, 200, 200)
+        self.selected_color = (255, 195, 0)
+        self.cursor_color = self.selected_color
 
         # Animation
         self.cursor_blink_timer = 0
