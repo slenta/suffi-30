@@ -101,7 +101,7 @@ class LevelSelectionScreen:
         """Convert level filename to display name."""
         # Convert level1-advanced to "Level 1 - Advanced"
         display_name = level_name.replace("level", "Level ").replace("-", " - ")
-        return display_name.title()
+        return display_name.title().upper()
 
     def handle_input(self, event):
         """Handle keyboard input for level selection."""
