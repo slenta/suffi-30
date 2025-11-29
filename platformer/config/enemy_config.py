@@ -137,6 +137,22 @@ ENEMY_TYPES = {
         "encounter_message": None,
         "shoot_cooldown": 60,
     },
+    "trance_shroom": {
+        "name": "Trance Shroom",
+        "image": "enemies/trance-mushroom.png",
+        "speed": 1,
+        "patrol_range": 50,
+        "size_multiplier": 2,
+        "health": 10,
+        "damage": 5,
+        "shoot_range": 5,
+        "chase_range": 10,
+        "melee_damage": 5,
+        "can_throw_explosives": True,
+        "can_summon_minions": False,
+        "encounter_message": None,
+        "shoot_cooldown": 60,
+    },
     # Generic enemies for other levels
     "basic_enemy": {
         "name": "Basic Enemy",
