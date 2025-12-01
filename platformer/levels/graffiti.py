@@ -23,6 +23,27 @@ level_config = {
         (61, 8),
         (62, 8),
     ],
+    # Poppable blocks (like Mario question blocks)
+    "poppable_block_locations": [
+        # Simple tuple format uses default "disappear" type
+        (25, 9),  # Disappears after being popped
+        # Dict format allows specifying type and item
+        {"x": 26, "y": 9, "type": "fix"},  # Turns into solid block after popping
+        {
+            "x": 27,
+            "y": 9,
+            "type": "item",
+            "item": {"type": "gem", "image": "gem.png"},
+        },  # Releases a gem
+        {
+            "x": 45,
+            "y": 10,
+            "type": "item",
+            "item": {"type": "powerup", "powerup_type": 1},
+        },  # Releases a powerup
+        {"x": 46, "y": 10, "type": "disappear"},  # Explicitly set to disappear
+        {"x": 65, "y": 6, "type": "fix"},  # Another one that turns solid
+    ],
     # A few gems
     "gem_locations": [
         (21, 9),
@@ -34,7 +55,7 @@ level_config = {
     "enemy_locations": [
         {"type": "tightill", "x": 30, "y": -24},
         {"type": "robodog", "x": 70, "y": -24},
-        {"type": "drone", "x": 20, "y": -24},
+        {"type": "drone", "x": 120, "y": -24},
     ],
     # No weapons
     "weapon_locations": [],

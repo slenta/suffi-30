@@ -253,6 +253,22 @@ ENEMY_TYPES = {
         "encounter_message": "Bye Bye!",
         "shoot_cooldown": 30,
     },
+    "police": {
+        "name": "Police Officer",
+        "image": "enemies/graffiti/police.png",
+        "speed": 2,
+        "patrol_range": 200,
+        "size_multiplier": 4,
+        "health": 10,
+        "damage": 1,
+        "shoot_range": 100,
+        "chase_range": 200,
+        "melee_damage": 0,
+        "can_throw_explosives": False,
+        "can_summon_minions": False,
+        "encounter_message": "Halt stehenbleiben!",
+        "shoot_cooldown": 30,
+    },
 }
 
 

@@ -156,6 +156,10 @@ class Player(pg.sprite.Sprite):
                 )
             elif self.vy < 0:
                 self.rect.top = hit.rect.bottom
+                # Check if this is a poppable block
+                if hit in self.world.poppable_blocks:
+                    hit.pop()
+                    sound_manager.play_sound_effect("enemy_hit")  # Play pop sound
             self.vy = 0
 
         # Apply moving platform velocity if standing on one

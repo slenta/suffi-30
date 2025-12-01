@@ -6,6 +6,7 @@ from .ladder import Ladder, LadderTop
 from .pipe import Pipe
 from .spike import Spike
 from .waterfall import Waterfall, WaterfallTop
+from .poppable_block import PoppableBlock
 
 __all__ = [
     "Platform",
@@ -16,4 +17,5 @@ __all__ = [
     "Spike",
     "Waterfall",
     "WaterfallTop",
+    "PoppableBlock",
 ]

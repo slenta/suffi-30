@@ -3,6 +3,7 @@ import os, sys
 import asyncio
 from ..world.platform_class import Platform
 from ..world.moving_platform import MovingPlatform
+from ..world.poppable_block import PoppableBlock
 from ..collectibles.gem import Gem
 from ..entities.player import Player
 from ..config.settings import *
@@ -108,6 +109,7 @@ class GameWorld:
         self.ladder_tops = pg.sprite.Group()
         self.waterfalls = pg.sprite.Group()
         self.waterfall_tops = pg.sprite.Group()
+        self.poppable_blocks = pg.sprite.Group()
 
     def _clear_sprite_groups(self):
         """Clear all sprite groups."""
@@ -139,6 +141,7 @@ class GameWorld:
             self.ladder_tops,
             self.waterfalls,
             self.waterfall_tops,
+            self.poppable_blocks,
         ]:
             group.empty()
 
@@ -271,6 +274,27 @@ class GameWorld:
             self.moving_platforms.add(mp)
             self.platforms.add(mp)  # Add to platforms for collision detection
             self.all_sprites.add(mp)
+
+        # Load poppable blocks
+        poppable_block_image = pg.image.load(
+            os.path.join(IMAGEPATH, "block_pop.png")
+        ).convert_alpha()
+        for block_data in self.level_config.get("poppable_block_locations", []):
+            # Support both tuple (x, y) and dict formats
+            if isinstance(block_data, (tuple, list)):
+                x, y = block_data
+                block_type = "disappear"  # Default type
+                item_data = None
+            else:
+                x = block_data["x"]
+                y = block_data["y"]
+                block_type = block_data.get("type", "disappear")
+                item_data = block_data.get("item", None)
+
+            pb = PoppableBlock(x, y, poppable_block_image, block_type, item_data, self)
+            self.poppable_blocks.add(pb)
+            self.platforms.add(pb)  # Add to platforms for collision detection
+            self.all_sprites.add(pb)
 
         # Load gems (supports both new template-based and legacy format)
         for gem_data in self.level_config["gem_locations"]:
@@ -874,6 +898,10 @@ class GameWorld:
         # Update moving platforms first
         for moving_platform in self.moving_platforms:
             moving_platform.update()
+
+        # Update poppable blocks
+        for poppable_block in self.poppable_blocks:
+            poppable_block.update()
 
         # Update all sprites except enemies
         for sprite in self.all_sprites:
