@@ -33,6 +33,8 @@ level_config = {
     # A simple enemy
     "enemy_locations": [
         {"type": "tightill", "x": 30, "y": -24},
+        {"type": "robodog", "x": 70, "y": -24},
+        {"type": "drone", "x": 20, "y": -24},
     ],
     # No weapons
     "weapon_locations": [],
