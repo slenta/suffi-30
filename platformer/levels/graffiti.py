@@ -32,17 +32,7 @@ level_config = {
     "powerup_locations": [],
     # A simple enemy
     "enemy_locations": [
-        # {
-        #     "x": 50,
-        #     "y": 13,
-        #     "image": "trump.png",
-        #     "speed": 1,
-        #     "patrol_range": 100,
-        #     "size_multiplier": 1,
-        #     "health": 2,
-        #     "damage": 1,
-        #     "shoot_range": 0,
-        # },
+        {"type": "tightill", "x": 30, "y": -24},
     ],
     # No weapons
     "weapon_locations": [],

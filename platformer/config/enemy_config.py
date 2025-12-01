@@ -205,6 +205,22 @@ ENEMY_TYPES = {
         "encounter_message": "PLH gibt dir aufs Maul!",
         "shoot_cooldown": 60,
     },
+    "tightill": {
+        "name": "Tightill",
+        "image": "enemies/tightill.png",
+        "speed": 1,
+        "patrol_range": 200,
+        "size_multiplier": 4,
+        "health": 40,
+        "damage": 5,
+        "shoot_range": 5,
+        "chase_range": 200,
+        "melee_damage": 20,
+        "can_throw_explosives": False,
+        "can_summon_minions": False,
+        "encounter_message": "Das ist T-t-t-t-t-t-tightill!",
+        "shoot_cooldown": 20,
+    },
 }
 
 

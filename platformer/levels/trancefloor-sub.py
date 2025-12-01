@@ -14,7 +14,7 @@ level_config = {
     "powerup_locations": [],
     # Enemy locations (using centralized config with overrides)
     "enemy_locations": [
-        {"type": "trance-shroom", "x": 100, "y": -5},
+        {"type": "trance_shroom", "x": 100, "y": -5},
         {"type": "druide", "x": 120, "y": -5},
     ],
     "trophy_locations": [(50, -25)],
