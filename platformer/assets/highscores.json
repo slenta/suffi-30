@@ -136,5 +136,19 @@
       },
       "timestamp": "2025-11-05T16:26:35.123083"
     }
+  ],
+  "baby-level": [
+    {
+      "player_name": "asdf ",
+      "score": 67003,
+      "breakdown": {
+        "time_score": 19003,
+        "trophy_score": 30000,
+        "damage_score": 8000,
+        "life_score": 10000,
+        "total_score": 67003
+      },
+      "timestamp": "2025-12-01T21:58:03.791552"
+    }
   ]
 }
