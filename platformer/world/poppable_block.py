@@ -33,11 +33,11 @@ class PoppableBlock(GridSprite):
         self.pop_offset_y = 0
         self.max_pop_offset = -GRIDSIZE // 2  # How far the block moves up when popped
         self.original_image = image  # Store original image
-        
-        # Load the fixed block image for \"fix\" and \"item\" types
-        if block_type in [\"fix\", \"item\"]:
+
+        # Load the fixed block image for "fix" and "item" types
+        if block_type in ["fix", "item"]:
             self.fixed_image = pg.image.load(
-                os.path.join(IMAGEPATH, \"block_00.png\")
+                os.path.join(IMAGEPATH, "block_00.png")
             ).convert_alpha()
 
     def pop(self):
@@ -46,7 +46,7 @@ class PoppableBlock(GridSprite):
             self.is_popping = True
             self.has_been_popped = True
             self.pop_animation_frame = 0
-            
+
             # Spawn item if this is an "item" type block
             if self.block_type == "item" and self.item_data and self.world:
                 self._spawn_item()
@@ -54,9 +54,10 @@ class PoppableBlock(GridSprite):
     def _spawn_item(self):
         """Spawn the item from this block."""
         item_type = self.item_data.get("type")
-        
+
         if item_type == "gem":
             from ..collectibles.gem import Gem
+
             # Get image from item_data or use default
             if "image" in self.item_data:
                 gem_image = pg.image.load(
@@ -66,21 +67,22 @@ class PoppableBlock(GridSprite):
                 gem_image = pg.image.load(
                     os.path.join(IMAGEPATH, "gem.png")
                 ).convert_alpha()
-            
+
             # Spawn gem above the block (convert from pixel to grid position)
             gem_x = self.rect.centerx // GRIDSIZE
             gem_y = (self.rect.top // GRIDSIZE) - 1  # One grid unit above
-            
+
             gem = Gem(gem_x, gem_y, gem_image)
             self.world.items.add(gem)
             self.world.all_sprites.add(gem)
-            
+
         elif item_type == "powerup":
             from ..collectibles.powerup import PowerUp
+
             # Spawn powerup above the block
             powerup_x = self.rect.centerx
             powerup_y = self.rect.top - GRIDSIZE
-            
+
             powerup_type = self.item_data.get("powerup_type", 1)
             powerup = PowerUp(powerup_x, powerup_y, powerup_type, self.world)
             self.world.powerups.add(powerup)
@@ -119,7 +121,7 @@ class PoppableBlock(GridSprite):
                 self.pop_animation_frame = 0
                 self.pop_offset_y = 0
                 self.rect.y = self.original_y
-                
+
                 # Handle different block types
                 if self.block_type == "disappear":
                     # Remove the block from the game
