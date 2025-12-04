@@ -119,14 +119,7 @@ level_config = {
         {"type": "trance_jesus", "x": 170, "y": -35},
         {"type": "trance_hippie", "x": 215, "y": -42},
         {"type": "trance_okf", "x": 255, "y": -10},
-        # DJ Booth boss with custom shoot_cooldown
-        {
-            "type": "dj_booth",
-            "x": 336,
-            "y": -55,
-            "shoot_cooldown": 20,
-            "melee_damage": 100,
-        },
+        {"type": "dj_booth", "x": 336, "y": -55},
         # Special final enemy (yourself!) - custom config needed
         {
             "x": 480,
