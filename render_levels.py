@@ -403,7 +403,7 @@ def draw_moving_platforms_with_sprites(draw, image, platform_locations, min_x, m
         if platform_type == "grass":
             sprite_name = "grass.png"
         else:
-            sprite_name = "block_00.png"
+            sprite_name = "block.png"
 
         platform_image = load_sprite_image(sprite_name, (GRIDSIZE, GRIDSIZE))
 
@@ -716,7 +716,7 @@ def render_level(level_config, output_path, show_grid=True, bg_opacity=0.3):
 
         # Draw blocks using actual sprites
         block_locations = level_config.get("block_locations", [])
-        draw_platforms(draw, image, block_locations, min_x, min_y, "block_00.png")
+        draw_platforms(draw, image, block_locations, min_x, min_y, "block.png")
 
         # Draw gems using actual sprites
         gem_locations = level_config.get("gem_locations", [])

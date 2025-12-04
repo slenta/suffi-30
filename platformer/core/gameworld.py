@@ -238,7 +238,7 @@ class GameWorld:
             os.path.join(IMAGEPATH, "grass.png")
         ).convert_alpha()
         block_image = pg.image.load(
-            os.path.join(IMAGEPATH, "block_00.png")
+            os.path.join(IMAGEPATH, "block.png")
         ).convert_alpha()
         gem_image = pg.image.load(os.path.join(IMAGEPATH, "gem.png")).convert_alpha()
 

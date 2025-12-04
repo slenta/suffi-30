@@ -96,6 +96,14 @@ level_config = {
         *[(i, -27) for i in range(308, 309)],
         *[(i, -27) for i in range(312, 313)],
     ],
+    "poppable_block_locations": [
+        {
+            "x": 10,
+            "y": -20,
+            "type": "item",
+            "item": {"type": "gem", "image": "gem.png"},
+        },  # Releases a gem
+    ],
     # Extended gem locations - more rewards throughout the longer level
     "gem_locations": [
         # Original gems

@@ -37,7 +37,7 @@ class PoppableBlock(GridSprite):
         # Load the fixed block image for "fix" and "item" types
         if block_type in ["fix", "item"]:
             self.fixed_image = pg.image.load(
-                os.path.join(IMAGEPATH, "block_00.png")
+                os.path.join(IMAGEPATH, "block.png")
             ).convert_alpha()
 
     def pop(self):
