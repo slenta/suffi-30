@@ -22,7 +22,7 @@ from ..config.weapon_config import WEAPON_CONFIG
 def draw_gems(screen, player):
     # Load the heart image
     try:
-        heart_image = pg.image.load(os.path.join(IMAGEPATH, "heart_02.png"))
+        heart_image = pg.image.load(os.path.join(IMAGEPATH, "heart.png"))
         # Scale the heart to a reasonable size (adjust as needed)
         heart_image = pg.transform.scale(heart_image, (30, 30))
     except pg.error:

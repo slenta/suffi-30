@@ -401,7 +401,7 @@ def draw_moving_platforms_with_sprites(draw, image, platform_locations, min_x, m
 
         # Choose sprite based on platform type
         if platform_type == "grass":
-            sprite_name = "grass_02.png"
+            sprite_name = "grass.png"
         else:
             sprite_name = "block_00.png"
 
@@ -712,7 +712,7 @@ def render_level(level_config, output_path, show_grid=True, bg_opacity=0.3):
 
         # Draw grass using actual sprites
         grass_locations = level_config.get("grass_locations", [])
-        draw_platforms(draw, image, grass_locations, min_x, min_y, "grass_02.png")
+        draw_platforms(draw, image, grass_locations, min_x, min_y, "grass.png")
 
         # Draw blocks using actual sprites
         block_locations = level_config.get("block_locations", [])

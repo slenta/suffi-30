@@ -13,7 +13,7 @@ GEM_TYPES = {
     },
     "heart": {
         "name": "Heart (Extra Life)",
-        "image": "heart_02.png",
+        "image": "heart.png",
         "value": 1,  # In the current system, gems represent lives
         "size_multiplier": 1,
     },

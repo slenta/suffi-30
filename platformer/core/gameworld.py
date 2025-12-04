@@ -235,7 +235,7 @@ class GameWorld:
 
         # Load common images
         grass_image = pg.image.load(
-            os.path.join(IMAGEPATH, "grass_02.png")
+            os.path.join(IMAGEPATH, "grass.png")
         ).convert_alpha()
         block_image = pg.image.load(
             os.path.join(IMAGEPATH, "block_00.png")
