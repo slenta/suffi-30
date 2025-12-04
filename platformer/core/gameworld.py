@@ -674,6 +674,12 @@ class GameWorld:
                     f"⏱️ Preserving timer during parent level reset: {self.time_remaining:.1f}s"
                 )
 
+        # Preserve background and music state during reset
+        saved_background_index = self.current_background_index
+        saved_music_track = sound_manager.current_music_file if hasattr(sound_manager, 'current_music_file') else None
+        print(f"🎨 Preserving background index during reset: {saved_background_index}")
+        print(f"🎵 Preserving music track during reset: {saved_music_track}")
+
         # Reload the current level with preserved player state
         # Mark as sub-level transition if we're in a sub-level to preserve killed enemies/items
         self.load_level(
@@ -681,6 +687,17 @@ class GameWorld:
             preserve_player_state=player_state,
             is_sub_level_transition=bool(self.level_stack),  # True if in sub-level
         )
+
+        # Restore background and music after reset
+        if saved_background_index > 0 and self.alternative_backgrounds:
+            self.current_background_index = saved_background_index
+            if saved_background_index - 1 < len(self.alternative_backgrounds):
+                self.background_image = self.alternative_backgrounds[saved_background_index - 1]
+                print(f"🎨 Restored background index after reset: {saved_background_index}")
+        
+        if saved_music_track:
+            sound_manager.play_background_music(saved_music_track)
+            print(f"🎵 Restored music after reset: {os.path.basename(saved_music_track)}")
 
     def events(self):
         for event in pg.event.get():
