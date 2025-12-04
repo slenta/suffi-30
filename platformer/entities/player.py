@@ -69,6 +69,7 @@ class Player(pg.sprite.Sprite):
         self.spike_damage_cooldown = 0
         self.exploding_object_cooldown = EXPLODING_OBJECT_COOLDOWN
         self.damage_dealt = 0  # Track total damage dealt to enemies
+        self.radial_blur_active = False  # Track if radial blur effect is active
 
         # Ladder mechanics
         self.on_ladder = False
@@ -226,8 +227,15 @@ class Player(pg.sprite.Sprite):
                 f"{self.world.current_level_name}_powerup_{powerup_x}_{powerup_y}"
             )
             powerup.apply_effect(self)
-            # Type 3 powerup lasts 8 seconds (480 frames at 60 FPS), others last 5 seconds (300 frames)
-            duration = 240 if powerup.power_type == 3 else 480
+            # Type 3 powerup lasts 4 seconds (240 frames), type 5 lasts 15 seconds (900 frames), others last 8 seconds (480 frames)
+            if powerup.power_type == 3:
+                duration = 240
+            elif powerup.power_type == 5:
+                from ..config.constants import PIXELATION_DURATION
+
+                duration = PIXELATION_DURATION
+            else:
+                duration = 480
             self.active_powerups[powerup.power_type] = [duration, powerup]
             sound_manager.play_sound_effect(
                 "powerup_collect"

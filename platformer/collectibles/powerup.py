@@ -21,6 +21,8 @@ class PowerUp(pg.sprite.Sprite):
     - Type 1: Makes the player faster (pulver.png)
     - Type 2: Changes the level background (spraydose.png)
     - Type 3: Chaos effect - reverses left/right controls, increases speed by 6, and has 50% chance to set FPS to 10 for 8 seconds
+    - Type 4: Makes the player bigger (babybrei.png)
+    - Type 5: Teil - Creates pixelation/rasterization effect for 15 seconds
 
     To use type 2 (background changer):
     1. Add a power-up in your level config:
@@ -46,16 +48,25 @@ class PowerUp(pg.sprite.Sprite):
         if power_type == 0:
             image = pg.image.load(os.path.join(IMAGEPATH, "banana.png")).convert_alpha()
         elif power_type == 1:
-            image = pg.image.load(os.path.join(IMAGEPATH, "pulver.png")).convert_alpha()
+            image = pg.image.load(
+                os.path.join(IMAGEPATH, "powerups/pulver.png")
+            ).convert_alpha()
         elif power_type == 2:
             image = pg.image.load(
                 os.path.join(IMAGEPATH, "powerups/powerup-pill.png")
             ).convert_alpha()
         elif power_type == 3:
-            image = pg.image.load(os.path.join(IMAGEPATH, "pulver.png")).convert_alpha()
+            image = pg.image.load(
+                os.path.join(IMAGEPATH, "powerups/pulver.png")
+            ).convert_alpha()
         elif power_type == 4:
             image = pg.image.load(
                 os.path.join(IMAGEPATH, "powerups/babybrei.png")
+            ).convert_alpha()
+        elif power_type == 5:
+            # Teil powerup - radial blur effect
+            image = pg.image.load(
+                os.path.join(IMAGEPATH, "powerups/teil.png")
             ).convert_alpha()
         else:
             image = pg.Surface((20, 20))  # Default size for unknown power-ups
@@ -68,7 +79,10 @@ class PowerUp(pg.sprite.Sprite):
 
     def apply_effect(self, player):
         """Apply power-up effect to player."""
-        if self.power_type == 0 or self.power_type == 4:
+        if self.power_type == 5:
+            # Teil powerup - radial blur effect
+            player.radial_blur_active = True
+        elif self.power_type == 0 or self.power_type == 4:
             # Make the player bigger
             player.image = pg.transform.scale(
                 player.image,
@@ -100,7 +114,10 @@ class PowerUp(pg.sprite.Sprite):
 
     def power_down(self, player):
         """Remove power-up effect from player."""
-        if self.power_type == 0 or self.power_type == 4:
+        if self.power_type == 5:
+            # Remove radial blur effect
+            player.radial_blur_active = False
+        elif self.power_type == 0 or self.power_type == 4:
             # Restore normal size
             player.image = pg.transform.scale(
                 player.image,

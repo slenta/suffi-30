@@ -23,6 +23,7 @@ from ..config.enemy_config import get_enemy_config
 from ..config.gem_config import get_gem_config
 from ..config.trophy_config import get_trophy_config
 from ..config.api_config import API_BASE_URL
+from ..config.constants import PIXELATION_FACTOR, PIXELATION_DURATION
 from .highscore_manager import HighscoreManager
 import importlib
 
@@ -945,6 +946,10 @@ class GameWorld:
         # Draw player with weapon
         self.player.draw(self.screen, self.camera_offset_x, self.camera_offset_y)
 
+        # Apply pixelation effect if active
+        if self.player.radial_blur_active:
+            self._apply_pixelation()
+
         # Draw enemy health bars
         for enemy in self.enemies:
             enemy.draw_health_bar(
@@ -1383,6 +1388,21 @@ class GameWorld:
         """Set the game FPS (used by power-up effects)."""
         self.current_fps = fps
         print(f"🕐 FPS changed to {fps}")
+
+    def _apply_pixelation(self):
+        """Apply pixelation/rasterization effect to the entire screen."""
+        # Downscale the screen by PIXELATION_FACTOR
+        small_width = WIDTH // PIXELATION_FACTOR
+        small_height = HEIGHT // PIXELATION_FACTOR
+        
+        # Create a small surface with the downscaled image
+        small_surface = pg.transform.scale(self.screen, (small_width, small_height))
+        
+        # Scale it back up to original size without smoothing (creates pixelated look)
+        pixelated_surface = pg.transform.scale(small_surface, (WIDTH, HEIGHT))
+        
+        # Blit the pixelated version back to the screen
+        self.screen.blit(pixelated_surface, (0, 0))
 
     def reset_fps(self):
         """Reset FPS to default value."""

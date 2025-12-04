@@ -106,6 +106,7 @@ level_config = {
     ],
     "ladder_locations": [(289, i) for i in range(-40, -16)],
     "powerup_locations": [
+        {"x": 10, "y": -23, "type": 5},  # Teil collectible
         {"x": 50, "y": -25, "type": 3},
         {"x": 182, "y": -37, "type": 3},
         {"x": 83, "y": -27, "type": 2},

@@ -64,3 +64,9 @@ SCORE_PER_SECOND_REMAINING = 100  # Points per second of remaining time
 SCORE_PER_TROPHY = 10000  # Points per trophy collected
 SCORE_PER_DAMAGE = 100  # Points per damage dealt to enemies
 SCORE_PER_LIFE = 5000  # Points per life (gem) remaining at level end
+
+# Pixelation effect constants (Teil powerup)
+PIXELATION_DURATION = 900  # Frames (15 seconds at 60 FPS)
+PIXELATION_FACTOR = (
+    8  # Pixelation factor - how much to reduce resolution (higher = more pixelated)
+)
