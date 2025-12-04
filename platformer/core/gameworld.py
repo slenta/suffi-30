@@ -1024,7 +1024,8 @@ class GameWorld:
 
         # Draw HUD
         draw_gems(self.screen, self.player)
-        draw_trophies(self.screen, self.player, self.total_trophies)
+        trophy_image = self.level_config.get("trophy_image", "trophy.png")
+        draw_trophies(self.screen, self.player, self.total_trophies, trophy_image)
         draw_health_bar(self.screen, self.player, 200, 20, self.player.max_health)
 
         # Draw encounter message (if active)
