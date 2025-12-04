@@ -79,6 +79,10 @@ class GameWorld:
         self.timer_start_ticks = None
         self.parent_time_remaining = None
 
+        # Background state tracking for sub-level transitions
+        self.parent_background_index = 0
+        self.parent_music_track = None  # Track music state for sub-level transitions
+
         # Encounter message system
         self.encounter_message = None
         self.encounter_message_timer = 0
@@ -611,8 +615,31 @@ class GameWorld:
                 else:
                     print(f"❌ Alternative music not found: {alt_music_path}")
 
-        # Load background image
-        self.load_background_image()
+        # Load background image (preserve index if this is a sub-level transition)
+        self.load_background_image(preserve_background_index=is_sub_level_transition)
+
+        # Restore parent background index if returning from sub-level
+        if is_sub_level_transition and hasattr(self, "parent_background_index"):
+            self.current_background_index = self.parent_background_index
+            print(f"🎨 Restored background index: {self.current_background_index}")
+            # Apply the saved background immediately
+            if self.current_background_index > 0 and self.alternative_backgrounds:
+                if self.current_background_index - 1 < len(
+                    self.alternative_backgrounds
+                ):
+                    self.background_image = self.alternative_backgrounds[
+                        self.current_background_index - 1
+                    ]
+                    print(
+                        f"🎨 Applied alternative background {self.current_background_index}"
+                    )
+
+            # Restore parent music track if returning from sub-level
+            if hasattr(self, "parent_music_track") and self.parent_music_track:
+                sound_manager.play_background_music(self.parent_music_track)
+                print(
+                    f"🎵 Restored parent music: {os.path.basename(self.parent_music_track)}"
+                )
 
         # Load common sound effects (if they exist)
         self.load_sound_effects()
@@ -775,6 +802,18 @@ class GameWorld:
         if self.time_remaining is not None:
             self.parent_time_remaining = self.time_remaining
             print(f"⏱️ Saving parent timer state: {self.time_remaining:.1f}s")
+
+        # Save current background state
+        self.parent_background_index = self.current_background_index
+        print(f"🎨 Saving parent background index: {self.current_background_index}")
+
+        # Save current music state
+        self.parent_music_track = (
+            sound_manager.current_music_file
+            if hasattr(sound_manager, "current_music_file")
+            else None
+        )
+        print(f"🎵 Saving parent music track: {self.parent_music_track}")
 
         # Save current level state
         player_state = {
@@ -1281,12 +1320,18 @@ class GameWorld:
             full_path = os.path.join(sounds_dir, filename)
             sound_manager.load_sound_effect(name, full_path)
 
-    def load_background_image(self):
-        """Load level-specific background image."""
+    def load_background_image(self, preserve_background_index=False):
+        """Load level-specific background image.
+
+        Args:
+            preserve_background_index: If True, keep the current background index (for sub-level transitions)
+        """
+        saved_index = self.current_background_index if preserve_background_index else 0
+
         self.background_image = None
         self.background_scroll_speed = 1  # Default parallax scroll speed
         self.alternative_backgrounds = []  # Reset alternative backgrounds
-        self.current_background_index = 0
+        self.current_background_index = saved_index
 
         # Load background scroll speed from config (applies to all backgrounds)
         if "background_scroll_speed" in self.level_config:
@@ -1394,13 +1439,13 @@ class GameWorld:
         # Downscale the screen by PIXELATION_FACTOR
         small_width = WIDTH // PIXELATION_FACTOR
         small_height = HEIGHT // PIXELATION_FACTOR
-        
+
         # Create a small surface with the downscaled image
         small_surface = pg.transform.scale(self.screen, (small_width, small_height))
-        
+
         # Scale it back up to original size without smoothing (creates pixelated look)
         pixelated_surface = pg.transform.scale(small_surface, (WIDTH, HEIGHT))
-        
+
         # Blit the pixelated version back to the screen
         self.screen.blit(pixelated_surface, (0, 0))
 

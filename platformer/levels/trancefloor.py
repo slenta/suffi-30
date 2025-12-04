@@ -2,8 +2,8 @@ level_config = {
     "x_bounds": [-300, 9000],  # Extended gameworld width (doubled)
     "y_bounds": [-1230, 1170],  # Increased gameworld height for more vertical space
     "level_time": 300,  # Time limit in seconds (5 minutes)
-    # "player_spawn": (285, 12),
-    "player_spawn": (0, -35),
+    "player_spawn": (219, -45),
+    # "player_spawn": (0, -35),
     # Extended grass locations - keeping original and adding more sections
     "grass_locations": [(i, -16) for i in range(-20, 16)]
     + [(i, -16) for i in range(25, 30)]
@@ -110,6 +110,7 @@ level_config = {
         {"x": 50, "y": -25, "type": 3},
         {"x": 182, "y": -37, "type": 3},
         {"x": 83, "y": -27, "type": 2},
+        {"x": 219, "y": -40, "type": 2},  # test, disable later
         {"x": 108, "y": -25, "type": 0},
     ],
     # Enemies (using centralized config templates with overrides where needed)

@@ -3,6 +3,7 @@
 import pygame as pg
 import os
 import math
+import random
 from ..config.settings import (
     IMAGEPATH,
     GRIDSIZE,
@@ -229,11 +230,15 @@ class Player(pg.sprite.Sprite):
             powerup.apply_effect(self)
             # Type 3 powerup lasts 4 seconds (240 frames), type 5 lasts 15 seconds (900 frames), others last 8 seconds (480 frames)
             if powerup.power_type == 3:
-                duration = 240
+                from ..config.constants import POWERUP_CHAOS_DURATION
+
+                duration = random.randint(
+                    POWERUP_CHAOS_DURATION // 2, POWERUP_CHAOS_DURATION
+                )
             elif powerup.power_type == 5:
                 from ..config.constants import PIXELATION_DURATION
 
-                duration = PIXELATION_DURATION
+                duration = random.randint(PIXELATION_DURATION // 2, PIXELATION_DURATION)
             else:
                 duration = 480
             self.active_powerups[powerup.power_type] = [duration, powerup]

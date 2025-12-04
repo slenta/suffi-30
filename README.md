@@ -47,14 +47,11 @@ python -m pygbag --PYBUILD 3.12 --build --template custom.tmpl .
 
 
 ideas trancefloor:
-- sub level at the bar
-- background
+- sub level zu ende bauen
+- background ist buggy bei sub level wechsel
+- spike blocks einbauen
+- pop blocks einbauen
+- mehr power ups einbauen
+- power ups kürzere dauer
+- level etwas kürzen
 - the final enemy is yourself
-- plh
-
-
-
-apfel
-brotschnitte
-bier
-discokugel
