@@ -14,6 +14,17 @@ level_config = {
     "grass_image": "asche.png",
     # Block locations - create a small cave-like structure
     "block_locations": [
+        # Left Wall
+        (3,4),
+        (3,5),
+        (3,6),
+        (3,7),
+        (3,8),
+        (3,9),
+        (3,10),
+        (3,11),
+        (3,12),
+        (3,13),
         # Upper ceiling
         (10, 3),
         (11, 3),
@@ -42,6 +53,12 @@ level_config = {
         (50, 12),
         (51, 12),
         (52, 12),
+        # Exit blocks
+        (-7, 6),
+        (-6, 6),
+        (-6, 5),
+        (-6, 4),
+        (-7, 4),
     ],
     # Gem locations - rewards for exploring the sub-level
     "gem_locations": [
@@ -101,7 +118,7 @@ level_config = {
     ],
     "trophy_image": "trophy.png",
     # Exit location - completing this returns to main level
-    "exit_location": (70, 13),
+    "exit_location": (-7, 5),
     # Optional: Different background for sub-level
     "background_image": "assets/backgrounds/graffiti_sublevel.png",
     "background_scroll_speed": 0.1,
