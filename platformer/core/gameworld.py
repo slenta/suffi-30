@@ -234,12 +234,73 @@ class GameWorld:
                 self.timer_start_ticks = None
 
         # Load common images
-        grass_image = pg.image.load(
-            os.path.join(IMAGEPATH, "grass.png")
-        ).convert_alpha()
-        block_image = pg.image.load(
-            os.path.join(IMAGEPATH, "block.png")
-        ).convert_alpha()
+        # Allow level-specific override for grass tile
+        default_grass_path = os.path.join(IMAGEPATH, "grass.png")
+        grass_image = None
+        if "grass_image" in self.level_config and self.level_config["grass_image"]:
+            custom = self.level_config["grass_image"]
+            if not os.path.isabs(custom):
+                possible = [
+                    os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), custom),
+                    os.path.join(IMAGEPATH, custom),
+                ]
+            else:
+                possible = [custom]
+
+            for p in possible:
+                if os.path.exists(p):
+                    try:
+                        grass_image = pg.image.load(p).convert_alpha()
+                        print(f"🌾 Loaded custom grass image for level: {os.path.basename(p)}")
+                        break
+                    except Exception as e:
+                        print(f"Error loading custom grass image {p}: {e}")
+                        grass_image = None
+
+        if grass_image is None:
+            grass_image = pg.image.load(os.path.join(IMAGEPATH, "grass.png")).convert_alpha()
+
+        # Load block image (allow level-specific override or tint)
+        default_block_path = os.path.join(IMAGEPATH, "block.png")
+        block_image = None
+        # If the level provides a custom block image path, try to load it
+        if "block_image" in self.level_config and self.level_config["block_image"]:
+            custom_path = self.level_config["block_image"]
+            if not os.path.isabs(custom_path):
+                # If path is relative, allow paths relative to project root or IMAGEPATH
+                possible = [
+                    os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), custom_path),
+                    os.path.join(IMAGEPATH, custom_path),
+                ]
+            else:
+                possible = [custom_path]
+
+            for p in possible:
+                if os.path.exists(p):
+                    try:
+                        block_image = pg.image.load(p).convert_alpha()
+                        print(f"🧱 Loaded custom block image for level: {os.path.basename(p)}")
+                        break
+                    except Exception as e:
+                        print(f"Error loading custom block image {p}: {e}")
+                        block_image = None
+
+        # Fallback to default block image
+        if block_image is None:
+            block_image = pg.image.load(default_block_path).convert_alpha()
+
+        # Apply optional tint to block image for level-specific look
+        if "block_tint" in self.level_config and self.level_config["block_tint"]:
+            try:
+                tint = tuple(self.level_config["block_tint"])  # (r,g,b)
+                overlay = pg.Surface(block_image.get_size(), pg.SRCALPHA)
+                overlay.fill((tint[0], tint[1], tint[2], 255))
+                tinted = block_image.copy()
+                tinted.blit(overlay, (0, 0), special_flags=pg.BLEND_RGBA_MULT)
+                block_image = tinted
+                print(f"🧱 Applied block tint {tint} for level")
+            except Exception as e:
+                print(f"Error applying block tint: {e}")
         gem_image = pg.image.load(os.path.join(IMAGEPATH, "gem.png")).convert_alpha()
 
         self.all_sprites = pg.sprite.Group()

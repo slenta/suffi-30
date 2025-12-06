@@ -6,33 +6,12 @@ This is an example sub-level accessed via a pipe from the main level.
 level_config = {
     "x_bounds": [-300, 2000],  # Smaller sub-level
     "y_bounds": [-200, 300],
-    # Bright red background so we know our changes are working
-    "background_color": (255, 0, 0),  # Bright red
-    "background_image": "graffiti_sublevel.png",  # Image is directly in backgrounds folder
     # Player spawn point - where player appears when entering this sub-level
     "player_spawn": (5, 1),
     # Floor grass locations
     "grass_locations": [(i, 14) for i in range(-20, 80)],
-    # Add a distinctive pattern of blocks to form "HI"
-    "block_locations": [
-        # Letter H
-        (3, 8),
-        (3, 9),
-        (3, 10),  # Left vertical
-        (4, 9),  # Middle
-        (5, 8),
-        (5, 9),
-        (5, 10),  # Right vertical
-        # Letter I
-        (7, 8),
-        (8, 8),
-        (9, 8),  # Top
-        (8, 9),
-        (8, 10),  # Middle
-        (7, 10),
-        (8, 10),
-        (9, 10),  # Bottom
-    ],
+    # Use a different grass tile for this sublevel (placed in assets/images)
+    "grass_image": "asche.png",
     # Block locations - create a small cave-like structure
     "block_locations": [
         # Upper ceiling
@@ -77,16 +56,29 @@ level_config = {
     "powerup_locations": [
         {"x": 60, "y": 10, "type": 0},  # Size power-up
     ],
-    # Enemy locations (using centralized config)
+    # Enemy locations - make it challenging
     "enemy_locations": [
-        {"type": "trump", "x": 25, "y": 13},
         {
-            "type": "trump",
+            "x": 25,
+            "y": 13,
+            "image": "trump.png",
+            "speed": 1,
+            "patrol_range": 50,
+            "size_multiplier": 1,
+            "health": 2,
+            "damage": 1,
+            "shoot_range": 0,
+        },
+        {
             "x": 50,
             "y": 13,
+            "image": "trump.png",
             "speed": 2,
             "patrol_range": 80,
+            "size_multiplier": 1,
             "health": 3,
+            "damage": 1,
+            "shoot_range": 0,
         },
     ],
     # Weapon locations
@@ -111,8 +103,10 @@ level_config = {
     # Exit location - completing this returns to main level
     "exit_location": (70, 13),
     # Optional: Different background for sub-level
-    # "background_image": "assets/backgrounds/cave.png",
+    "background_image": "assets/backgrounds/graffiti_sublevel.png",
     "background_scroll_speed": 0.1,
+    # Level-specific block look: dusty brown/grey tint (R,G,B)
+    "block_tint": (120, 110, 100),
     # No pipes in the sub-level (to keep it simple)
     "pipe_locations": [],
 }
