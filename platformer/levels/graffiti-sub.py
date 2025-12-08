@@ -17,7 +17,8 @@ level_config = {
     # Block locations - create a small cave-like structure
     "block_locations": [
         # Left Wall
-        (3,2),
+        (3,-2),
+        
         (3,3),
         (3,4),
         (3,5),
@@ -29,15 +30,22 @@ level_config = {
         (3,11),
         (3,12),
         (3,13),
+        # left to the wall
+        (2,-2),
+        (1,-2),
+        (0,-2),
+        (-1,-1),
+        (-2,0),
+        (-3,1),
+        (-4,2),
+     
+
         # Upper ceiling
-        (10, 3),
-        (11, 3),
-        (12, 3),
         (13, 3),
         (14, 3),
-    (20, 4),
-    (21, 4),
-    (22, 4),
+        (20, 4),
+        (21, 4),
+        (22, 4),
         # Mid-level platforms
         (15, 10),
         (16, 10),
