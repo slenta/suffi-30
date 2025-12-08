@@ -37,10 +37,10 @@ class MovingPlatform(pg.sprite.Sprite):
         self.moving_forward = True
         self.current_distance = 0
 
-        # For circular movement
+        # For circular movement: use the sprite center as the rotation center
         self.angle = 0
-        self.center_x = self.start_x
-        self.center_y = self.start_y
+        self.center_x = self.start_x + self.rect.width // 2
+        self.center_y = self.start_y + self.rect.height // 2
 
         # Store previous position for player movement
         self.prev_x = self.rect.x
@@ -85,15 +85,15 @@ class MovingPlatform(pg.sprite.Sprite):
 
     def _update_circular(self):
         """Update circular movement."""
-        self.angle += self.speed * 0.02  # Adjust rotation speed
-        radius = self.distance  # Use distance as radius
+        # Increase angular speed multiplier so circular platforms are visibly moving
+        # Treat `speed` as an abstract speed factor (degrees per frame multiplier)
+        self.angle += self.speed * 3.0
+        radius = self.distance  # Already in pixels
 
-        self.rect.x = int(
-            self.center_x + radius * pg.math.Vector2(1, 0).rotate(self.angle).x
-        )
-        self.rect.y = int(
-            self.center_y + radius * pg.math.Vector2(1, 0).rotate(self.angle).y
-        )
+        vec = pg.math.Vector2(1, 0).rotate(self.angle)
+        # Position the platform so its center follows the circular path
+        self.rect.x = int(self.center_x + radius * vec.x - self.rect.width // 2)
+        self.rect.y = int(self.center_y + radius * vec.y - self.rect.height // 2)
 
     def get_velocity(self):
         """Get the platform's velocity for player movement."""

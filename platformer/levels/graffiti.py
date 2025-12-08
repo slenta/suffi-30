@@ -9,7 +9,6 @@ level_config = {
     "x_bounds": [-600, 3000],
     "y_bounds": [-200, 300],
     "level_time": 240,  # Time limit in seconds (4 minutes)
-    "background_color": (50, 50, 55),  # Semi-dark grey for night scene
     # Basic floor
     "grass_locations": [(i, 14) for i in range(-20, 100)],
     # Some platforms and blocks
@@ -53,7 +52,7 @@ level_config = {
     "powerup_locations": [],
     # A simple enemy
     "enemy_locations": [
-        {"type": "tightill", "x": 30, "y": -24},
+        {"type": "tightill", "x": 121, "y": -24},
         {"type": "robodog", "x": 70, "y": -24},
         {"type": "drone", "x": 120, "y": -24},
     ],

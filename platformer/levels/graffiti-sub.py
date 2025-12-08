@@ -17,9 +17,11 @@ level_config = {
     # Block locations - create a small cave-like structure
     "block_locations": [
         # Left Wall
+        (3,2),
+        (3,3),
         (3,4),
         (3,5),
-        (3,6),
+
         (3,7),
         (3,8),
         (3,9),
@@ -33,13 +35,9 @@ level_config = {
         (12, 3),
         (13, 3),
         (14, 3),
-        (20, 4),
-        (21, 4),
-        (22, 4),
-        (30, 5),
-        (31, 5),
-        (32, 5),
-        (33, 5),
+    (20, 4),
+    (21, 4),
+    (22, 4),
         # Mid-level platforms
         (15, 10),
         (16, 10),
@@ -105,13 +103,30 @@ level_config = {
     # Moving platform locations
     "moving_platform_locations": [
         {
-            "x": 45,
+            "x": 36,
             "y": 9,
             "platform_type": "block",
             "movement_type": "linear",
             "speed": 1,
-            "distance": 5,
+            "distance": 10,
             "direction": "horizontal",
+        },
+        {
+            "x": 55,
+            "y": 4,
+            "platform_type": "block",
+            "movement_type": "circular",
+            "speed": 1,
+            "distance": 4,
+        },
+        {
+            "x": 33,
+            "y": 1,
+            "platform_type": "block",
+            "movement_type": "circular",
+            "speed": 1,
+            "distance": 4,
+
         },
     ],
     # Trophy locations - collect trophy to open exit
@@ -126,9 +141,11 @@ level_config = {
     "background_scroll_speed": 0.1,
     # Level-specific block look: dusty brown/grey tint (R,G,B)
     "block_tint": (120, 110, 100),
-    # Invisible poppable block for testing: stays pass-through until hit from below
+    # Invisible poppable block: stays pass-through until hit from below
     "poppable_block_locations": [
-        {"x": 4, "y": 10, "type": "invisible"},
+        {"x": 4, "y": 10, "type": "disappear"},
+        {"x":7, "y": 4, "type": "invisible"},
+        {"x":4, "y": 6, "type": "invisible"},
     ],
     # No pipes in the sub-level (to keep it simple)
     "pipe_locations": [],
