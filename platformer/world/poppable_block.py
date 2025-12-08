@@ -34,8 +34,8 @@ class PoppableBlock(GridSprite):
         self.max_pop_offset = -GRIDSIZE // 2  # How far the block moves up when popped
         self.original_image = image  # Store original image
 
-        # Load the fixed block image for "fix" and "item" types
-        if block_type in ["fix", "item"]:
+        # Load the fixed block image for "fix", "item" and "invisible" types
+        if block_type in ["fix", "item", "invisible"]:
             self.fixed_image = pg.image.load(
                 os.path.join(IMAGEPATH, "block.png")
             ).convert_alpha()
@@ -126,12 +126,17 @@ class PoppableBlock(GridSprite):
                 if self.block_type == "disappear":
                     # Remove the block from the game
                     self.kill()
-                elif self.block_type == "fix":
+                elif self.block_type in ("fix", "item", "invisible"):
                     # Change to solid block appearance
                     self.image = self.fixed_image
-                elif self.block_type == "item":
-                    # Change to solid block appearance (empty now)
-                    self.image = self.fixed_image
+                    # If this block has a reference to the world, ensure it becomes a platform
+                    if self.world is not None:
+                        try:
+                            if self not in self.world.platforms:
+                                self.world.platforms.add(self)
+                        except Exception:
+                            # Be defensive if world/platforms not available yet
+                            pass
 
     @property
     def original_y(self):

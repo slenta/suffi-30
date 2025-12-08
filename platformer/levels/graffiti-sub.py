@@ -4,12 +4,14 @@ This is an example sub-level accessed via a pipe from the main level.
 """
 
 level_config = {
-    "x_bounds": [-300, 2000],  # Smaller sub-level
+    # Extended to the left to give more room for exploration
+    "x_bounds": [-500, 2000],  # Extended left boundary
     "y_bounds": [-200, 300],
     # Player spawn point - where player appears when entering this sub-level
     "player_spawn": (5, 1),
     # Floor grass locations
-    "grass_locations": [(i, 14) for i in range(-20, 80)],
+    # Expand floor to the left so the player can move farther left
+    "grass_locations": [(i, 14) for i in range(-500, 80)],
     # Use a different grass tile for this sublevel (placed in assets/images)
     "grass_image": "asche.png",
     # Block locations - create a small cave-like structure
@@ -124,6 +126,10 @@ level_config = {
     "background_scroll_speed": 0.1,
     # Level-specific block look: dusty brown/grey tint (R,G,B)
     "block_tint": (120, 110, 100),
+    # Invisible poppable block for testing: stays pass-through until hit from below
+    "poppable_block_locations": [
+        {"x": 4, "y": 10, "type": "invisible"},
+    ],
     # No pipes in the sub-level (to keep it simple)
     "pipe_locations": [],
 }

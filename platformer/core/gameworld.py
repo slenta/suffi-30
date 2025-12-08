@@ -359,7 +359,15 @@ class GameWorld:
 
             pb = PoppableBlock(x, y, poppable_block_image, block_type, item_data, self)
             self.poppable_blocks.add(pb)
-            self.platforms.add(pb)  # Add to platforms for collision detection
+            # Only add to platforms (solid) immediately if not an invisible block
+            if block_type != "invisible":
+                self.platforms.add(pb)  # Add to platforms for collision detection
+            else:
+                # Invisible blocks should not be visible until popped - make image transparent
+                try:
+                    pb.image = pg.Surface((GRIDSIZE, GRIDSIZE), pg.SRCALPHA)
+                except Exception:
+                    pass
             self.all_sprites.add(pb)
 
         # Load gems (supports both new template-based and legacy format)
