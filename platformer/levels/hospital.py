@@ -1,5 +1,5 @@
 level_config = {
-    "x_bounds": [-600, 3000],  # Gameworld width
+    "x_bounds": [-500, 3000],  # Gameworld width
     "y_bounds": [-200, 300],  # Gameworld height
     "level_time": 240,  # Time limit in seconds (4 minutes)
     # Player spawn point (optional) - x and y coordinates in grid units
@@ -107,13 +107,13 @@ level_config = {
     ],
     # Enemy locations (using centralized config with overrides)
     "enemy_locations": [
-        {"type": "trump", "x": 25, "y": 13},
-        {"type": "trump", "x": 48, "y": 13},
-        {"type": "trump", "x": 65, "y": 13},
-        {"type": "trump", "x": 78, "y": 7},
-        {"type": "trump", "x": 95, "y": 13},
-        {"type": "trump", "x": 110, "y": 13},
-        {"type": "trump", "x": 120, "y": 13},
+        {"type": "patient_follower", "x": 2, "y": 13},
+        {"type": "patient", "x": 48, "y": 13},
+        {"type": "patient", "x": 65, "y": 13},
+        {"type": "patient", "x": 78, "y": 7},
+        {"type": "patient", "x": 95, "y": 13},
+        {"type": "patient", "x": 110, "y": 13},
+        {"type": "patient", "x": 120, "y": 13},
     ],
     # Trophy checkpoints
     "trophy_locations": [
@@ -177,6 +177,7 @@ level_config = {
         ],  # Below zigzag section
     ],
     "background_music": "assets/music/level1.ogg",  # Path relative to game root
-    "background_image": "assets/backgrounds/level1_bg.png",  # Path to background image
+    "background_image": "assets/backgrounds/hospital_background_seamless.png",
     "background_scroll_speed": 0.3,  # Optional: parallax scrolling speed (0.0 = static, 1.0 = moves with camera)
+    "block_image": "block_white_2.png",  # Custom block image for this level
 }

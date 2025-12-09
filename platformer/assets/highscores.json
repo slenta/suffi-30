@@ -200,5 +200,31 @@
       },
       "timestamp": "2025-12-06T14:49:25.371504"
     }
+  ],
+  "hospital": [
+    {
+      "player_name": "Anonymous",
+      "score": 83502,
+      "breakdown": {
+        "time_score": 21502,
+        "trophy_score": 30000,
+        "damage_score": 2000,
+        "life_score": 30000,
+        "total_score": 83502
+      },
+      "timestamp": "2025-12-09T15:05:44.280597"
+    },
+    {
+      "player_name": "j",
+      "score": 81863,
+      "breakdown": {
+        "time_score": 18863,
+        "trophy_score": 30000,
+        "damage_score": 3000,
+        "life_score": 30000,
+        "total_score": 81863
+      },
+      "timestamp": "2025-12-09T16:42:36.064947"
+    }
   ]
 }

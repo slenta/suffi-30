@@ -26,6 +26,7 @@ from ..config.api_config import API_BASE_URL
 from ..config.constants import PIXELATION_FACTOR, PIXELATION_DURATION
 from .highscore_manager import HighscoreManager
 import importlib
+from IPython import embed
 
 
 ## Class GameWorld
