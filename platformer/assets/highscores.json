@@ -215,6 +215,18 @@
       "timestamp": "2025-12-09T15:05:44.280597"
     },
     {
+      "player_name": "Anonymous",
+      "score": 82871,
+      "breakdown": {
+        "time_score": 19871,
+        "trophy_score": 30000,
+        "damage_score": 8000,
+        "life_score": 25000,
+        "total_score": 82871
+      },
+      "timestamp": "2025-12-10T19:02:24.783566"
+    },
+    {
       "player_name": "j",
       "score": 81863,
       "breakdown": {
