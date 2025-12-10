@@ -17,6 +17,7 @@ level_config = {
     # Block locations - create a small cave-like structure
     "block_locations": [
         # Left Wall
+        (4,-2),
         (3,-2),
         
         (3,3),
@@ -31,15 +32,24 @@ level_config = {
         (3,12),
         (3,13),
         # left to the wall
+        #top stairs
         (2,-2),
         (1,-2),
         (0,-2),
         (-1,-1),
         (-2,0),
         (-3,1),
-        (-4,2),
-     
-
+        # Exit blocks
+        (-6, 6),
+        (-6, 5),
+        (-6, 4),
+        (-7, 4),
+        # left top stairs 
+        (-9,3),
+        (-10,2),
+        (-11,1),
+        (-12,0),
+        # right to the wall
         # Upper ceiling
         (13, 3),
         (14, 3),
@@ -61,12 +71,7 @@ level_config = {
         (50, 12),
         (51, 12),
         (52, 12),
-        # Exit blocks
-        (-7, 6),
-        (-6, 6),
-        (-6, 5),
-        (-6, 4),
-        (-7, 4),
+    
     ],
     # Gem locations - rewards for exploring the sub-level
     "gem_locations": [
@@ -136,6 +141,20 @@ level_config = {
             "distance": 4,
 
         },
+    ],
+    # Ladder locations
+    "ladder_locations": [
+        (2, 13),
+        (2, 12),
+        (2, 11),
+        (2, 10),
+        (2, 9),
+        (2, 8),
+        (2, 7),
+        (2, 6),
+        (2, 5),
+        (2, 4),
+        (2, 3),
     ],
     # Trophy locations - collect trophy to open exit
     "trophy_locations": [
