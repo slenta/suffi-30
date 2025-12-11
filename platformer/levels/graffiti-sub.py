@@ -17,38 +17,36 @@ level_config = {
     # Block locations - create a small cave-like structure
     "block_locations": [
         # Left Wall
-        (4,-2),
-        (3,-2),
-        
-        (3,3),
-        (3,4),
-        (3,5),
-
-        (3,7),
-        (3,8),
-        (3,9),
-        (3,10),
-        (3,11),
-        (3,12),
-        (3,13),
+        (4, -2),
+        (3, -2),
+        (3, 3),
+        (3, 4),
+        (3, 5),
+        (3, 7),
+        (3, 8),
+        (3, 9),
+        (3, 10),
+        (3, 11),
+        (3, 12),
+        (3, 13),
         # left to the wall
-        #top stairs
-        (2,-2),
-        (1,-2),
-        (0,-2),
-        (-1,-1),
-        (-2,0),
-        (-3,1),
+        # top stairs
+        (2, -2),
+        (1, -2),
+        (0, -2),
+        (-1, -1),
+        (-2, 0),
+        (-3, 1),
         # Exit blocks
         (-6, 6),
         (-6, 5),
         (-6, 4),
         (-7, 4),
-        # left top stairs 
-        (-9,3),
-        (-10,2),
-        (-11,1),
-        (-12,0),
+        # left top stairs
+        (-9, 3),
+        (-10, 2),
+        (-11, 1),
+        (-12, 0),
         # right to the wall
         # Upper ceiling
         (13, 3),
@@ -69,25 +67,24 @@ level_config = {
         (50, 12),
         (51, 12),
         (52, 12),
-    
     ],
     # Gem locations - rewards for exploring the sub-level
-    "gem_locations": [
-        (12, 2),
-        (21, 3),
-        (31, 4),
-        (16, 9),
-        (26, 7),
-        (51, 11),
-        (33, -3)
-    ],
+    "gem_locations": [(12, 2), (21, 3), (31, 4), (16, 9), (26, 7), (51, 11), (33, -3)],
     # Powerup locations
     "powerup_locations": [
         {"x": 60, "y": 10, "type": 0},  # Size power-up (existing)
-        {"x": 15, "y": 9, "type": 1},   # Speed power-up above mid platform (reachable)
-        {"x": 25, "y": 7, "type": 2},   # Background changer above moving platforms
-        {"x": 55, "y": 3, "type": 3},   # Chaos power-up near circular platform (use moving platform to reach)
-        {"x": 31, "y": 3, "type": 5},   # Teil/pixelation power-up placed on a small platform
+        {"x": 15, "y": 9, "type": 1},  # Speed power-up above mid platform (reachable)
+        {"x": 25, "y": 7, "type": 2},  # Background changer above moving platforms
+        {
+            "x": 55,
+            "y": 3,
+            "type": 3,
+        },  # Chaos power-up near circular platform (use moving platform to reach)
+        {
+            "x": 31,
+            "y": 3,
+            "type": 5,
+        },  # Teil/pixelation power-up placed on a small platform
     ],
     # Enemy locations - make it challenging
     "enemy_locations": [
@@ -147,7 +144,6 @@ level_config = {
             "movement_type": "circular",
             "speed": 1,
             "distance": 4,
-
         },
     ],
     # Ladder locations
@@ -183,10 +179,11 @@ level_config = {
     # Invisible poppable block: stays pass-through until hit from below
     "poppable_block_locations": [
         {"x": 4, "y": 10, "type": "disappear"},
-        {"x":7, "y": 4, "type": "invisible"},
-        {"x":4, "y": 6, "type": "invisible"},
-        {"x":16, "y": 10, "type": "powerup", "powerup_type": 1},
+        {"x": 7, "y": 4, "type": "invisible"},
+        {"x": 4, "y": 6, "type": "invisible"},
+        {"x": 16, "y": 10, "type": "powerup", "powerup_type": 1},
     ],
     # No pipes in the sub-level (to keep it simple)
     "pipe_locations": [],
+    "exit_location": (330, 11),
 }

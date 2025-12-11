@@ -107,4 +107,5 @@ level_config = {
         #     "direction": "down"
         # },
     ],
+    "exit_location": (330, 11),
 }
