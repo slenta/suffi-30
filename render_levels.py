@@ -103,6 +103,7 @@ COLORS = {
     "spike": (255, 50, 50),  # Bright red
     "ladder": (139, 90, 43),  # Brown
     "waterfall": (64, 164, 223),  # Water blue
+    "poppable_block": (160, 82, 45),  # Sienna brown
     "moving_platform_path": (200, 200, 200, 100),  # Light gray, semi-transparent
     "death_zone": (255, 0, 0, 50),  # Red, very transparent
 }
@@ -202,13 +203,23 @@ def calculate_level_bounds(level_config):
         all_x_coords.append(x)
         all_y_coords.append(y)
 
-    # Collect waterfall locations
+        # Collect waterfall locations
     waterfall_locations = level_config.get("waterfall_locations", [])
     for waterfall_loc in waterfall_locations:
         if isinstance(waterfall_loc, tuple):
             x, y = waterfall_loc
         else:
             x, y = waterfall_loc["x"], waterfall_loc["y"]
+        all_x_coords.append(x)
+        all_y_coords.append(y)
+
+    # Collect poppable block locations
+    poppable_block_locations = level_config.get("poppable_block_locations", [])
+    for block_loc in poppable_block_locations:
+        if isinstance(block_loc, tuple):
+            x, y = block_loc
+        else:
+            x, y = block_loc["x"], block_loc["y"]
         all_x_coords.append(x)
         all_y_coords.append(y)
 
@@ -581,6 +592,56 @@ def draw_waterfalls_with_sprites(draw, image, waterfall_locations, min_x, min_y)
         image.paste(waterfall_image, (img_x, img_y), waterfall_image)
 
 
+def draw_poppable_blocks_with_sprites(
+    draw, image, poppable_block_locations, min_x, min_y
+):
+    """Draw poppable blocks using actual sprites."""
+    for block_loc in poppable_block_locations:
+        if isinstance(block_loc, tuple):
+            x, y = block_loc
+            block_type = "disappear"  # Default type
+        else:
+            x, y = block_loc["x"], block_loc["y"]
+            block_type = block_loc.get("type", "disappear")
+
+        img_x, img_y = world_to_image_coords(x, y, min_x, min_y)
+
+        # Load poppable block sprite (use a special sprite or block.png with indicator)
+        block_image = load_sprite_image("block.png", (GRIDSIZE, GRIDSIZE))
+        image.paste(block_image, (img_x, img_y), block_image)
+
+        # Add visual indicator for block type
+        center_x = img_x + GRIDSIZE // 2
+        center_y = img_y + GRIDSIZE // 2
+
+        if block_type == "disappear":
+            # Draw X for disappearing blocks
+            draw.line(
+                [(img_x + 2, img_y + 2), (img_x + GRIDSIZE - 2, img_y + GRIDSIZE - 2)],
+                fill=(255, 255, 0),
+                width=2,
+            )
+            draw.line(
+                [(img_x + GRIDSIZE - 2, img_y + 2), (img_x + 2, img_y + GRIDSIZE - 2)],
+                fill=(255, 255, 0),
+                width=2,
+            )
+        elif block_type == "fix":
+            # Draw small circle for fixed blocks
+            draw.ellipse(
+                [center_x - 3, center_y - 3, center_x + 3, center_y + 3],
+                fill=(0, 255, 255),
+                outline=(0, 0, 0),
+            )
+        elif block_type == "item":
+            # Draw question mark style indicator for item blocks
+            draw.ellipse(
+                [center_x - 4, center_y - 4, center_x + 4, center_y + 4],
+                fill=(255, 215, 0),
+                outline=(0, 0, 0),
+            )
+
+
 def draw_special_locations_with_sprites(
     draw, image, locations, min_x, min_y, sprite_name, fallback_color
 ):
@@ -793,6 +854,12 @@ def render_level(level_config, output_path, show_grid=True, bg_opacity=0.3):
         waterfall_locations = level_config.get("waterfall_locations", [])
         draw_waterfalls_with_sprites(draw, image, waterfall_locations, min_x, min_y)
 
+        # Draw poppable blocks using actual sprites
+        poppable_block_locations = level_config.get("poppable_block_locations", [])
+        draw_poppable_blocks_with_sprites(
+            draw, image, poppable_block_locations, min_x, min_y
+        )
+
         # Draw player start position using actual sprites
         # Use player_spawn from level config, fallback to default (5, 1) if not specified
         player_spawn = level_config.get("player_spawn", (5, 1))
@@ -839,6 +906,7 @@ def draw_legend(draw, width, height):
         ("Spikes", COLORS["spike"]),
         ("Ladders", COLORS["ladder"]),
         ("Waterfalls", COLORS["waterfall"]),
+        ("Poppable", COLORS["poppable_block"]),
         ("Exit", COLORS["exit"]),
         ("Player", COLORS["player_start"]),
     ]
@@ -876,6 +944,7 @@ def draw_level_info(draw, level_config, width):
     spike_count = len(level_config.get("spike_locations", []))
     ladder_count = len(level_config.get("ladder_locations", []))
     waterfall_count = len(level_config.get("waterfall_locations", []))
+    poppable_block_count = len(level_config.get("poppable_block_locations", []))
 
     info_lines = [
         f"Gems: {gem_count}",
@@ -888,6 +957,7 @@ def draw_level_info(draw, level_config, width):
         f"Spikes: {spike_count}",
         f"Ladders: {ladder_count}",
         f"Waterfalls: {waterfall_count}",
+        f"Poppable: {poppable_block_count}",
     ]
 
     # Position in top-right
@@ -918,6 +988,7 @@ def draw_level_info(draw, level_config, width):
             COLORS["spike"],
             COLORS["ladder"],
             COLORS["waterfall"],
+            COLORS["poppable_block"],
         ]
         if i < len(colors):
             draw.rectangle(

@@ -153,7 +153,7 @@ ENEMY_TYPES = {
         "encounter_message": None,
         "shoot_cooldown": 60,
     },
-        # Hospital level enemies
+    # Hospital level enemies
     "patient": {
         "name": "Patient",
         "image": "enemies/hospital/patient_2.png",
@@ -432,7 +432,7 @@ ENEMY_TYPES = {
         "melee_damage": 20,
         "can_throw_explosives": False,
         "can_summon_minions": False,
-        "encounter_message": "Look at this crazy costume!",
+        "encounter_message": "Crazy Kutte! Who's that?",
         "shoot_cooldown": 60,
         "spawn_on_death": {
             "type": "presslufthanna",
