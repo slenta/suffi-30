@@ -178,6 +178,18 @@
     },
     {
       "player_name": "Anonymous",
+      "score": 36904,
+      "breakdown": {
+        "time_score": 20904,
+        "trophy_score": 10000,
+        "damage_score": 1000,
+        "life_score": 5000,
+        "total_score": 36904
+      },
+      "timestamp": "2025-12-10T19:46:49.490804"
+    },
+    {
+      "player_name": "Anonymous",
       "score": 36268,
       "breakdown": {
         "time_score": 10268,
@@ -237,6 +249,18 @@
         "total_score": 81863
       },
       "timestamp": "2025-12-09T16:42:36.064947"
+    },
+    {
+      "player_name": "Anonymous",
+      "score": 65793,
+      "breakdown": {
+        "time_score": 15793,
+        "trophy_score": 20000,
+        "damage_score": 5000,
+        "life_score": 25000,
+        "total_score": 65793
+      },
+      "timestamp": "2025-12-11T14:12:06.123929"
     }
   ]
 }

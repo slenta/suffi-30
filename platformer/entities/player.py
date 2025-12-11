@@ -13,7 +13,7 @@ from ..config.settings import (
     MAX_VELOCITY,
     KEYBINDINGS,
 )
-from .bullet import Bullet, ExplodingObject
+from .bullet import Bullet, ExplodingObject, SprayStream
 from ..core.sound_manager import sound_manager
 from ..config.weapon_config import WEAPON_CONFIG
 from ..config.constants import (
@@ -66,6 +66,8 @@ class Player(pg.sprite.Sprite):
         self.active_weapon = None
         self.weapon_image = None
         self.weapon_rect = None
+        # Active spray stream (if using continuous spray weapons)
+        self.spray_stream = None
         self.controls_reversed = False
         self.spike_damage_cooldown = 0
         self.exploding_object_cooldown = EXPLODING_OBJECT_COOLDOWN
@@ -277,13 +279,18 @@ class Player(pg.sprite.Sprite):
         self.trophies_collected += len(hits)
 
     def check_exit(self):
+        # If the current level has no exit (e.g., parent level delegates finishing to a sub-level), do nothing
+        if not getattr(self.world, "exit", None):
+            return
+
         # Exit is always open - no need to collect all trophies
-        self.world.exit.open()
+        try:
+            self.world.exit.open()
+        except Exception:
+            return
 
         if pg.sprite.collide_rect(self, self.world.exit):
-            sound_manager.play_sound_effect(
-                "level_complete"
-            )  # Play level complete sound
+            sound_manager.play_sound_effect("level_complete")
             self.world.level_complete_flag = True
 
     def check_pipes(self):
@@ -418,13 +425,18 @@ class Player(pg.sprite.Sprite):
         """Fire a bullet if player has a shooting weapon"""
         if not self.active_weapon:
             return
-
         weapon_data = WEAPON_CONFIG.get(self.active_weapon)
-        if not weapon_data or weapon_data["type"] != "shooting":
+        if not weapon_data:
+            return
+        # Regular shooting weapons: fire a single bullet immediately
+        if weapon_data.get("type") != "shooting":
             return
 
         direction_x = 1 if self.vx >= 0 else -1
         direction_y = 0
+
+        # Pass gravity hint to Bullet if weapon requests it
+        use_gravity = weapon_data.get("gravity", False)
 
         bullet = Bullet(
             self.rect.centerx,
@@ -434,10 +446,38 @@ class Player(pg.sprite.Sprite):
             self.active_weapon,
             self.world,
             from_enemy=False,
+            use_gravity=use_gravity,
         )
         self.world.bullets.add(bullet)
         self.world.all_sprites.add(bullet)
-        self.weapons[self.active_weapon] = weapon_data["fire_rate"]
+        # Set fire cooldown
+        self.weapons[self.active_weapon] = weapon_data.get("fire_rate", 0)
+
+    def start_shoot(self):
+        """Begin firing: for spray weapons start the continuous emitter; for shooting weapons fire once."""
+        if not self.active_weapon:
+            return
+        weapon_data = WEAPON_CONFIG.get(self.active_weapon)
+        if not weapon_data:
+            return
+
+        if weapon_data.get("type") == "spray":
+            # Start continuous spray if not already running
+            if not (self.spray_stream and self.spray_stream.alive()):
+                self.spray_stream = SprayStream(self, self.active_weapon, self.world)
+                self.world.all_sprites.add(self.spray_stream)
+        elif weapon_data.get("type") == "shooting":
+            # Fire a single shot immediately on press
+            self.shoot_bullet()
+
+    def stop_shoot(self):
+        """Stop firing: terminate any continuous spray emitter."""
+        if self.spray_stream and self.spray_stream.alive():
+            try:
+                self.spray_stream.kill()
+            except Exception:
+                pass
+            self.spray_stream = None
 
     def melee_attack(self):
         """Perform melee attack if player has a melee weapon"""

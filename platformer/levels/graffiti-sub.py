@@ -83,7 +83,11 @@ level_config = {
     ],
     # Powerup locations
     "powerup_locations": [
-        {"x": 60, "y": 10, "type": 0},  # Size power-up
+        {"x": 60, "y": 10, "type": 0},  # Size power-up (existing)
+        {"x": 15, "y": 9, "type": 1},   # Speed power-up above mid platform (reachable)
+        {"x": 25, "y": 7, "type": 2},   # Background changer above moving platforms
+        {"x": 55, "y": 3, "type": 3},   # Chaos power-up near circular platform (use moving platform to reach)
+        {"x": 31, "y": 3, "type": 5},   # Teil/pixelation power-up placed on a small platform
     ],
     # Enemy locations - make it challenging
     "enemy_locations": [
@@ -113,7 +117,10 @@ level_config = {
         },
     ],
     # Weapon locations
-    "weapon_locations": [],
+    "weapon_locations": [
+        # placed at x=17 so it's reachable from the central platforms
+        {"x": 17, "y": 9, "type": "spraydose"},
+    ],
     # Moving platform locations
     "moving_platform_locations": [
         {
@@ -164,6 +171,10 @@ level_config = {
     "trophy_image": "trophy.png",
     # Exit location - completing this returns to main level
     "exit_location": (-7, 5),
+    # If True, when this sub-level's exit is reached the whole level is finished
+    # instead of returning to the parent level. Useful when the sub-level contains
+    # the final door for the complete stage.
+    "finish_parent_on_exit": True,
     # Optional: Different background for sub-level
     "background_image": "assets/backgrounds/graffiti_sublevel.png",
     "background_scroll_speed": 0.1,
@@ -174,7 +185,7 @@ level_config = {
         {"x": 4, "y": 10, "type": "disappear"},
         {"x":7, "y": 4, "type": "invisible"},
         {"x":4, "y": 6, "type": "invisible"},
-        {"x":16, "y": 10, "type": "powerup", "item": {"type": 1}},
+        {"x":16, "y": 10, "type": "powerup", "powerup_type": 1},
     ],
     # No pipes in the sub-level (to keep it simple)
     "pipe_locations": [],
