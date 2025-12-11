@@ -4,6 +4,8 @@ level_config = {
     "level_time": 300,  # Time limit in seconds (5 minutes)
     # "player_spawn": (219, -45),
     "player_spawn": (0, -35),
+    "player_start_message": "Nach rechts geht zum Trancer Leute \n kommt ihr mit?",
+    "player_start_message_color": (255, 255, 255),  # White
     # Extended grass locations - keeping original and adding more sections
     "grass_locations": [(i, -16) for i in range(-20, 16)]
     + [(i, -16) for i in range(25, 30)]
