@@ -592,7 +592,9 @@ def draw_waterfalls_with_sprites(draw, image, waterfall_locations, min_x, min_y)
         image.paste(waterfall_image, (img_x, img_y), waterfall_image)
 
 
-def draw_poppable_blocks_with_sprites(draw, image, poppable_block_locations, min_x, min_y):
+def draw_poppable_blocks_with_sprites(
+    draw, image, poppable_block_locations, min_x, min_y
+):
     """Draw poppable blocks using actual sprites."""
     for block_loc in poppable_block_locations:
         if isinstance(block_loc, tuple):
@@ -611,7 +613,7 @@ def draw_poppable_blocks_with_sprites(draw, image, poppable_block_locations, min
         # Add visual indicator for block type
         center_x = img_x + GRIDSIZE // 2
         center_y = img_y + GRIDSIZE // 2
-        
+
         if block_type == "disappear":
             # Draw X for disappearing blocks
             draw.line(
@@ -854,7 +856,9 @@ def render_level(level_config, output_path, show_grid=True, bg_opacity=0.3):
 
         # Draw poppable blocks using actual sprites
         poppable_block_locations = level_config.get("poppable_block_locations", [])
-        draw_poppable_blocks_with_sprites(draw, image, poppable_block_locations, min_x, min_y)
+        draw_poppable_blocks_with_sprites(
+            draw, image, poppable_block_locations, min_x, min_y
+        )
 
         # Draw player start position using actual sprites
         # Use player_spawn from level config, fallback to default (5, 1) if not specified
