@@ -48,16 +48,20 @@ level_config = {
         (21, 9),
         (61, 7),
     ],
-    # No powerups for simplicity
-    "powerup_locations": [],
+    # Powerups - place a flight powerup next to the pipe for testing
+    "powerup_locations": [
+        {"x": 29, "y": 11, "type": 6},
+    ],
     # A simple enemy
     "enemy_locations": [
         {"type": "tightill", "x": 121, "y": -24},
         {"type": "robodog", "x": 70, "y": -24},
         {"type": "drone", "x": 120, "y": -24},
     ],
-    # No weapons
-    "weapon_locations": [],
+    # Weapon(s) placed near the pipe for testing — spraydose placed just above the pipe
+    "weapon_locations": [
+        {"x": 30, "y": 11, "type": "spraydose"},
+    ],
     # No moving platforms
     "moving_platform_locations": [],
     # Add waterfall
@@ -82,8 +86,7 @@ level_config = {
         (5, 5),
         (5, 4),  # Top of ladder
     ],
-    # Exit at the end
-    "exit_location": (50, 13),
+    # No exit here — the sub-level exit will finish the whole level
     # Pipe configuration - this is the important part!
     "pipe_locations": [
         {

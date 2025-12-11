@@ -48,6 +48,15 @@ POWERUP_CHAOS_FPS = 10
 POWERUP_SIZE_MULTIPLIER = 2
 POWERUP_DEFAULT_DURATION = 480  # Frames (8 seconds at 60 FPS)
 POWERUP_CHAOS_DURATION = 240  # Frames (4 seconds at 60 FPS)
+# Flight powerup: duration (10s) and speed penalty while flying
+POWERUP_FLY_DURATION = 600  # Frames (10 seconds at 60 FPS)
+POWERUP_FLY_DURATION = 420  # Frames (7 seconds at 60 FPS)
+POWERUP_FLY_SPEED_PENALTY = 3  # Reduce player.speed by this amount while flying (stronger slow)
+# For the joint powerup we enable flight immediately; keep delay at 0 for compatibility
+POWERUP_FLY_DELAY = 0  # Frames before flight ability activates (now immediate)
+
+# Joint-specific pixelation strength (much stronger than default)
+POWERUP_JOINT_PIXELATION_FACTOR = 24  # Higher = more pixelated
 
 # Timer constants
 ENCOUNTER_MESSAGE_DURATION = 180  # Frames (3 seconds at 60 FPS)

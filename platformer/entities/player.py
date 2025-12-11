@@ -13,7 +13,7 @@ from ..config.settings import (
     MAX_VELOCITY,
     KEYBINDINGS,
 )
-from .bullet import Bullet, ExplodingObject
+from .bullet import Bullet, ExplodingObject, SprayStream
 from ..core.sound_manager import sound_manager
 from ..config.weapon_config import WEAPON_CONFIG
 from ..config.constants import (
@@ -31,6 +31,8 @@ from ..config.constants import (
     WEAPON_SCALE_FACTOR,
     FALL_DEATH_THRESHOLD,
     FALL_SEARCH_RANGE,
+    POWERUP_FLY_DURATION,
+    POWERUP_FLY_DELAY,
 )
 
 
@@ -66,11 +68,15 @@ class Player(pg.sprite.Sprite):
         self.active_weapon = None
         self.weapon_image = None
         self.weapon_rect = None
+        # Active spray stream (if using continuous spray weapons)
+        self.spray_stream = None
         self.controls_reversed = False
         self.spike_damage_cooldown = 0
         self.exploding_object_cooldown = EXPLODING_OBJECT_COOLDOWN
         self.damage_dealt = 0  # Track total damage dealt to enemies
         self.radial_blur_active = False  # Track if radial blur effect is active
+        # Flight flag (enabled by powerup)
+        self.can_fly = False
 
         # Ladder mechanics
         self.on_ladder = False
@@ -97,7 +103,8 @@ class Player(pg.sprite.Sprite):
 
     def apply_gravity(self):
         # Only apply gravity when not gripping a ladder
-        if not self.ladder_grip:
+        # Do not apply gravity while flying
+        if not self.ladder_grip and not self.can_fly:
             self.vy += GRAVITY
             if self.vy > MAX_VELOCITY:
                 self.vy = MAX_VELOCITY
@@ -250,6 +257,10 @@ class Player(pg.sprite.Sprite):
                 duration = random.randint(
                     POWERUP_CHAOS_DURATION // 2, POWERUP_CHAOS_DURATION
                 )
+            elif powerup.power_type == 6:
+                from ..config.constants import POWERUP_FLY_DURATION
+
+                duration = POWERUP_FLY_DURATION
             elif powerup.power_type == 5:
                 from ..config.constants import PIXELATION_DURATION
 
@@ -277,13 +288,18 @@ class Player(pg.sprite.Sprite):
         self.trophies_collected += len(hits)
 
     def check_exit(self):
+        # If the current level has no exit (e.g., parent level delegates finishing to a sub-level), do nothing
+        if not getattr(self.world, "exit", None):
+            return
+
         # Exit is always open - no need to collect all trophies
-        self.world.exit.open()
+        try:
+            self.world.exit.open()
+        except Exception:
+            return
 
         if pg.sprite.collide_rect(self, self.world.exit):
-            sound_manager.play_sound_effect(
-                "level_complete"
-            )  # Play level complete sound
+            sound_manager.play_sound_effect("level_complete")
             self.world.level_complete_flag = True
 
     def check_pipes(self):
@@ -339,12 +355,19 @@ class Player(pg.sprite.Sprite):
 
     def handle_powerup_timers(self):
         expired = []
-        for ptype in self.active_powerups:
+        # Iterate over a static list of keys because we may modify the dict during iteration
+        for ptype in list(self.active_powerups.keys()):
             self.active_powerups[ptype][0] -= 1
-            if self.active_powerups[ptype][0] <= 0:
+            remaining = self.active_powerups[ptype][0]
+
+            # (No delayed activation required anymore for flight powerup; joint
+            # enables flight immediately on pickup.)
+
+            if remaining <= 0:
                 # Timer expired, power down and mark for removal
                 self.active_powerups[ptype][1].power_down(self)
                 expired.append(ptype)
+
         for ptype in expired:
             del self.active_powerups[ptype]
 
@@ -418,13 +441,18 @@ class Player(pg.sprite.Sprite):
         """Fire a bullet if player has a shooting weapon"""
         if not self.active_weapon:
             return
-
         weapon_data = WEAPON_CONFIG.get(self.active_weapon)
-        if not weapon_data or weapon_data["type"] != "shooting":
+        if not weapon_data:
+            return
+        # Regular shooting weapons: fire a single bullet immediately
+        if weapon_data.get("type") != "shooting":
             return
 
         direction_x = 1 if self.vx >= 0 else -1
         direction_y = 0
+
+        # Pass gravity hint to Bullet if weapon requests it
+        use_gravity = weapon_data.get("gravity", False)
 
         bullet = Bullet(
             self.rect.centerx,
@@ -434,10 +462,38 @@ class Player(pg.sprite.Sprite):
             self.active_weapon,
             self.world,
             from_enemy=False,
+            use_gravity=use_gravity,
         )
         self.world.bullets.add(bullet)
         self.world.all_sprites.add(bullet)
-        self.weapons[self.active_weapon] = weapon_data["fire_rate"]
+        # Set fire cooldown
+        self.weapons[self.active_weapon] = weapon_data.get("fire_rate", 0)
+
+    def start_shoot(self):
+        """Begin firing: for spray weapons start the continuous emitter; for shooting weapons fire once."""
+        if not self.active_weapon:
+            return
+        weapon_data = WEAPON_CONFIG.get(self.active_weapon)
+        if not weapon_data:
+            return
+
+        if weapon_data.get("type") == "spray":
+            # Start continuous spray if not already running
+            if not (self.spray_stream and self.spray_stream.alive()):
+                self.spray_stream = SprayStream(self, self.active_weapon, self.world)
+                self.world.all_sprites.add(self.spray_stream)
+        elif weapon_data.get("type") == "shooting":
+            # Fire a single shot immediately on press
+            self.shoot_bullet()
+
+    def stop_shoot(self):
+        """Stop firing: terminate any continuous spray emitter."""
+        if self.spray_stream and self.spray_stream.alive():
+            try:
+                self.spray_stream.kill()
+            except Exception:
+                pass
+            self.spray_stream = None
 
     def melee_attack(self):
         """Perform melee attack if player has a melee weapon"""
@@ -586,6 +642,20 @@ class Player(pg.sprite.Sprite):
         elif not self.in_waterfall:
             self.waterfall_grip = False
 
+    def handle_flight(self):
+        """Handle flight controls when the player has flight enabled."""
+        if not getattr(self, "can_fly", False):
+            return
+        keys = pg.key.get_pressed()
+        # Vertical movement while flying
+        if keys[pg.K_UP]:
+            self.vy = -self.ladder_move_speed
+        elif keys[pg.K_DOWN]:
+            self.vy = self.ladder_move_speed
+        else:
+            # Hover in place when no vertical input
+            self.vy = 0
+
     def update(self):
         # Update knockback animation if active
         self.update_knockback_animation()
@@ -606,6 +676,9 @@ class Player(pg.sprite.Sprite):
                 if self.attack_frame >= self.attack_duration:
                     self.is_attacking = False
                     self.attack_frame = 0
+
+            # Flight handling (if active) should influence vertical movement before gravity
+            self.handle_flight()
 
             self.apply_gravity()
             self.check_edges()

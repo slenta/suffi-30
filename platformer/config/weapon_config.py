@@ -39,4 +39,16 @@ WEAPON_CONFIG = {
         "image": "weapons/gun.png",
         "size": 2,
     },
+    "spraydose": {
+        "type": "spray",
+        "damage": 1,
+        "bullet_speed": 6,
+        "fire_rate": 2,  # frames between emitted droplets
+        "bullet_image": "",  # use generated color if not provided
+        "bullet_size": (6, 6),
+        "bullet_color": (200, 100, 255),
+        "image": "spraydose.png",
+        "size": 2,
+        "gravity": True,
+    },
 }

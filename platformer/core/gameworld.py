@@ -600,9 +600,14 @@ class GameWorld:
             else current_level_trophy_count
         )
 
-        exit_x, exit_y = self.level_config["exit_location"]
-        self.exit = Exit(exit_x * GRIDSIZE, exit_y * GRIDSIZE)
-        self.all_sprites.add(self.exit)
+        # Exit may be omitted for parent levels that delegate finishing to a sub-level
+        exit_loc = self.level_config.get("exit_location", None)
+        if exit_loc:
+            exit_x, exit_y = exit_loc
+            self.exit = Exit(exit_x * GRIDSIZE, exit_y * GRIDSIZE)
+            self.all_sprites.add(self.exit)
+        else:
+            self.exit = None
 
         # Load weapon pickups
         for weapon_data in self.level_config.get("weapon_locations", []):
@@ -808,20 +813,28 @@ class GameWorld:
                         else:
                             print("🎮 Marvin Mode deactivated")
 
-                # Game controls
-                if event.key == pg.K_f:  # Shoot
-                    self.player.shoot_bullet()
+                # Game controls (KEYDOWN)
+                if event.key == pg.K_f:  # Shoot (start / single)
+                    self.player.start_shoot()
                 elif event.key == pg.K_g:  # Melee attack
                     self.player.melee_attack()
                 elif event.key == pg.K_e:
                     self.player.throw_exploding_object()
+            elif event.type == pg.KEYUP:
+                # Handle key releases (stop actions like hold-to-fire)
+                if event.key == pg.K_f:
+                    self.player.stop_shoot()
 
     async def level_complete(self):
         # Check if we're in a sub-level
+        # If we're in a sub-level, allow certain sub-levels to finish the whole level
         if self.level_stack:
-            # Return to parent level
-            self.exit_sub_level()
-            return
+            # If the current sub-level requests that its exit finishes the entire level,
+            # continue with level completion instead of returning to parent.
+            if not self.level_config.get("finish_parent_on_exit", False):
+                # Default behavior: return to parent level
+                self.exit_sub_level()
+                return
 
         # Otherwise, normal level completion
         await fade_to_black(
@@ -1534,9 +1547,11 @@ class GameWorld:
 
     def _apply_pixelation(self):
         """Apply pixelation/rasterization effect to the entire screen."""
-        # Downscale the screen by PIXELATION_FACTOR
-        small_width = WIDTH // PIXELATION_FACTOR
-        small_height = HEIGHT // PIXELATION_FACTOR
+        # Use a stronger pixelation factor if the player has a joint-specific override
+        factor = getattr(self.player, "joint_pixelation_factor", PIXELATION_FACTOR)
+        # Downscale the screen by the selected factor
+        small_width = max(1, WIDTH // factor)
+        small_height = max(1, HEIGHT // factor)
 
         # Create a small surface with the downscaled image
         small_surface = pg.transform.scale(self.screen, (small_width, small_height))
