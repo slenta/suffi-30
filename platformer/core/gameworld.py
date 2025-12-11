@@ -200,6 +200,14 @@ class GameWorld:
         self.level_module = importlib.import_module(f"platformer.levels.{level_name}")
         self.level_config = self.level_module.level_config
 
+        # Optional: allow a level to force-reset collected items / killed enemies
+        # Useful for level editing so placed enemies always respawn when the level
+        # is loaded even if this is considered the "same" level.
+        if self.level_config.get("reset_killed_on_load", False):
+            self.collected_items.clear()
+            self.killed_enemies.clear()
+            print("🧹 reset_killed_on_load is set: cleared collected items and killed enemies")
+
         # Set level boundaries
         self.ground_start = self.level_config["x_bounds"][0]
         self.ground_end = self.level_config["x_bounds"][1]
