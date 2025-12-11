@@ -5,7 +5,8 @@ This is an example sub-level accessed via a pipe from the main level.
 
 level_config = {
     # Extended to the left to give more room for exploration
-    "x_bounds": [-500, 2000],  # Extended left boundary
+    # Increase left bound so player can move at least to x = -100 (grid units)
+    "x_bounds": [-2000, 2000],  # Extended left boundary (pixels)
     "y_bounds": [-200, 300],
     # Player spawn point - where player appears when entering this sub-level
     "player_spawn": (5, 1),
@@ -17,36 +18,98 @@ level_config = {
     # Block locations - create a small cave-like structure
     "block_locations": [
         # Left Wall
-        (4, -2),
-        (3, -2),
-        (3, 3),
-        (3, 4),
-        (3, 5),
-        (3, 7),
-        (3, 8),
-        (3, 9),
-        (3, 10),
-        (3, 11),
-        (3, 12),
-        (3, 13),
+        (4,-2),
+        (3,-2),
+        
+        (3,3),
+        (3,4),
+        (3,5),
+
+        (3,7),
+        (3,8),
+        (3,9),
+        (3,10),
+        (3,11),
+        (3,12),
+        (3,13),
         # left to the wall
-        # top stairs
-        (2, -2),
-        (1, -2),
-        (0, -2),
-        (-1, -1),
-        (-2, 0),
-        (-3, 1),
+        #top stairs
+        (2,-2),
+        (1,-2),
+        (0,-2),
+        (-1,-1),
+        (-2,0),
+        (-3,1),
         # Exit blocks
         (-6, 6),
         (-6, 5),
         (-6, 4),
         (-7, 4),
-        # left top stairs
-        (-9, 3),
-        (-10, 2),
-        (-11, 1),
-        (-12, 0),
+        (-8, 4),
+        (-6,3),
+        (-7,7),
+        (-8,7),
+        (-9,7),
+        (-10,7),
+        (-11,7),
+        (-12,7),
+        # left top stairs 
+        (-9,3),
+        (-10,2),
+        (-11,1),
+        (-12,0),
+        #lower left tunnel
+        (0,10),
+        ( -1,10),
+        ( -2,10),
+        ( -3,10),
+        ( -4,10),
+        ( -5,10),
+        (-6,10),
+        (-7,10),
+        (-8,10),
+        (-9,10),
+        (-10,10),
+        (-11,10),
+        (-12,10),
+        (-13,10),
+        (-14,10),
+        (-15,10),
+        (-16,10),
+        (-17,10),
+        (-18,10),
+        (-19,10),
+        (-20,10),
+        (-21,10),
+        (-22,10),
+        (-23,10),
+        (-24,10),
+        (-25,10),
+        (-26,10),
+        (-27,10),
+        (-28,10),
+        (-29,10),
+        (-30,10),
+        (-31,10),
+        (-32,10),
+        (-33,10),
+        (-34,10),
+        (-35,10),
+        (-36,10),
+        (-37,10),
+        (-38,10),
+        (-39,10),
+        (-40,10),
+        (-41,10),
+        (-42,10),
+        (-43,10),
+        (-44,10),
+        (-45,10),
+        (-46,10),
+        (-47,10),
+        (-48,10),
+        (-49,10),
+        (-50,10),
         # right to the wall
         # Upper ceiling
         (13, 3),
@@ -67,24 +130,24 @@ level_config = {
         (50, 12),
         (51, 12),
         (52, 12),
+    
     ],
     # Gem locations - rewards for exploring the sub-level
-    "gem_locations": [(12, 2), (21, 3), (31, 4), (16, 9), (26, 7), (51, 11), (33, -3)],
+    "gem_locations": [
+        (12, 2),
+        (21, 3),
+        (31, 4),
+        (16, 9),
+        (26, 7),
+        (51, 11),     
+        (33, -3)
+    ],
     # Powerup locations
     "powerup_locations": [
         {"x": 60, "y": 10, "type": 0},  # Size power-up (existing)
-        {"x": 15, "y": 9, "type": 1},  # Speed power-up above mid platform (reachable)
-        {"x": 25, "y": 7, "type": 2},  # Background changer above moving platforms
-        {
-            "x": 55,
-            "y": 3,
-            "type": 3,
-        },  # Chaos power-up near circular platform (use moving platform to reach)
-        {
-            "x": 31,
-            "y": 3,
-            "type": 5,
-        },  # Teil/pixelation power-up placed on a small platform
+        {"x": 15, "y": 9, "type": 1},   # Speed power-up above mid platform (reachable)
+        {"x": 25, "y": 7, "type": 2},   # Background changer above moving platforms
+        {"x": 55, "y": 3, "type": 3},   # Chaos power-up near circular platform (use moving platform to reach)
     ],
     # Enemy locations - make it challenging
     "enemy_locations": [
@@ -144,6 +207,7 @@ level_config = {
             "movement_type": "circular",
             "speed": 1,
             "distance": 4,
+
         },
     ],
     # Ladder locations
@@ -166,7 +230,7 @@ level_config = {
     ],
     "trophy_image": "trophy.png",
     # Exit location - completing this returns to main level
-    "exit_location": (-7, 5),
+    "exit_location": (-7, 6),
     # If True, when this sub-level's exit is reached the whole level is finished
     # instead of returning to the parent level. Useful when the sub-level contains
     # the final door for the complete stage.
@@ -179,11 +243,10 @@ level_config = {
     # Invisible poppable block: stays pass-through until hit from below
     "poppable_block_locations": [
         {"x": 4, "y": 10, "type": "disappear"},
-        {"x": 7, "y": 4, "type": "invisible"},
-        {"x": 4, "y": 6, "type": "invisible"},
-        {"x": 16, "y": 10, "type": "powerup", "powerup_type": 1},
+        {"x":7, "y": 4, "type": "invisible"},
+        {"x":4, "y": 6, "type": "invisible"},
+        {"x":16, "y": 10, "type": "powerup", "powerup_type": 1},
     ],
     # No pipes in the sub-level (to keep it simple)
     "pipe_locations": [],
-    "exit_location": (330, 11),
 }

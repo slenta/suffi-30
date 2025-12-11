@@ -33,6 +33,7 @@ from ..config.constants import (
     FALL_SEARCH_RANGE,
     POWERUP_FLY_DURATION,
     POWERUP_FLY_DELAY,
+    POWERUP_JOINT_DURATION,
 )
 
 
@@ -77,6 +78,8 @@ class Player(pg.sprite.Sprite):
         self.radial_blur_active = False  # Track if radial blur effect is active
         # Flight flag (enabled by powerup)
         self.can_fly = False
+        # Slow-fall flag (enabled by certain powerups)
+        self.slow_fall = False
 
         # Ladder mechanics
         self.on_ladder = False
@@ -105,9 +108,19 @@ class Player(pg.sprite.Sprite):
         # Only apply gravity when not gripping a ladder
         # Do not apply gravity while flying
         if not self.ladder_grip and not self.can_fly:
-            self.vy += GRAVITY
-            if self.vy > MAX_VELOCITY:
-                self.vy = MAX_VELOCITY
+            keys = pg.key.get_pressed()
+            jump_key = KEYBINDINGS.get("jump")
+            # If slow_fall is active and the player is NOT holding the jump/up key,
+            # fall slowly similar to being in a waterfall.
+            if getattr(self, "slow_fall", False) and not keys[jump_key]:
+                # Apply reduced gravity and cap the fall speed to waterfall speed
+                self.vy += GRAVITY * 0.2
+                if self.vy > WATERFALL_MOVE_SPEED:
+                    self.vy = WATERFALL_MOVE_SPEED
+            else:
+                self.vy += GRAVITY
+                if self.vy > MAX_VELOCITY:
+                    self.vy = MAX_VELOCITY
 
     def move(self):
         keys = pg.key.get_pressed()
@@ -128,8 +141,15 @@ class Player(pg.sprite.Sprite):
             self.vx = 0
 
         # Handle jumping independently of horizontal movement
-        if keys[KEYBINDINGS.get("jump")]:
-            self.jump()
+        jump_key = KEYBINDINGS.get("jump")
+        if keys[jump_key]:
+            # If slow_fall is active (joint powerup) allow continuous ascent
+            # while the jump key is held — otherwise use normal jump logic.
+            if getattr(self, "slow_fall", False) and not self.on_ladder:
+                # Continuous upward movement: set upward velocity each frame
+                self.vy = -abs(self.jump_power)
+            else:
+                self.jump()
 
         # Check if standing on a moving platform BEFORE movement
         # This needs to happen before any position changes
@@ -264,6 +284,10 @@ class Player(pg.sprite.Sprite):
                 from ..config.constants import POWERUP_FLY_DURATION
 
                 duration = POWERUP_FLY_DURATION
+            elif powerup.power_type == 7:
+                from ..config.constants import POWERUP_JOINT_DURATION
+
+                duration = POWERUP_JOINT_DURATION
             elif powerup.power_type == 5:
                 from ..config.constants import PIXELATION_DURATION
 
