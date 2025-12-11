@@ -94,6 +94,7 @@ level_config = {
         {"x": 35, "y": -19, "type": 3},  # pulver
         {"x": 85, "y": -2, "type": 5},  # punisher
         {"x": 61, "y": -15, "type": 5},
+        {"x": 78, "y": -20, "type": 0},
     ],
     # Enemy locations (using centralized config with overrides)
     "enemy_locations": [

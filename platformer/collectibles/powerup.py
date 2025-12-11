@@ -17,7 +17,7 @@ class PowerUp(pg.sprite.Sprite):
     PowerUp class for different power-up types in the game.
 
     Power-up types:
-    - Type 0: Makes the player bigger (banana.png)
+    - Type 0: Makes the player bigger and restores health to full (banana.png)
     - Type 1: Makes the player faster (pulver.png)
     - Type 2: Changes the level background (spraydose.png)
     - Type 3: Chaos effect - reverses left/right controls, increases speed by 6, and has 50% chance to set FPS to 10 for 8 seconds
@@ -88,7 +88,9 @@ class PowerUp(pg.sprite.Sprite):
             # Teil powerup - radial blur effect
             player.radial_blur_active = True
         elif self.power_type == 0 or self.power_type == 4:
-            # Make the player bigger
+            # Make the player bigger and restore health to full (type 0)
+            if self.power_type == 0:
+                player.health = player.max_health
             player.image = pg.transform.scale(
                 player.image,
                 (
