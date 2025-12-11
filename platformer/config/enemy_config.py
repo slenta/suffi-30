@@ -53,7 +53,7 @@ ENEMY_TYPES = {
         "melee_damage": 2,
         "can_throw_explosives": False,
         "can_summon_minions": False,
-        "encounter_message": "Das erste Totem!",
+        "encounter_message": "Suffi guck! Das erste Totem!",
         "shoot_cooldown": 60,
     },
     "trance_jesus": {
@@ -69,7 +69,7 @@ ENEMY_TYPES = {
         "melee_damage": 4,
         "can_throw_explosives": False,
         "can_summon_minions": False,
-        "encounter_message": "Sweet Baby Jesus",
+        "encounter_message": "Sweet Baby Jesus dieses Acid war aber keine Microdose",
         "shoot_cooldown": 60,
     },
     "trance_hippie": {
@@ -85,7 +85,7 @@ ENEMY_TYPES = {
         "melee_damage": 2,
         "can_throw_explosives": False,
         "can_summon_minions": False,
-        "encounter_message": "Ab in den Hippie Wald!",
+        "encounter_message": "Durch die Röhre ab in den Hippie Wald!",
         "shoot_cooldown": 60,
     },
     "trance_okf": {
@@ -101,7 +101,7 @@ ENEMY_TYPES = {
         "melee_damage": 15,
         "can_throw_explosives": False,
         "can_summon_minions": False,
-        "encounter_message": "BOSS FIGHT: OKF Macker!",
+        "encounter_message": "OKF Macker verpiss dich!",
         "shoot_cooldown": 60,
     },
     "dj_booth": {
@@ -117,7 +117,7 @@ ENEMY_TYPES = {
         "melee_damage": 50,
         "can_throw_explosives": False,
         "can_summon_minions": True,
-        "encounter_message": "Mix it up!",
+        "encounter_message": "Jetzt nur noch länger durchhalten als die DJ..",
         "shoot_cooldown": 10,
     },
     # Graffiti level enemies
@@ -150,7 +150,7 @@ ENEMY_TYPES = {
         "melee_damage": 1,
         "can_throw_explosives": False,
         "can_summon_minions": False,
-        "encounter_message": None,
+        "encounter_message": "Du süßer kleiner Pilz",
         "shoot_cooldown": 60,
     },
     # Hospital level enemies
@@ -432,7 +432,7 @@ ENEMY_TYPES = {
         "melee_damage": 20,
         "can_throw_explosives": False,
         "can_summon_minions": False,
-        "encounter_message": "Crazy Kutte! Who's that?",
+        "encounter_message": "Crazy Druiden Kutte wo hast du die denn her?",
         "shoot_cooldown": 60,
         "spawn_on_death": {
             "type": "presslufthanna",
@@ -451,7 +451,7 @@ ENEMY_TYPES = {
         "melee_damage": 20,
         "can_throw_explosives": False,
         "can_summon_minions": False,
-        "encounter_message": "PLH gibt dir aufs Maul!",
+        "encounter_message": "Es ist PLH",
         "shoot_cooldown": 60,
     },
     "tightill": {

@@ -175,7 +175,7 @@ level_config = {
             "chase_range": 400,
             "melee_damage": 15,
             "can_throw_explosives": False,
-            "encounter_message": "The final enemy on the trancefloor – it is yourself!",
+            "encounter_message": "BOSS FIGHT: The final enemy on the trancefloor – it is yourself!",
         },
     ],
     # Extended trophy locations - more collectibles
