@@ -243,7 +243,10 @@ class GameWorld:
             custom = self.level_config["grass_image"]
             if not os.path.isabs(custom):
                 possible = [
-                    os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), custom),
+                    os.path.join(
+                        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                        custom,
+                    ),
                     os.path.join(IMAGEPATH, custom),
                 ]
             else:
@@ -253,14 +256,18 @@ class GameWorld:
                 if os.path.exists(p):
                     try:
                         grass_image = pg.image.load(p).convert_alpha()
-                        print(f"🌾 Loaded custom grass image for level: {os.path.basename(p)}")
+                        print(
+                            f"🌾 Loaded custom grass image for level: {os.path.basename(p)}"
+                        )
                         break
                     except Exception as e:
                         print(f"Error loading custom grass image {p}: {e}")
                         grass_image = None
 
         if grass_image is None:
-            grass_image = pg.image.load(os.path.join(IMAGEPATH, "grass.png")).convert_alpha()
+            grass_image = pg.image.load(
+                os.path.join(IMAGEPATH, "grass.png")
+            ).convert_alpha()
 
         # Load block image (allow level-specific override or tint)
         default_block_path = os.path.join(IMAGEPATH, "block.png")
@@ -271,7 +278,10 @@ class GameWorld:
             if not os.path.isabs(custom_path):
                 # If path is relative, allow paths relative to project root or IMAGEPATH
                 possible = [
-                    os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), custom_path),
+                    os.path.join(
+                        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                        custom_path,
+                    ),
                     os.path.join(IMAGEPATH, custom_path),
                 ]
             else:
@@ -281,7 +291,9 @@ class GameWorld:
                 if os.path.exists(p):
                     try:
                         block_image = pg.image.load(p).convert_alpha()
-                        print(f"🧱 Loaded custom block image for level: {os.path.basename(p)}")
+                        print(
+                            f"🧱 Loaded custom block image for level: {os.path.basename(p)}"
+                        )
                         break
                     except Exception as e:
                         print(f"Error loading custom block image {p}: {e}")
@@ -468,9 +480,15 @@ class GameWorld:
         self.all_sprites.add(self.player)
 
         # Show player start message if defined in level config (only on first load, not after sub-level)
-        if "player_start_message" in self.level_config and not is_sub_level_transition and not self.level_stack:
+        if (
+            "player_start_message" in self.level_config
+            and not is_sub_level_transition
+            and not self.level_stack
+        ):
             start_message = self.level_config["player_start_message"]
-            start_color = self.level_config.get("player_start_message_color", (255, 255, 255))
+            start_color = self.level_config.get(
+                "player_start_message_color", (255, 255, 255)
+            )
             self.show_encounter_message(start_message, start_color)
 
         # Load enemies (supports both new template-based and legacy detailed configs)
@@ -616,7 +634,9 @@ class GameWorld:
         closed_image = self.level_config.get("exit_closed_image", "door_closed.png")
         open_image = self.level_config.get("exit_open_image", "door_open.png")
         exit_size = self.level_config.get("exit_size_multiplier", 2)
-        self.exit = Exit(exit_x * GRIDSIZE, exit_y * GRIDSIZE, closed_image, open_image, exit_size)
+        self.exit = Exit(
+            exit_x * GRIDSIZE, exit_y * GRIDSIZE, closed_image, open_image, exit_size
+        )
         self.all_sprites.add(self.exit)
 
         # Load weapon pickups
@@ -825,11 +845,15 @@ class GameWorld:
 
                 # Game controls
                 if event.key == pg.K_f:  # Shoot
-                    self.player.shoot_bullet()
+                    self.player.start_shoot()
                 elif event.key == pg.K_g:  # Melee attack
                     self.player.melee_attack()
                 elif event.key == pg.K_e:
                     self.player.throw_exploding_object()
+            elif event.type == pg.KEYUP:
+                # Stop continuous spray when F key is released
+                if event.key == pg.K_f:
+                    self.player.stop_shoot()
 
     async def level_complete(self):
         # Check if we're in a sub-level
@@ -1116,7 +1140,11 @@ class GameWorld:
         # Draw encounter message (if active)
         if self.encounter_message_timer > 0 and self.encounter_message:
             draw_encounter_message(
-                self.screen, self.encounter_message, WIDTH, HEIGHT, self.encounter_message_color
+                self.screen,
+                self.encounter_message,
+                WIDTH,
+                HEIGHT,
+                self.encounter_message_color,
             )
             self.encounter_message_timer -= 1
 
