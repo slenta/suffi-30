@@ -26,6 +26,7 @@ class Bullet(pg.sprite.Sprite):
         weapon_name,
         world,
         from_enemy=False,
+        use_gravity=False,
         *groups
     ):
         super().__init__(*groups)
@@ -36,7 +37,8 @@ class Bullet(pg.sprite.Sprite):
         # Get weapon stats
         weapon_data = WEAPON_CONFIG.get(weapon_name, WEAPON_CONFIG["gun"])
         self.damage = weapon_data["damage"]
-        self.speed = weapon_data["bullet_speed"]
+        self.speed = weapon_data.get("bullet_speed", 0)
+        self.use_gravity = use_gravity or weapon_data.get("gravity", False)
 
         # Load bullet image or create colored surface
         bullet_image_path = os.path.join(IMAGEPATH, weapon_data.get("bullet_image", ""))
@@ -52,24 +54,59 @@ class Bullet(pg.sprite.Sprite):
         self.direction_x = direction_x
         self.direction_y = direction_y
 
+        # For gravity-affected bullets we track vertical velocity separately
+        if self.use_gravity:
+            # horizontal velocity (pixels/frame)
+            self.vx = self.direction_x * self.speed
+            # initial vertical velocity (pixels/frame)
+            self.vy = self.direction_y * self.speed
+
     def update(self):
-        self.rect.x += self.direction_x * self.speed
-        self.rect.y += self.direction_y * self.speed
+        try:
+            if self.use_gravity:
+                # Gravity-affected projectile: horizontal constant velocity, vertical accelerates
+                self.rect.x += int(self.vx)
+                self.vy += GRAVITY
+                self.rect.y += int(self.vy)
+            else:
+                self.rect.x += self.direction_x * self.speed
+                self.rect.y += self.direction_y * self.speed
 
-        # Check for collisions with platforms
-        if pg.sprite.spritecollideany(self, self.world.platforms):
-            self.kill()
+            # Check for collisions with platforms
+            try:
+                if pg.sprite.spritecollideany(self, self.world.platforms):
+                    self.kill()
+                    return
+            except Exception:
+                # Defensive: if platforms group is missing or invalid, ignore collision check
+                pass
 
-        # Check for collisions
-        if self.from_enemy:
-            if pg.sprite.collide_rect(self, self.world.player):
-                self.world.player.take_damage(self.damage)
+            # Check for collisions
+            if self.from_enemy:
+                if hasattr(self.world, 'player') and pg.sprite.collide_rect(self, self.world.player):
+                    try:
+                        self.world.player.take_damage(self.damage)
+                    except Exception:
+                        pass
+                    self.kill()
+            else:
+                try:
+                    hit_enemy = pg.sprite.spritecollideany(self, self.world.enemies)
+                except Exception:
+                    hit_enemy = None
+                if hit_enemy:
+                    try:
+                        hit_enemy.take_damage(self.damage)
+                    except Exception:
+                        pass
+                    self.kill()
+        except Exception as e:
+            # Defensive: print and remove bullet if unexpected error occurs during update
+            print(f"⚠️ Bullet update error: {e}")
+            try:
                 self.kill()
-        else:
-            hit_enemy = pg.sprite.spritecollideany(self, self.world.enemies)
-            if hit_enemy:
-                hit_enemy.take_damage(self.damage)
-                self.kill()
+            except Exception:
+                pass
 
 
 class ExplodingObject(pg.sprite.Sprite):
@@ -124,3 +161,73 @@ class ExplodingObject(pg.sprite.Sprite):
 
         # Remove the object after it explodes
         self.kill()
+
+
+class SprayStream(pg.sprite.Sprite):
+    """A continuous spray emitter attached to the player.
+
+    Creates gravity-affected bullets every `fire_rate` frames while active.
+    """
+
+    def __init__(self, player, weapon_name, world, *groups):
+        super().__init__(*groups)
+        self.player = player
+        self.weapon_name = weapon_name
+        self.world = world
+        self.counter = 0
+        self.fire_rate = WEAPON_CONFIG.get(weapon_name, {}).get("fire_rate", 2)
+        # Provide a minimal image and rect so the sprite can be safely drawn by GameWorld
+        # SprayStream itself is invisible; use a 1x1 transparent surface and keep it positioned
+        self.image = pg.Surface((1, 1), pg.SRCALPHA)
+        self.image.fill((0, 0, 0, 0))
+        self.rect = self.image.get_rect()
+
+    def update(self):
+        try:
+            # Stop emitting if player switched weapons or no longer has it
+            if self.player.active_weapon != self.weapon_name or self.weapon_name not in self.player.weapons:
+                self.kill()
+                return
+
+            self.counter += 1
+            if self.counter % max(1, self.fire_rate) != 0:
+                return
+
+            # Determine facing direction and emission point
+            facing = 1 if getattr(self.player, "vx", 0) >= 0 else -1
+            player_rect = getattr(self.player, "rect", pg.Rect(0, 0, 0, 0))
+            muzzle_x = player_rect.centerx + int(facing * (player_rect.width // 2 + 2))
+            muzzle_y = player_rect.centery
+
+            # Update our own rect so GameWorld.draw() can blit safely
+            try:
+                self.rect.center = (muzzle_x, muzzle_y)
+            except Exception:
+                # If rect can't be updated for some reason, keep going (emitter is invisible)
+                pass
+
+            # Emit a gravity-affected bullet (droplet)
+            b = Bullet(
+                muzzle_x,
+                muzzle_y,
+                facing,
+                0,
+                self.weapon_name,
+                self.world,
+                from_enemy=False,
+                use_gravity=True,
+            )
+            # Safely add to groups
+            try:
+                self.world.bullets.add(b)
+                self.world.all_sprites.add(b)
+            except Exception:
+                # If groups are in an inconsistent state, ensure bullet still exists
+                pass
+        except Exception as e:
+            # Defensive: if anything goes wrong during emission, remove the emitter to avoid crashing the game loop
+            print(f"⚠️ SprayStream error: {e}")
+            try:
+                self.kill()
+            except Exception:
+                pass

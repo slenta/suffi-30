@@ -17,6 +17,7 @@ level_config = {
     # Block locations - create a small cave-like structure
     "block_locations": [
         # Left Wall
+        (4,-2),
         (3,-2),
         
         (3,3),
@@ -31,15 +32,24 @@ level_config = {
         (3,12),
         (3,13),
         # left to the wall
+        #top stairs
         (2,-2),
         (1,-2),
         (0,-2),
         (-1,-1),
         (-2,0),
         (-3,1),
-        (-4,2),
-     
-
+        # Exit blocks
+        (-6, 6),
+        (-6, 5),
+        (-6, 4),
+        (-7, 4),
+        # left top stairs 
+        (-9,3),
+        (-10,2),
+        (-11,1),
+        (-12,0),
+        # right to the wall
         # Upper ceiling
         (13, 3),
         (14, 3),
@@ -48,8 +58,6 @@ level_config = {
         (22, 4),
         # Mid-level platforms
         (15, 10),
-        (16, 10),
-        (17, 10),
         (25, 8),
         (26, 8),
         (27, 8),
@@ -61,12 +69,7 @@ level_config = {
         (50, 12),
         (51, 12),
         (52, 12),
-        # Exit blocks
-        (-7, 6),
-        (-6, 6),
-        (-6, 5),
-        (-6, 4),
-        (-7, 4),
+    
     ],
     # Gem locations - rewards for exploring the sub-level
     "gem_locations": [
@@ -76,38 +79,48 @@ level_config = {
         (16, 9),
         (26, 7),
         (51, 11),
+        (33, -3)
     ],
     # Powerup locations
     "powerup_locations": [
-        {"x": 60, "y": 10, "type": 0},  # Size power-up
+        {"x": 60, "y": 10, "type": 0},  # Size power-up (existing)
+        {"x": 15, "y": 9, "type": 1},   # Speed power-up above mid platform (reachable)
+        {"x": 25, "y": 7, "type": 2},   # Background changer above moving platforms
+        {"x": 55, "y": 3, "type": 3},   # Chaos power-up near circular platform (use moving platform to reach)
+        {"x": 31, "y": 3, "type": 5},   # Teil/pixelation power-up placed on a small platform
     ],
     # Enemy locations - make it challenging
     "enemy_locations": [
         {
             "x": 25,
             "y": 13,
-            "image": "trump.png",
-            "speed": 1,
+            "type": "tightill",
+            "speed": 2,
             "patrol_range": 50,
-            "size_multiplier": 1,
-            "health": 2,
-            "damage": 1,
-            "shoot_range": 0,
+            "size_multiplier": 3,
+            "health": 50,
+            "damage": 2,
+            "shoot_range": 30,
+            "range": 4,
+            "reload_time": 3,
         },
         {
             "x": 50,
             "y": 13,
-            "image": "trump.png",
-            "speed": 2,
+            "type": "robodog",
+            "speed": 3,
             "patrol_range": 80,
-            "size_multiplier": 1,
-            "health": 3,
+            "size_multiplier": 3,
+            "health": 15,
             "damage": 1,
             "shoot_range": 0,
         },
     ],
     # Weapon locations
-    "weapon_locations": [],
+    "weapon_locations": [
+        # placed at x=17 so it's reachable from the central platforms
+        {"x": 17, "y": 9, "type": "spraydose"},
+    ],
     # Moving platform locations
     "moving_platform_locations": [
         {
@@ -137,6 +150,20 @@ level_config = {
 
         },
     ],
+    # Ladder locations
+    "ladder_locations": [
+        (2, 13),
+        (2, 12),
+        (2, 11),
+        (2, 10),
+        (2, 9),
+        (2, 8),
+        (2, 7),
+        (2, 6),
+        (2, 5),
+        (2, 4),
+        (2, 3),
+    ],
     # Trophy locations - collect trophy to open exit
     "trophy_locations": [
         (65, 10),
@@ -144,6 +171,10 @@ level_config = {
     "trophy_image": "trophy.png",
     # Exit location - completing this returns to main level
     "exit_location": (-7, 5),
+    # If True, when this sub-level's exit is reached the whole level is finished
+    # instead of returning to the parent level. Useful when the sub-level contains
+    # the final door for the complete stage.
+    "finish_parent_on_exit": True,
     # Optional: Different background for sub-level
     "background_image": "assets/backgrounds/graffiti_sublevel.png",
     "background_scroll_speed": 0.1,
@@ -154,6 +185,7 @@ level_config = {
         {"x": 4, "y": 10, "type": "disappear"},
         {"x":7, "y": 4, "type": "invisible"},
         {"x":4, "y": 6, "type": "invisible"},
+        {"x":16, "y": 10, "type": "powerup", "powerup_type": 1},
     ],
     # No pipes in the sub-level (to keep it simple)
     "pipe_locations": [],
