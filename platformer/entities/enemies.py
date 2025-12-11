@@ -46,6 +46,10 @@ class Enemy(pg.sprite.Sprite):
         encounter_message=None,  # Optional message to display when first encountered
         shoot_cooldown=60,  # Cooldown for shooting in frames (default: 60 = 1 second at 60 FPS)
         spawn_on_death=None,  # Optional dict with enemy config to spawn on death
+        no_clip=False,  # If True, enemy can pass through blocks
+        encounter_message_color=None,  # Optional RGB tuple for message color (e.g., (255, 0, 0) for red)
+        explosive_image=None,  # Optional custom image for thrown explosives
+        explosive_size=15,  # Size of explosive in pixels (default: 15)
     ):
         super().__init__()
         # Store the image path
@@ -53,9 +57,10 @@ class Enemy(pg.sprite.Sprite):
 
         # Load and scale the image
         original_image = pg.image.load(_image_path).convert_alpha()
-        self.image = pg.transform.scale(
+        self.original_image = pg.transform.scale(
             original_image, (GRIDSIZE * size_multiplier, GRIDSIZE * size_multiplier)
         )
+        self.image = self.original_image.copy()
         self.rect = self.image.get_rect()
         self.rect.x = _x * GRIDSIZE
         self.rect.y = _y * GRIDSIZE
@@ -68,6 +73,7 @@ class Enemy(pg.sprite.Sprite):
         self.start_x = self.rect.x
         self.patrol_range = patrol_range
         self.direction = 1  # 1 for right, -1 for left
+        self.last_direction = 1  # Track last direction for flipping
         self.size_multiplier = size_multiplier
         self.health = health
         self.max_health = health
@@ -82,10 +88,16 @@ class Enemy(pg.sprite.Sprite):
         self.is_minion = is_minion  # Store minion status
         self.can_summon_minions = can_summon_minions  # Store minion summoning ability
         self.spawn_on_death = spawn_on_death  # Enemy config to spawn on death
+        self.no_clip = no_clip  # Can pass through blocks
 
         # Encounter message attributes
         self.encounter_message = encounter_message  # Message to display
+        self.encounter_message_color = encounter_message_color  # Optional custom color
         self.has_been_encountered = False  # Track if player has seen this enemy
+        
+        # Explosive customization
+        self.explosive_image = explosive_image  # Custom image for thrown explosives
+        self.explosive_size = explosive_size  # Size of explosive in pixels
 
         # Add gravity-related attributes
         self.vy = 0  # Vertical velocity
@@ -107,11 +119,15 @@ class Enemy(pg.sprite.Sprite):
 
         # Check if enemy is visible to player for the first time
         if not self.has_been_encountered and self.encounter_message:
-            if self.is_visible_to_player():
+            # Check if player is very close to the enemy (within 3 tiles)
+            distance_to_player = abs(player.rect.centerx - self.rect.centerx)
+            if distance_to_player <= GRIDSIZE * 10 and self.is_visible_to_player():
                 self.has_been_encountered = True
                 # Trigger the encounter message in the world
                 if self.world:
-                    self.world.show_encounter_message(self.encounter_message)
+                    self.world.show_encounter_message(
+                        self.encounter_message, self.encounter_message_color
+                    )
 
         # Apply gravity
         self.vy += GRAVITY
@@ -182,24 +198,29 @@ class Enemy(pg.sprite.Sprite):
             self.rect.x -= self.speed
             self.direction = -1
 
+        # Flip image if direction changed
+        self.update_sprite_direction()
+
         # Check for horizontal collisions with platforms (prevents climbing vertical walls)
-        hits = pg.sprite.spritecollide(self, self.world.platforms, False)
-        for hit in hits:
-            # Check if this is a vertical wall collision (not the platform we're standing on)
-            # If enemy moved right and hit something on the right side
-            if (
-                move_right
-                and self.rect.right > hit.rect.left
-                and self.rect.left < hit.rect.left
-            ):
-                self.rect.right = hit.rect.left
-            # If enemy moved left and hit something on the left side
-            elif (
-                move_left
-                and self.rect.left < hit.rect.right
-                and self.rect.right > hit.rect.right
-            ):
-                self.rect.left = hit.rect.right
+        # Skip collision check if no_clip is enabled
+        if not self.no_clip:
+            hits = pg.sprite.spritecollide(self, self.world.platforms, False)
+            for hit in hits:
+                # Check if this is a vertical wall collision (not the platform we're standing on)
+                # If enemy moved right and hit something on the right side
+                if (
+                    move_right
+                    and self.rect.right > hit.rect.left
+                    and self.rect.left < hit.rect.left
+                ):
+                    self.rect.right = hit.rect.left
+                # If enemy moved left and hit something on the left side
+                elif (
+                    move_left
+                    and self.rect.left < hit.rect.right
+                    and self.rect.right > hit.rect.right
+                ):
+                    self.rect.left = hit.rect.right
 
     def shoot_at_player(self, player):
         if self.shoot_timer == 0:  # Only shoot if the timer is 0
@@ -268,6 +289,17 @@ class Enemy(pg.sprite.Sprite):
         # Reverse direction if patrol range is exceeded
         if self.rect.x > self.start_x + self.patrol_range or self.rect.x < self.start_x:
             self.direction *= -1
+
+        # Flip image if direction changed
+        self.update_sprite_direction()
+
+    def update_sprite_direction(self):
+        """Flip the sprite image based on direction."""
+        if self.direction != self.last_direction:
+            self.image = pg.transform.flip(self.original_image, True, False)
+            if self.direction == 1:  # Facing right - use original
+                self.image = self.original_image.copy()
+            self.last_direction = self.direction
 
     def reset_position(self):
         # Reset the enemy's position to its initial position
@@ -340,6 +372,8 @@ class Enemy(pg.sprite.Sprite):
                 direction_y,
                 damage=20,
                 world=self.world,
+                explosive_image=self.explosive_image,  # Pass custom image if set
+                explosive_size=self.explosive_size,  # Pass custom size
             )
             self.world.bullets.add(exploding_object)
             self.world.all_sprites.add(exploding_object)

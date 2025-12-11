@@ -1,131 +1,149 @@
 level_config = {
-    "x_bounds": [-500, 3000],  # Gameworld width
-    "y_bounds": [-200, 300],  # Gameworld height
+    "x_bounds": [-1000, 5000],  # Gameworld width
+    "y_bounds": [-500, 800],  # Gameworld height
     "level_time": 240,  # Time limit in seconds (4 minutes)
     # Player spawn point (optional) - x and y coordinates in grid units
     # If not specified, defaults to PLAYER_START_X, PLAYER_START_Y from settings.py
-    "player_spawn": (0, 10),  # Example: spawn at grid position (5, 1)
+    "player_spawn": (50, 8),  # Example: spawn at grid position (5, 1)
+    # Player thought bubble at level start
+    "player_start_message": "Nur noch diese Schicht \n und dann endlich zur Fusion...",
+    "player_start_message_color": (255, 255, 255),  # White
+    # Use a different grass tile for this sublevel (placed in assets/images)
+    "grass_image": "krankenhaus_boden.png",
     # Extended grass platforms with challenging gaps
-    "grass_locations": [(i, 14) for i in range(-20, 20)]
-    + [(i, 14) for i in range(23, 35)]
-    + [(i, 14) for i in range(40, 50)]
+    "grass_locations": [(i, 14) for i in range(-40, -23)]
+    + [(i, 14) for i in range(-20, 16)]
     + [(i, 14) for i in range(55, 70)]
-    + [(i, 8) for i in range(72, 85)]
-    + [(i, 14) for i in range(90, 110)]
-    + [(i, 14) for i in range(115, 130)],
+    + [(i, 8) for i in range(76, 90)]
+    + [(i, 14) for i in range(100, 120)]
+    + [(i, 14) for i in range(115, 400)],
     # Challenging block structures throughout the level
     "block_locations": [
-        # Starting pyramid structure
+        # Starting obstacle
         (18, 13),
-        (19, 12),
-        (20, 11),
-        (21, 10),
-        (22, 9),
-        (23, 8),
+        (21, 11),
         (24, 9),
-        (25, 10),
-        (26, 11),
-        (27, 12),
-        (28, 13),
-        # First gap - floating platforms
-        *[(i, 10) for i in range(30, 33)],
-        (35, 8),
-        (36, 8),
-        (37, 8),
-        # Vertical tower challenge
-        *[(42, i) for i in range(13, 7, -1)],
-        (43, 7),
-        (44, 7),
-        (45, 7),
-        *[(46, i) for i in range(7, 14)],
-        # Staircase up
-        (52, 13),
-        (53, 12),
-        (54, 11),
-        (55, 10),
-        (56, 9),
-        (57, 8),
-        (58, 7),
-        # Hidden cave for powerup
-        *[(i, 10) for i in range(60, 68)],
-        *[(60, i) for i in range(10, 13)],
-        *[(67, i) for i in range(10, 13)],
-        # Staircase down to lower platform
-        (70, 9),
-        (71, 10),
-        (72, 11),
-        # Tower platforms on lower level
-        *[(75, i) for i in range(8, 5, -1)],
-        *[(78, i) for i in range(8, 4, -1)],
-        *[(81, i) for i in range(8, 3, -1)],
-        # Bridge back to main level
-        *[(i, 10) for i in range(83, 88)],
-        (87, 11),
-        (88, 12),
-        (89, 13),
-        # Challenging zigzag section
-        (92, 12),
-        (93, 11),
-        (94, 10),
-        (95, 9),
-        (96, 8),
-        (97, 7),
-        (98, 8),
-        (99, 9),
-        (100, 10),
-        (101, 11),
-        (102, 12),
-        # Final tower before exit
-        *[(105, i) for i in range(13, 8, -1)],
-        *[(i, 8) for i in range(105, 110)],
-        *[(110, i) for i in range(8, 14)],
-        # Final platform gauntlet
-        (112, 12),
-        (113, 11),
-        (115, 10),
-        (117, 9),
-        (119, 10),
-        (121, 11),
-        (123, 12),
-        (125, 13),
+        (30, 13),
+        (33, 11),
+        (39, 13),    
+        # Jumping puzzle
+        (128, 9),
+        (134, 5),
+        (128, 1),
+        (134, -3),
+        (128, -7),
+        (112, -11),
+        # Way back after Trophy
+        (88,20),
+        (85,19),
+        (82,18),
+        (79,17),
+        (78,17),
+        (75,20),
+        (74,20),
+        (73,20),
     ],
     # Strategic gem placements
     "gem_locations": [
-        (21, 7),  # Top of first pyramid
+        (21, 7),  # Top of starting obstacle
         (37, 6),  # After first gap
         (63, 8),  # Inside hidden cave
         (81, 1),  # Top of tallest tower
         (97, 5),  # Peak of zigzag
-        (105, 7),  # Final tower
+        (128, -9),  # Jumping puzzle
     ],
     # Powerups at key locations
     "powerup_locations": [
-        {"x": 35, "y": 7, "type": 0},  # Speed boost before gap
-        {"x": 63, "y": 9, "type": 2},  # Invincibility in cave
-        {"x": 75, "y": 4, "type": 1},  # Jump boost on tower
-        {"x": 100, "y": 8, "type": 3},  # Health near zigzag peak
+        {"x": 10, "y": 7, "type": 0},  # Speed boost before gap
+        {"x": 10, "y": 9, "type": 2},  # Invincibility in cave
+        {"x": 10, "y": 4, "type": 1},  # Jump boost on tower
+        {"x": 120, "y": 8, "type": 6},  # Health near zigzag peak
     ],
     # Enemy locations (using centralized config with overrides)
     "enemy_locations": [
-        {"type": "patient_follower", "x": 2, "y": 13},
-        {"type": "patient", "x": 48, "y": 13},
-        {"type": "patient", "x": 65, "y": 13},
-        {"type": "patient", "x": 78, "y": 7},
-        {"type": "patient", "x": 95, "y": 13},
-        {"type": "patient", "x": 110, "y": 13},
-        {"type": "patient", "x": 120, "y": 13},
+        {
+            "type": "doctor_f_follower",
+            "x": 2,
+            "y": 13,
+            "encounter_message": "Frau Hegselmann, schön,\ndass sie so spontan einspringen konnten!",
+            "encounter_message_color": (0, 255, 0),  # Green
+        },
+        {
+            "type": "patient",
+            "x": 56,
+            "y": 13,
+            "encounter_message": "Da sind sie ja endlich!",
+            "encounter_message_color": (255, 0, 0),  # Red
+        },
+        {
+            "type": "patient_f_young",
+            "x": 65,
+            "y": 13,
+            "encounter_message": "Haben sie kurz Zeit für mich?",
+            "encounter_message_color": (255, 0, 0),  # Red
+        },
+        {
+            "type": "doctor_f_follower",
+            "x": 83,
+            "y": 6,
+            "encounter_message": "Frau Hegselmann, können Sie sich \n bitte kurz in der Notaufnahme melden?",
+            "encounter_message_color": (255, 0, 0),  # Red
+        },
+         {
+            "type": "doctor_old",
+            "x": 120,
+            "y": 13,
+            "encounter_message": "Sie müssen mich leider vertreten und länger bleiben, \n jemand hat eine Delle in meinen Porsche gefahren.",
+            "encounter_message_color": (255, 0, 0),  # Red
+        },
+        {
+            "type": "patient_f",
+            "x": 140,
+            "y": 13,
+            "encounter_message": "Lassen Sie mich nicht allein \n das ist Altersdiskriminierung!",
+            "encounter_message_color": (0, 255, 0),  # Green
+        },
+        {
+            "type": "patient_f_young",
+            "x": 150,
+            "y": 13,
+            "encounter_message": "This hospital\nis cursed!",
+            "encounter_message_color": (0, 255, 0),  # Green
+        },
+        {
+            "type": "patient",
+            "x": 160,
+            "y": 13,
+            "encounter_message": "Don't leave\nme here!",
+            "encounter_message_color": (0, 255, 0),  # Green
+        },
+        {
+            "type": "jonas",
+            "x": 180,
+            "y": 13,
+        },
+        {
+            "type": "paul",
+            "x": 185,
+            "y": 13,
+        },
+        {
+            "type": "house",
+            "x": 200,
+            "y": 13,
+            "encounter_message": "Sie wollen doch nicht etwa schon gehen? \n Die Schicht fängt doch gerade erst an!",
+        }
     ],
-    # Trophy checkpoints
     "trophy_locations": [
-        (43, 6),  # After first tower
-        (85, 9),  # After lower level section
-        (110, 7),  # Final tower
+        (43, -3),  # First jumping obstacle
+        (91, 25),  # Bottom of ladder
+        (112, -14),  # Jumping puzzle end
     ],
-    "trophy_image": "trophy.png",  # Path to trophy image (relative to assets/images)
+    "trophy_image": "AU.png",  # Path to trophy image (relative to assets/images)
     # Moving platforms for dynamic challenge
     "moving_platform_locations": [
         {
-            "x": 38,
+            "x": 43,
             "y": 10,
             "platform_type": "block",
             "movement_type": "linear",
@@ -134,8 +152,17 @@ level_config = {
             "direction": "horizontal",
         },
         {
+            "x": 40,
+            "y": 2,
+            "platform_type": "block",
+            "movement_type": "linear",
+            "speed": 1,
+            "distance": 7,
+            "direction": "vertical",
+        },
+        {
             "x": 50,
-            "y": 11,
+            "y": 9,
             "platform_type": "block",
             "movement_type": "linear",
             "speed": 1,
@@ -147,12 +174,12 @@ level_config = {
             "y": 12,
             "platform_type": "block",
             "movement_type": "circular",
-            "speed": 20,
+            "speed": 2,
             "distance": 3,
             "direction": "horizontal",
         },
         {
-            "x": 107,
+            "x": 99,
             "y": 10,
             "platform_type": "block",
             "movement_type": "linear",
@@ -160,23 +187,55 @@ level_config = {
             "distance": 6,
             "direction": "vertical",
         },
+        {
+            "x": 116,
+            "y": -7,
+            "platform_type": "block",
+            "movement_type": "linear",
+            "speed": 2,
+            "distance": 6,
+            "direction": "horizontal",
+        },
     ],
     # Ladder for vertical navigation
-    "ladder_locations": [(85, i) for i in range(8, 14)],
-    "exit_location": (128, 13),
+    "ladder_locations": [(91, i) for i in range(8, 25)],
+    "exit_location": (330, 11),
+    "exit_closed_image": "Bus.png",  # Optional
+    "exit_open_image": "Bus.png",      # Optional
+    "exit_size_multiplier": 16,  # Make the bus 16 times bigger (default is 2)
     "spike_locations": [
-        # Add danger zones
+        # Add danger 
         *[
-            {"x": i, "y": 15, "direction": "up", "damage": 10} for i in range(36, 39)
-        ],  # Below first gap
+            {"x": i, "y": 12, "direction": "up", "damage": 50} for i in range(19, 21)
+        ],  # in first obstacle
+        *[
+            {"x": i, "y": 10, "direction": "up", "damage": 50} for i in range(22, 24)
+        ],  # in first obstacle
+        *[
+            {"x": i, "y": 11, "direction": "up", "damage": 50} for i in range(26, 29)
+        ],  # in first obstacle
+        *[
+            {"x": i, "y": 11, "direction": "up", "damage": 50} for i in range(35, 38)
+        ],  # in first obstacle
         *[
             {"x": i, "y": 15, "direction": "up", "damage": 10} for i in range(51, 55)
         ],  # Below staircase
         *[
-            {"x": i, "y": 15, "direction": "up", "damage": 10} for i in range(91, 104)
+            {"x": i, "y": 15, "direction": "up", "damage": 10} for i in range(91, 100)
         ],  # Below zigzag section
     ],
-    "background_music": "assets/music/level1.ogg",  # Path relative to game root
+    # Pipe configuration - this is the important part!
+    "pipe_locations": [
+        {
+            "x": 86,  # X position in grid units (where the pipe appears)
+            "y": 6,  # Y position in grid units (top of the pipe - pipe is 2 units tall, so bottom will be at y=14)
+            "sub_level": "hospital-sub",  # Name of the sub-level file (without .py extension)
+            "return_x": 100,  # Where player spawns when returning (grid units)
+            "return_y": 13,  # Y position when returning (grid units)
+            "direction": "down",  # Direction to press: "down", "up", "left", or "right"
+        },
+    ],
+    "background_music": "assets/music/greys.mp3",  # Path relative to game root
     "background_image": "assets/backgrounds/hospital_background_seamless.png",
     "background_scroll_speed": 0.3,  # Optional: parallax scrolling speed (0.0 = static, 1.0 = moves with camera)
     "block_image": "block_white_2.png",  # Custom block image for this level

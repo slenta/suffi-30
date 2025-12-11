@@ -86,6 +86,7 @@ class GameWorld:
 
         # Encounter message system
         self.encounter_message = None
+        self.encounter_message_color = None  # Custom color for message
         self.encounter_message_timer = 0
         self.encounter_message_duration = 180  # 3 seconds at 60 FPS
 
@@ -466,6 +467,12 @@ class GameWorld:
         self.player_sprite_group.add(self.player)
         self.all_sprites.add(self.player)
 
+        # Show player start message if defined in level config (only on first load, not after sub-level)
+        if "player_start_message" in self.level_config and not is_sub_level_transition and not self.level_stack:
+            start_message = self.level_config["player_start_message"]
+            start_color = self.level_config.get("player_start_message_color", (255, 255, 255))
+            self.show_encounter_message(start_message, start_color)
+
         # Load enemies (supports both new template-based and legacy detailed configs)
         for enemy_data in self.level_config["enemy_locations"]:
             # If enemy has a 'type' field, load from config template
@@ -514,6 +521,10 @@ class GameWorld:
                 config.get("encounter_message", None),
                 config.get("shoot_cooldown", 60),
                 config.get("spawn_on_death", None),
+                config.get("no_clip", False),
+                config.get("encounter_message_color", None),
+                config.get("explosive_image", None),
+                config.get("explosive_size", 15),
             )
             # Store the enemy ID for tracking when killed
             enemy.enemy_id = enemy_id
@@ -601,7 +612,11 @@ class GameWorld:
         )
 
         exit_x, exit_y = self.level_config["exit_location"]
-        self.exit = Exit(exit_x * GRIDSIZE, exit_y * GRIDSIZE)
+        # Get custom exit images if specified in level config
+        closed_image = self.level_config.get("exit_closed_image", "door_closed.png")
+        open_image = self.level_config.get("exit_open_image", "door_open.png")
+        exit_size = self.level_config.get("exit_size_multiplier", 2)
+        self.exit = Exit(exit_x * GRIDSIZE, exit_y * GRIDSIZE, closed_image, open_image, exit_size)
         self.all_sprites.add(self.exit)
 
         # Load weapon pickups
@@ -1100,7 +1115,9 @@ class GameWorld:
 
         # Draw encounter message (if active)
         if self.encounter_message_timer > 0 and self.encounter_message:
-            draw_encounter_message(self.screen, self.encounter_message, WIDTH, HEIGHT)
+            draw_encounter_message(
+                self.screen, self.encounter_message, WIDTH, HEIGHT, self.encounter_message_color
+            )
             self.encounter_message_timer -= 1
 
         # Draw timer (top right corner)
@@ -1385,9 +1402,10 @@ class GameWorld:
                     waiting = False
             self.clock.tick(60)
 
-    def show_encounter_message(self, message):
+    def show_encounter_message(self, message, color=None):
         """Display an encounter message when player first sees an enemy."""
         self.encounter_message = message
+        self.encounter_message_color = color  # Store custom color
         self.encounter_message_timer = self.encounter_message_duration
 
     def load_sound_effects(self):

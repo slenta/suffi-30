@@ -75,10 +75,19 @@ class Bullet(pg.sprite.Sprite):
 class ExplodingObject(pg.sprite.Sprite):
     """Throwable explosive object that damages enemies and player in radius."""
 
-    def __init__(self, x, y, direction_x, direction_y, damage, world, *groups):
+    def __init__(self, x, y, direction_x, direction_y, damage, world, explosive_image=None, explosive_size=15, *groups):
         super().__init__(*groups)
-        self.image = pg.Surface((15, 15))
-        self.image.fill((255, 165, 0))  # Orange
+        # Try to load custom explosive image if provided, fallback to default or orange square
+        if explosive_image:
+            try:
+                loaded_image = pg.image.load(os.path.join(IMAGEPATH, explosive_image)).convert_alpha()
+                self.image = pg.transform.scale(loaded_image, (explosive_size, explosive_size))
+            except:
+                self.image = pg.Surface((explosive_size, explosive_size))
+                self.image.fill((255, 165, 0))  # Orange fallback
+        else:
+            self.image = pg.Surface((explosive_size, explosive_size))
+            self.image.fill((255, 165, 0))  # Orange default
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         self.direction_x = direction_x

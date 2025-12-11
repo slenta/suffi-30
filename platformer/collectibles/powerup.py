@@ -23,6 +23,7 @@ class PowerUp(pg.sprite.Sprite):
     - Type 3: Chaos effect - reverses left/right controls, increases speed by 6, and has 50% chance to set FPS to 10 for 8 seconds
     - Type 4: Makes the player bigger (babybrei.png)
     - Type 5: Teil - Creates pixelation/rasterization effect for 15 seconds
+    - Type 6: Monster - Restores health and makes player faster 
 
     To use type 2 (background changer):
     1. Add a power-up in your level config:
@@ -68,6 +69,10 @@ class PowerUp(pg.sprite.Sprite):
             image = pg.image.load(
                 os.path.join(IMAGEPATH, "powerups/teil.png")
             ).convert_alpha()
+        elif power_type == 6:
+            image = pg.image.load(
+                os.path.join(IMAGEPATH, "powerups/monster.png")
+            ).convert_alpha()
         else:
             image = pg.Surface((20, 20))  # Default size for unknown power-ups
             image.fill((255, 255, 0))  # Yellow for unknown power-ups
@@ -111,6 +116,10 @@ class PowerUp(pg.sprite.Sprite):
                 player.speed += POWERUP_CHAOS_SPEED_INCREASE
                 self.speed_changed = True
                 self.fps_changed = False
+        elif self.power_type == 6:
+            # Monster powerup - Restore health and make player faster
+            player.health = player.max_health
+            player.speed += POWERUP_SPEED_INCREASE
 
     def power_down(self, player):
         """Remove power-up effect from player."""
@@ -127,7 +136,7 @@ class PowerUp(pg.sprite.Sprite):
                 ),
             )
             player.rect = player.image.get_rect(center=player.rect.center)
-        elif self.power_type == 1:
+        elif self.power_type == 1 or self.power_type == 6:
             # Restore normal speed
             player.speed -= POWERUP_SPEED_INCREASE
         elif self.power_type == 3:
