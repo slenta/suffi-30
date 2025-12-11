@@ -58,7 +58,6 @@ level_config = {
     "poppable_block_locations": [
         (142, -21),  # Disappears after being popped
         # Dict format allows specifying type and item
-        {"x": 26, "y": 9, "type": "fix"},  # Turns into solid block after popping
         {
             "x": 142,
             "y": -25,
@@ -70,6 +69,24 @@ level_config = {
             "y": -19,
             "type": "item",
             "item": {"type": "powerup", "powerup_type": 3},
+        },
+        {
+            "x": 96,
+            "y": -12,
+            "type": "item",
+            "item": {"type": "powerup", "powerup_type": 5},
+        },
+        {
+            "x": 48,
+            "y": -24,
+            "type": "item",
+            "item": {"type": "powerup", "powerup_type": 3},
+        },
+        {
+            "x": 6,
+            "y": -4,
+            "type": "item",
+            "item": {"type": "powerup", "powerup_type": 5},
         },
     ],
     "gem_locations": [(15, -8), (142, -17)],
@@ -154,6 +171,7 @@ level_config = {
             "direction": "vertical",  # "horizontal" or "vertical" (for linear only)
         },
     ],
+    "trophy_image": "mushroom.png",
     "exit_location": (148, -1),
     "spike_locations": [],
     # "background_music": "assets/music/level1.ogg",  # Path relative to game root

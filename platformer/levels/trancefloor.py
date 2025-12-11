@@ -20,8 +20,7 @@ level_config = {
     + [(270, i) for i in range(-16, -10)]
     + [(i, -16) for i in range(270, 281)]
     + [(i, -16) for i in range(282, 290)]
-    + [(i, -40) for i in range(290, 420)]
-    + [(i, -20) for i in range(420, 500)],
+    + [(i, -40) for i in range(290, 410)],
     # Extended block locations - original plus new challenging platforming sections
     "block_locations": [
         # pyramid structure
@@ -97,29 +96,63 @@ level_config = {
         *[(i, -27) for i in range(312, 313)],
     ],
     "poppable_block_locations": [
+        # Dict format allows specifying type and item
         {
-            "x": 10,
-            "y": -20,
+            "x": 185,
+            "y": -36,
             "type": "item",
             "item": {"type": "gem", "image": "gem.png"},
         },  # Releases a gem
+        {
+            "x": 93,
+            "y": -32,
+            "type": "item",
+            "item": {"type": "gem", "image": "gem.png"},
+        },  # Releases a gem
+        {
+            "x": 44,
+            "y": -31,
+            "type": "item",
+            "item": {"type": "powerup", "powerup_type": 5},
+        },
+        {
+            "x": 123,
+            "y": -27,
+            "type": "item",
+            "item": {"type": "powerup", "powerup_type": 5},
+        },
+        {
+            "x": 233,
+            "y": -19,
+            "type": "item",
+            "item": {"type": "powerup", "powerup_type": 3},
+        },
+        {
+            "x": 300,
+            "y": -45,
+            "type": "item",
+            "item": {"type": "powerup", "powerup_type": 5},
+        },
     ],
     # Extended gem locations - more rewards throughout the longer level
     "gem_locations": [
         # Original gems
         (35, -40),
         (140, -40),
-        (280, -10),
-        (311, -32),
+        (256, -50),
     ],
     "ladder_locations": [(289, i) for i in range(-40, -16)],
     "powerup_locations": [
-        {"x": 10, "y": -23, "type": 5},  # Teil collectible
         {"x": 50, "y": -25, "type": 3},
-        {"x": 182, "y": -37, "type": 3},
+        {"x": 158, "y": -47, "type": 3},
         {"x": 83, "y": -27, "type": 2},
-        # {"x": 219, "y": -40, "type": 2},  # test, disable later
-        {"x": 108, "y": -25, "type": 0},
+        {"x": 80, "y": -18, "type": 0},
+        {"x": 408, "y": -42, "type": 3},
+        {"x": 260, "y": -12, "type": 3},
+        {"x": 295, "y": -30, "type": 5},
+        {"x": 350, "y": -45, "type": 3},
+        {"x": 280, "y": -20, "type": 0},
+        {"x": 145, "y": -26, "type": 0},
     ],
     # Enemies (using centralized config templates with overrides where needed)
     "enemy_locations": [
@@ -127,11 +160,11 @@ level_config = {
         {"type": "trance_jesus", "x": 170, "y": -35},
         {"type": "trance_hippie", "x": 215, "y": -42},
         {"type": "trance_okf", "x": 255, "y": -10},
-        {"type": "dj_booth", "x": 336, "y": -55},
+        {"type": "dj_booth", "x": 340, "y": -55},
         # Special final enemy (yourself!) - custom config needed
         {
-            "x": 480,
-            "y": -22,
+            "x": 390,
+            "y": -45,
             "image": "player/suffi.png",
             "speed": 3,
             "patrol_range": 300,
@@ -308,10 +341,11 @@ level_config = {
     "trophy_locations": [
         (84, -30),
         (133, -32),
-        (256, -50),
+        (280, -10),
+        (311, -32),
     ],
     "trophy_image": "mushroom.png",
-    "exit_location": (499, -22),
+    "exit_location": (400, -44),
     # Pipe configuration - this is the important part!
     "pipe_locations": [
         {
