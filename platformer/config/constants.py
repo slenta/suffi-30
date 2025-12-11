@@ -47,11 +47,13 @@ POWERUP_CHAOS_SPEED_INCREASE = 6
 POWERUP_CHAOS_FPS = 10
 POWERUP_SIZE_MULTIPLIER = 2
 POWERUP_DEFAULT_DURATION = 480  # Frames (8 seconds at 60 FPS)
-POWERUP_CHAOS_DURATION = 240  # Frames (4 seconds at 60 FPS)
+POWERUP_CHAOS_DURATION = 360  # Frames (4 seconds at 60 FPS)
 # Flight powerup: duration (10s) and speed penalty while flying
 POWERUP_FLY_DURATION = 600  # Frames (10 seconds at 60 FPS)
 POWERUP_FLY_DURATION = 420  # Frames (7 seconds at 60 FPS)
-POWERUP_FLY_SPEED_PENALTY = 3  # Reduce player.speed by this amount while flying (stronger slow)
+POWERUP_FLY_SPEED_PENALTY = (
+    3  # Reduce player.speed by this amount while flying (stronger slow)
+)
 # For the joint powerup we enable flight immediately; keep delay at 0 for compatibility
 POWERUP_FLY_DELAY = 0  # Frames before flight ability activates (now immediate)
 

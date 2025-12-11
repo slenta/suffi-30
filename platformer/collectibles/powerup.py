@@ -83,7 +83,7 @@ class PowerUp(pg.sprite.Sprite):
         self.rect.center = (x, y)
 
     def apply_effect(self, player):
-        """Apply power-up effect to player."""
+        """Apply power-up effect to player. Returns duration if type 3, otherwise None."""
         if self.power_type == 5:
             # Teil powerup - radial blur effect
             player.radial_blur_active = True
@@ -105,21 +105,25 @@ class PowerUp(pg.sprite.Sprite):
             self.world.change_background()
         elif self.power_type == 3:
             # Chaos effect - 50% chance for one of two effects
+            from ..config.constants import POWERUP_CHAOS_DURATION
             if random.random() < 0.5:
-                # Option A: Reverse controls + slow FPS
+                # Option A: Reverse controls + slow FPS (half duration)
                 player.controls_reversed = True
                 self.world.set_fps(POWERUP_CHAOS_FPS)
                 self.fps_changed = True
                 self.speed_changed = False
+                return POWERUP_CHAOS_DURATION // 2  # 2 seconds
             else:
-                # Option B: Speed increase
+                # Option B: Speed increase (full duration)
                 player.speed += POWERUP_CHAOS_SPEED_INCREASE
                 self.speed_changed = True
                 self.fps_changed = False
+                return POWERUP_CHAOS_DURATION  # 4 seconds
         elif self.power_type == 6:
             # Monster powerup - Restore health and make player faster
             player.health = player.max_health
             player.speed += POWERUP_SPEED_INCREASE
+        return None
 
     def power_down(self, player):
         """Remove power-up effect from player."""

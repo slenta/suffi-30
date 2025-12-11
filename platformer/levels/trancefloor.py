@@ -40,7 +40,7 @@ level_config = {
         # first gem
         *[(i, -20) for i in range(45, 47)],
         *[(i, -23) for i in range(49, 51)],
-        (43, -27),
+        (45, -27),
         (42, -27),
         *[(i, -32) for i in range(47, 50)],
         *[(i, -35) for i in range(54, 56)],
@@ -158,7 +158,7 @@ level_config = {
     "enemy_locations": [
         {"type": "trance_totem", "x": 130, "y": -24},
         {"type": "trance_jesus", "x": 170, "y": -35},
-        {"type": "trance_hippie", "x": 215, "y": -42},
+        {"type": "trance_hippie", "x": 210, "y": -42},
         {"type": "trance_okf", "x": 255, "y": -10},
         {"type": "dj_booth", "x": 340, "y": -55},
         # Special final enemy (yourself!) - custom config needed

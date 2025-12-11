@@ -249,14 +249,11 @@ class Player(pg.sprite.Sprite):
             self.world.collected_items.add(
                 f"{self.world.current_level_name}_powerup_{powerup_x}_{powerup_y}"
             )
-            powerup.apply_effect(self)
+            # Type 3 powerup returns its own duration based on effect
+            effect_duration = powerup.apply_effect(self)
             # Type 3 powerup lasts 4 seconds (240 frames), type 5 lasts 15 seconds (900 frames), others last 8 seconds (480 frames)
             if powerup.power_type == 3:
-                from ..config.constants import POWERUP_CHAOS_DURATION
-
-                duration = random.randint(
-                    POWERUP_CHAOS_DURATION // 2, POWERUP_CHAOS_DURATION
-                )
+                duration = effect_duration  # Use duration from apply_effect
             elif powerup.power_type == 6:
                 from ..config.constants import POWERUP_FLY_DURATION
 
