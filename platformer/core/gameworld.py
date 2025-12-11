@@ -1547,9 +1547,11 @@ class GameWorld:
 
     def _apply_pixelation(self):
         """Apply pixelation/rasterization effect to the entire screen."""
-        # Downscale the screen by PIXELATION_FACTOR
-        small_width = WIDTH // PIXELATION_FACTOR
-        small_height = HEIGHT // PIXELATION_FACTOR
+        # Use a stronger pixelation factor if the player has a joint-specific override
+        factor = getattr(self.player, "joint_pixelation_factor", PIXELATION_FACTOR)
+        # Downscale the screen by the selected factor
+        small_width = max(1, WIDTH // factor)
+        small_height = max(1, HEIGHT // factor)
 
         # Create a small surface with the downscaled image
         small_surface = pg.transform.scale(self.screen, (small_width, small_height))

@@ -48,8 +48,10 @@ level_config = {
         (21, 9),
         (61, 7),
     ],
-    # No powerups for simplicity
-    "powerup_locations": [],
+    # Powerups - place a flight powerup next to the pipe for testing
+    "powerup_locations": [
+        {"x": 29, "y": 11, "type": 6},
+    ],
     # A simple enemy
     "enemy_locations": [
         {"type": "tightill", "x": 121, "y": -24},

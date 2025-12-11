@@ -31,6 +31,8 @@ from ..config.constants import (
     WEAPON_SCALE_FACTOR,
     FALL_DEATH_THRESHOLD,
     FALL_SEARCH_RANGE,
+    POWERUP_FLY_DURATION,
+    POWERUP_FLY_DELAY,
 )
 
 
@@ -73,6 +75,8 @@ class Player(pg.sprite.Sprite):
         self.exploding_object_cooldown = EXPLODING_OBJECT_COOLDOWN
         self.damage_dealt = 0  # Track total damage dealt to enemies
         self.radial_blur_active = False  # Track if radial blur effect is active
+        # Flight flag (enabled by powerup)
+        self.can_fly = False
 
         # Ladder mechanics
         self.on_ladder = False
@@ -99,7 +103,8 @@ class Player(pg.sprite.Sprite):
 
     def apply_gravity(self):
         # Only apply gravity when not gripping a ladder
-        if not self.ladder_grip:
+        # Do not apply gravity while flying
+        if not self.ladder_grip and not self.can_fly:
             self.vy += GRAVITY
             if self.vy > MAX_VELOCITY:
                 self.vy = MAX_VELOCITY
@@ -252,6 +257,10 @@ class Player(pg.sprite.Sprite):
                 duration = random.randint(
                     POWERUP_CHAOS_DURATION // 2, POWERUP_CHAOS_DURATION
                 )
+            elif powerup.power_type == 6:
+                from ..config.constants import POWERUP_FLY_DURATION
+
+                duration = POWERUP_FLY_DURATION
             elif powerup.power_type == 5:
                 from ..config.constants import PIXELATION_DURATION
 
@@ -346,12 +355,19 @@ class Player(pg.sprite.Sprite):
 
     def handle_powerup_timers(self):
         expired = []
-        for ptype in self.active_powerups:
+        # Iterate over a static list of keys because we may modify the dict during iteration
+        for ptype in list(self.active_powerups.keys()):
             self.active_powerups[ptype][0] -= 1
-            if self.active_powerups[ptype][0] <= 0:
+            remaining = self.active_powerups[ptype][0]
+
+            # (No delayed activation required anymore for flight powerup; joint
+            # enables flight immediately on pickup.)
+
+            if remaining <= 0:
                 # Timer expired, power down and mark for removal
                 self.active_powerups[ptype][1].power_down(self)
                 expired.append(ptype)
+
         for ptype in expired:
             del self.active_powerups[ptype]
 
@@ -626,6 +642,20 @@ class Player(pg.sprite.Sprite):
         elif not self.in_waterfall:
             self.waterfall_grip = False
 
+    def handle_flight(self):
+        """Handle flight controls when the player has flight enabled."""
+        if not getattr(self, "can_fly", False):
+            return
+        keys = pg.key.get_pressed()
+        # Vertical movement while flying
+        if keys[pg.K_UP]:
+            self.vy = -self.ladder_move_speed
+        elif keys[pg.K_DOWN]:
+            self.vy = self.ladder_move_speed
+        else:
+            # Hover in place when no vertical input
+            self.vy = 0
+
     def update(self):
         # Update knockback animation if active
         self.update_knockback_animation()
@@ -646,6 +676,9 @@ class Player(pg.sprite.Sprite):
                 if self.attack_frame >= self.attack_duration:
                     self.is_attacking = False
                     self.attack_frame = 0
+
+            # Flight handling (if active) should influence vertical movement before gravity
+            self.handle_flight()
 
             self.apply_gravity()
             self.check_edges()
