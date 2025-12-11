@@ -160,7 +160,13 @@ class Player(pg.sprite.Sprite):
         # when the player is moving upward (vy < 0). These blocks should react when
         # hit from below even though they are not solid yet.
         if self.vy < 0:
-            inv_hits = [b for b in pg.sprite.spritecollide(self, self.world.poppable_blocks, False) if b not in self.world.platforms]
+            inv_hits = [
+                b
+                for b in pg.sprite.spritecollide(
+                    self, self.world.poppable_blocks, False
+                )
+                if b not in self.world.platforms
+            ]
             for hit in inv_hits:
                 # Treat as a collision from below: stop upward movement and trigger pop
                 self.rect.top = hit.rect.bottom

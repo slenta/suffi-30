@@ -23,7 +23,7 @@ class PowerUp(pg.sprite.Sprite):
     - Type 3: Chaos effect - reverses left/right controls, increases speed by 6, and has 50% chance to set FPS to 10 for 8 seconds
     - Type 4: Makes the player bigger (babybrei.png)
     - Type 5: Teil - Creates pixelation/rasterization effect for 15 seconds
-    - Type 6: Monster - Restores health and makes player faster 
+    - Type 6: Monster - Restores health and makes player faster
 
     To use type 2 (background changer):
     1. Add a power-up in your level config:
@@ -106,6 +106,7 @@ class PowerUp(pg.sprite.Sprite):
         elif self.power_type == 3:
             # Chaos effect - 50% chance for one of two effects
             from ..config.constants import POWERUP_CHAOS_DURATION
+
             if random.random() < 0.5:
                 # Option A: Reverse controls + slow FPS (half duration)
                 player.controls_reversed = True
