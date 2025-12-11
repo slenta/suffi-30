@@ -9,6 +9,8 @@ from ..config.constants import (
     POWERUP_CHAOS_SPEED_INCREASE,
     POWERUP_CHAOS_FPS,
     POWERUP_SIZE_MULTIPLIER,
+    POWERUP_FLY_SPEED_PENALTY,
+    POWERUP_JOINT_PIXELATION_FACTOR,
 )
 
 
@@ -24,6 +26,7 @@ class PowerUp(pg.sprite.Sprite):
     - Type 4: Makes the player bigger (babybrei.png)
     - Type 5: Teil - Creates pixelation/rasterization effect for 15 seconds
     - Type 6: Monster - Restores health and makes player faster
+    - Type 7: Joint - Applies very strong pixelation effect, speed penalty, and grants flight for 7 seconds
 
     To use type 2 (background changer):
     1. Add a power-up in your level config:
@@ -44,6 +47,9 @@ class PowerUp(pg.sprite.Sprite):
         self.power_type = power_type
         self.fps_changed = False  # Track if FPS was changed for type 3
         self.speed_changed = False  # Track if speed was changed for type 3
+        # Track whether this powerup applied a flight speed penalty so we can restore correctly
+        self._applied_fly_penalty = False
+        self._original_speed = None
 
         # Load custom images for each power-up type
         if power_type == 0:
@@ -72,6 +78,11 @@ class PowerUp(pg.sprite.Sprite):
         elif power_type == 6:
             image = pg.image.load(
                 os.path.join(IMAGEPATH, "powerups/monster.png")
+            ).convert_alpha()
+        elif power_type == 7:
+            # Joint powerup - enables short flight but slows player
+            image = pg.image.load(
+                os.path.join(IMAGEPATH, "powerups/joint.png")
             ).convert_alpha()
         else:
             image = pg.Surface((20, 20))  # Default size for unknown power-ups
@@ -126,6 +137,21 @@ class PowerUp(pg.sprite.Sprite):
             # Monster powerup - Restore health and make player faster
             player.health = player.max_health
             player.speed += POWERUP_SPEED_INCREASE
+        elif self.power_type == 7:
+            # Joint powerup: start with pixelation and immediate speed penalty.
+            # Flight should enable instantly now. Apply a much stronger
+            # pixelation effect for this powerup type, and apply a larger
+            # immediate speed penalty.
+            player.radial_blur_active = True
+            # Store a per-player override for pixelation strength so the
+            # global pixelation remains unchanged for other powerups.
+            player.joint_pixelation_factor = POWERUP_JOINT_PIXELATION_FACTOR
+            # Store original speed so we can restore it exactly on power down
+            self._original_speed = player.speed
+            player.speed = max(1, player.speed - POWERUP_FLY_SPEED_PENALTY)
+            self._applied_fly_penalty = True
+            # Enable flying immediately
+            player.can_fly = True
         return None
 
     def power_down(self, player):
@@ -133,6 +159,21 @@ class PowerUp(pg.sprite.Sprite):
         if self.power_type == 5:
             # Remove radial blur effect
             player.radial_blur_active = False
+        elif self.power_type == 7:
+            # End of joint powerup: ensure flying disabled, remove pixelation and restore speed
+            player.can_fly = False
+            player.radial_blur_active = False
+            # Remove joint-specific pixelation override if present
+            if hasattr(player, "joint_pixelation_factor"):
+                delattr(player, "joint_pixelation_factor")
+            if self._applied_fly_penalty:
+                # Restore the exact original speed we stored on apply
+                if self._original_speed is not None:
+                    player.speed = self._original_speed
+                else:
+                    # Fallback: add penalty back (shouldn't normally happen)
+                    player.speed += POWERUP_FLY_SPEED_PENALTY
+                self._applied_fly_penalty = False
         elif self.power_type == 0 or self.power_type == 4:
             # Restore normal size
             player.image = pg.transform.scale(

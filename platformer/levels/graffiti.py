@@ -50,7 +50,7 @@ level_config = {
     ],
     # Powerups - place a flight powerup next to the pipe for testing
     "powerup_locations": [
-        {"x": 29, "y": 11, "type": 6},
+        {"x": 29, "y": 11, "type": 7},
     ],
     # A simple enemy
     "enemy_locations": [
