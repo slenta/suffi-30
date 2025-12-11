@@ -187,35 +187,61 @@ def draw_timer(screen, time_remaining, width):
     screen.blit(timer_surface, timer_rect)
 
 
-def draw_encounter_message(screen, message, width, height):
+def draw_encounter_message(screen, message, width, height, color=None):
     """
-    Draw an encounter message in yellow at the center of the screen.
+    Draw an encounter message at the center of the screen.
+    Supports multi-line messages with \n line breaks.
 
     Args:
         screen: Pygame screen surface
-        message: Message text to display
+        message: Message text to display (supports \n for line breaks)
         width: Screen width
         height: Screen height
+        color: Optional RGB tuple for text color (defaults to yellow)
     """
     if not message:
         return
 
-    # Render the message in yellow
+    # Split message by line breaks
+    lines = message.split('\n')
+    
+    # Use custom color or default to yellow
+    text_color = color if color else (255, 255, 0)
+    
+    # Render the message
     font = pg.font.Font(None, 36)
-    message_surface = font.render(message, True, (255, 255, 0))
-
-    # Position at center of screen
-    message_rect = message_surface.get_rect()
-    message_rect.center = (width // 2, height // 2)
-
+    line_surfaces = []
+    line_height = font.get_height()
+    max_width = 0
+    
+    for line in lines:
+        line_surface = font.render(line, True, text_color)
+        line_surfaces.append(line_surface)
+        max_width = max(max_width, line_surface.get_width())
+    
+    # Calculate total height and position
+    total_height = len(lines) * line_height
+    start_y = (height // 2) - (total_height // 2)
+    
     # Draw semi-transparent black background for better readability
-    bg_rect = message_rect.inflate(40, 20)
+    bg_width = max_width + 40
+    bg_height = total_height + 20
+    bg_rect = pg.Rect(
+        (width // 2) - (bg_width // 2),
+        start_y - 10,
+        bg_width,
+        bg_height
+    )
     bg_surface = pg.Surface((bg_rect.width, bg_rect.height), pg.SRCALPHA)
     bg_surface.fill((0, 0, 0, 180))
     screen.blit(bg_surface, bg_rect.topleft)
 
-    # Draw the message
-    screen.blit(message_surface, message_rect)
+    # Draw each line centered
+    for i, line_surface in enumerate(line_surfaces):
+        line_rect = line_surface.get_rect()
+        line_rect.centerx = width // 2
+        line_rect.y = start_y + (i * line_height)
+        screen.blit(line_surface, line_rect)
 
 
 def draw_marvin_mode(screen, width):

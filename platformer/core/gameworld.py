@@ -86,6 +86,7 @@ class GameWorld:
 
         # Encounter message system
         self.encounter_message = None
+        self.encounter_message_color = None  # Custom color for message
         self.encounter_message_timer = 0
         self.encounter_message_duration = 180  # 3 seconds at 60 FPS
 
@@ -466,6 +467,12 @@ class GameWorld:
         self.player_sprite_group.add(self.player)
         self.all_sprites.add(self.player)
 
+        # Show player start message if defined in level config (only on first load, not after sub-level)
+        if "player_start_message" in self.level_config and not is_sub_level_transition and not self.level_stack:
+            start_message = self.level_config["player_start_message"]
+            start_color = self.level_config.get("player_start_message_color", (255, 255, 255))
+            self.show_encounter_message(start_message, start_color)
+
         # Load enemies (supports both new template-based and legacy detailed configs)
         for enemy_data in self.level_config["enemy_locations"]:
             # If enemy has a 'type' field, load from config template
@@ -514,6 +521,10 @@ class GameWorld:
                 config.get("encounter_message", None),
                 config.get("shoot_cooldown", 60),
                 config.get("spawn_on_death", None),
+                config.get("no_clip", False),
+                config.get("encounter_message_color", None),
+                config.get("explosive_image", None),
+                config.get("explosive_size", 15),
             )
             # Store the enemy ID for tracking when killed
             enemy.enemy_id = enemy_id
@@ -600,14 +611,13 @@ class GameWorld:
             else current_level_trophy_count
         )
 
-        # Exit may be omitted for parent levels that delegate finishing to a sub-level
-        exit_loc = self.level_config.get("exit_location", None)
-        if exit_loc:
-            exit_x, exit_y = exit_loc
-            self.exit = Exit(exit_x * GRIDSIZE, exit_y * GRIDSIZE)
-            self.all_sprites.add(self.exit)
-        else:
-            self.exit = None
+        exit_x, exit_y = self.level_config["exit_location"]
+        # Get custom exit images if specified in level config
+        closed_image = self.level_config.get("exit_closed_image", "door_closed.png")
+        open_image = self.level_config.get("exit_open_image", "door_open.png")
+        exit_size = self.level_config.get("exit_size_multiplier", 2)
+        self.exit = Exit(exit_x * GRIDSIZE, exit_y * GRIDSIZE, closed_image, open_image, exit_size)
+        self.all_sprites.add(self.exit)
 
         # Load weapon pickups
         for weapon_data in self.level_config.get("weapon_locations", []):
@@ -813,28 +823,20 @@ class GameWorld:
                         else:
                             print("🎮 Marvin Mode deactivated")
 
-                # Game controls (KEYDOWN)
-                if event.key == pg.K_f:  # Shoot (start / single)
-                    self.player.start_shoot()
+                # Game controls
+                if event.key == pg.K_f:  # Shoot
+                    self.player.shoot_bullet()
                 elif event.key == pg.K_g:  # Melee attack
                     self.player.melee_attack()
                 elif event.key == pg.K_e:
                     self.player.throw_exploding_object()
-            elif event.type == pg.KEYUP:
-                # Handle key releases (stop actions like hold-to-fire)
-                if event.key == pg.K_f:
-                    self.player.stop_shoot()
 
     async def level_complete(self):
         # Check if we're in a sub-level
-        # If we're in a sub-level, allow certain sub-levels to finish the whole level
         if self.level_stack:
-            # If the current sub-level requests that its exit finishes the entire level,
-            # continue with level completion instead of returning to parent.
-            if not self.level_config.get("finish_parent_on_exit", False):
-                # Default behavior: return to parent level
-                self.exit_sub_level()
-                return
+            # Return to parent level
+            self.exit_sub_level()
+            return
 
         # Otherwise, normal level completion
         await fade_to_black(
@@ -1113,7 +1115,9 @@ class GameWorld:
 
         # Draw encounter message (if active)
         if self.encounter_message_timer > 0 and self.encounter_message:
-            draw_encounter_message(self.screen, self.encounter_message, WIDTH, HEIGHT)
+            draw_encounter_message(
+                self.screen, self.encounter_message, WIDTH, HEIGHT, self.encounter_message_color
+            )
             self.encounter_message_timer -= 1
 
         # Draw timer (top right corner)
@@ -1398,9 +1402,10 @@ class GameWorld:
                     waiting = False
             self.clock.tick(60)
 
-    def show_encounter_message(self, message):
+    def show_encounter_message(self, message, color=None):
         """Display an encounter message when player first sees an enemy."""
         self.encounter_message = message
+        self.encounter_message_color = color  # Store custom color
         self.encounter_message_timer = self.encounter_message_duration
 
     def load_sound_effects(self):
@@ -1547,11 +1552,9 @@ class GameWorld:
 
     def _apply_pixelation(self):
         """Apply pixelation/rasterization effect to the entire screen."""
-        # Use a stronger pixelation factor if the player has a joint-specific override
-        factor = getattr(self.player, "joint_pixelation_factor", PIXELATION_FACTOR)
-        # Downscale the screen by the selected factor
-        small_width = max(1, WIDTH // factor)
-        small_height = max(1, HEIGHT // factor)
+        # Downscale the screen by PIXELATION_FACTOR
+        small_width = WIDTH // PIXELATION_FACTOR
+        small_height = HEIGHT // PIXELATION_FACTOR
 
         # Create a small surface with the downscaled image
         small_surface = pg.transform.scale(self.screen, (small_width, small_height))

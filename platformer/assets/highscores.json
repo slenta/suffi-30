@@ -135,6 +135,18 @@
         "total_score": 38359
       },
       "timestamp": "2025-11-05T16:26:35.123083"
+    },
+    {
+      "player_name": "Anonymous",
+      "score": 37203,
+      "breakdown": {
+        "time_score": 17203,
+        "trophy_score": 10000,
+        "damage_score": 0,
+        "life_score": 10000,
+        "total_score": 37203
+      },
+      "timestamp": "2025-12-10T12:07:47.785843"
     }
   ],
   "baby-level": [
@@ -149,6 +161,18 @@
         "total_score": 67003
       },
       "timestamp": "2025-12-01T21:58:03.791552"
+    },
+    {
+      "player_name": "J",
+      "score": 61042,
+      "breakdown": {
+        "time_score": 18042,
+        "trophy_score": 30000,
+        "damage_score": 8000,
+        "life_score": 5000,
+        "total_score": 61042
+      },
+      "timestamp": "2025-12-10T12:10:02.328923"
     },
     {
       "player_name": " dsafad",
@@ -175,18 +199,6 @@
         "total_score": 68823
       },
       "timestamp": "2025-12-06T14:42:55.629377"
-    },
-    {
-      "player_name": "Anonymous",
-      "score": 36904,
-      "breakdown": {
-        "time_score": 20904,
-        "trophy_score": 10000,
-        "damage_score": 1000,
-        "life_score": 5000,
-        "total_score": 36904
-      },
-      "timestamp": "2025-12-10T19:46:49.490804"
     },
     {
       "player_name": "Anonymous",
@@ -239,18 +251,6 @@
       "timestamp": "2025-12-09T15:05:44.280597"
     },
     {
-      "player_name": "Anonymous",
-      "score": 82871,
-      "breakdown": {
-        "time_score": 19871,
-        "trophy_score": 30000,
-        "damage_score": 8000,
-        "life_score": 25000,
-        "total_score": 82871
-      },
-      "timestamp": "2025-12-10T19:02:24.783566"
-    },
-    {
       "player_name": "j",
       "score": 81863,
       "breakdown": {
@@ -264,15 +264,39 @@
     },
     {
       "player_name": "Anonymous",
-      "score": 65793,
+      "score": 58149,
       "breakdown": {
-        "time_score": 15793,
-        "trophy_score": 20000,
-        "damage_score": 5000,
-        "life_score": 25000,
-        "total_score": 65793
+        "time_score": 20149,
+        "trophy_score": 10000,
+        "damage_score": 18000,
+        "life_score": 10000,
+        "total_score": 58149
       },
-      "timestamp": "2025-12-11T14:12:06.123929"
+      "timestamp": "2025-12-10T16:30:19.454866"
+    },
+    {
+      "player_name": "j",
+      "score": 39956,
+      "breakdown": {
+        "time_score": 21956,
+        "trophy_score": 10000,
+        "damage_score": 3000,
+        "life_score": 5000,
+        "total_score": 39956
+      },
+      "timestamp": "2025-12-10T16:50:39.597063"
+    },
+    {
+      "player_name": "Anonymous",
+      "score": 39499,
+      "breakdown": {
+        "time_score": 23499,
+        "trophy_score": 10000,
+        "damage_score": 1000,
+        "life_score": 5000,
+        "total_score": 39499
+      },
+      "timestamp": "2025-12-11T10:22:11.303621"
     }
   ]
 }
