@@ -6,10 +6,11 @@ level_config = {
     # If not specified, defaults to PLAYER_START_X, PLAYER_START_Y from settings.py
     "player_spawn": (0, -10),  # Example: spawn at grid position (5, 1)
     "grass_locations": [(i, 0) for i in range(0, 10)]
-    + [(i, -20) for i in range(29, 60)]
+    + [(i, -20) for i in range(40, 60)]
     + [(i, -16) for i in range(65, 80)]
-    + [(i, -8) for i in range(90, 120)]
-    + [(i, -4) for i in range(125, 140)]
+    + [(i, -8) for i in range(90, 100)]
+    + [(i, -12) for i in range(112, 120)]
+    + [(i, -4) for i in range(115, 140)]
     + [(i, 0) for i in range(145, 150)],
     "block_locations": [
         (10, -1),
@@ -18,20 +19,24 @@ level_config = {
         (13, -4),
         (14, -5),
         (15, -6),
-        # (16, -7),
-        # (17, -8),
-        (18, -9),
-        (19, -10),
-        (20, -11),
-        (21, -12),
-        # (22, -13),
-        # (23, -14),
-        (24, -15),
-        (25, -16),
-        # (26, -17),
-        # (27, -18),
-        (28, -19),
-        (29, -20),
+        (16, -6),
+        (17, -6),
+        (18, -6),
+        (19, -6),
+        (20, -6),
+        (23, -9),
+        (24, -10),
+        (25, -11),
+        (26, -12),
+        (27, -12),
+        (28, -12),
+        (29, -12),
+        (30, -12),
+        (31, -12),
+        (34, -15),
+        (35, -16),
+        (38, -18),
+        (39, -19),
         (61, -10),
         (62, -10),
         (63, -10),
@@ -45,23 +50,42 @@ level_config = {
         (87, 0),
         (88, 0),
         (89, 0),
+        (137, -18),
+        (138, -18),
+        (139, -16),
+        (140, -14),
     ],
-    "gem_locations": [
-        (15, -8),
+    "poppable_block_locations": [
+        (142, -21),  # Disappears after being popped
+        # Dict format allows specifying type and item
+        {"x": 26, "y": 9, "type": "fix"},  # Turns into solid block after popping
+        {
+            "x": 142,
+            "y": -25,
+            "type": "item",
+            "item": {"type": "gem", "image": "gem.png"},
+        },  # Releases a gem
+        {
+            "x": 73,
+            "y": -19,
+            "type": "item",
+            "item": {"type": "powerup", "powerup_type": 3},
+        },
     ],
+    "gem_locations": [(15, -8), (142, -17)],
     "powerup_locations": [
-        # {"x": 15, "y": -8, "type": 3},
-        {"x": 85, "y": -2, "type": 3},
+        {"x": 35, "y": -19, "type": 3},  # pulver
+        {"x": 85, "y": -2, "type": 5},  # punisher
         {"x": 61, "y": -15, "type": 5},
     ],
     # Enemy locations (using centralized config with overrides)
     "enemy_locations": [
-        {"type": "trance_shroom", "x": 35, "y": -25},
-        {"type": "trance_shroom", "x": 45, "y": -25},
+        {"type": "trance_shroom", "x": 18, "y": -8},
+        {"type": "trance_shroom", "x": 29, "y": -14},
         {"type": "trance_shroom", "x": 55, "y": -25},
-        {"type": "druide", "x": 100, "y": -12},
+        {"type": "druide", "x": 130, "y": -7},
     ],
-    "trophy_locations": [(63, -12), (135, -7)],
+    "trophy_locations": [(63, -12), (115, -16)],
     "ladder_locations": [
         (60, -20),
         (60, -19),
@@ -101,7 +125,35 @@ level_config = {
     ],
     "trophy_image": "trophy.png",  # Path to trophy image (relative to assets/images)
     # Moving platform locations
-    "moving_platform_locations": [],
+    "moving_platform_locations": [
+        {
+            "x": 98,
+            "y": -12,
+            "platform_type": "block",
+            "movement_type": "linear",
+            "speed": 1,
+            "distance": 10,
+            "direction": "horizontal",
+        },
+        {
+            "x": 103,
+            "y": -15,
+            "platform_type": "block",
+            "movement_type": "linear",
+            "speed": 1,
+            "distance": 10,
+            "direction": "horizontal",
+        },
+        {
+            "x": 142,  # Starting x position (grid units)
+            "y": -16,  # Starting y position (grid units)
+            "platform_type": "block",  # "grass" or "block"
+            "movement_type": "linear",  # "linear" or "circular"
+            "speed": 1,  # Movement speed (pixels per frame)
+            "distance": 15,  # Distance to travel (grid units for linear, radius for circular)
+            "direction": "vertical",  # "horizontal" or "vertical" (for linear only)
+        },
+    ],
     "exit_location": (148, -1),
     "spike_locations": [],
     # "background_music": "assets/music/level1.ogg",  # Path relative to game root
