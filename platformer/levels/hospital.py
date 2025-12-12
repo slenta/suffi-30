@@ -4,12 +4,14 @@ level_config = {
     "level_time": 240,  # Time limit in seconds (4 minutes)
     # Player spawn point (optional) - x and y coordinates in grid units
     # If not specified, defaults to PLAYER_START_X, PLAYER_START_Y from settings.py
-    "player_spawn": (80, 8),  # Example: spawn at grid position (5, 1)
+    "player_spawn": (150, 8),  # Example: spawn at grid position (5, 1)
     # Player thought bubble at level start
     "player_start_message": "Nur noch diese Schicht \n und dann endlich zur Fusion...",
     "player_start_message_color": (255, 255, 255),  # White
     # Custom player image for this level (placed in assets/images/)
     "player_image": "player/suffi_aerztin.png",  # Change to your custom player image
+    # Total trophies including dropped items (overrides automatic counting)
+    "total_trophies": 4,  # 3 in trophy_locations + 1 dropped by enemy
     # Use a different grass tile for this sublevel (placed in assets/images)
     "grass_image": "krankenhaus_boden.png",
     # Extended grass platforms with challenging gaps
@@ -150,7 +152,11 @@ level_config = {
             "x": 200,
             "y": 13,
             "encounter_message": "Sie wollen doch nicht etwa schon gehen? \n Die Schicht fängt doch gerade erst an!",
-        }
+            "drop_on_death": {
+            "type": "trophy",
+            "image": "AU.png"  # Dein Busticket-Bild
+            }
+        },
     ],
     "trophy_locations": [
         (43, -3),  # First jumping obstacle

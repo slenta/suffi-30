@@ -593,6 +593,7 @@ class GameWorld:
                 config.get("encounter_message", None),
                 config.get("shoot_cooldown", 60),
                 config.get("spawn_on_death", None),
+                config.get("drop_on_death", None),
                 config.get("no_clip", False),
                 config.get("encounter_message_color", None),
                 config.get("explosive_image", None),
@@ -649,7 +650,11 @@ class GameWorld:
             self.all_sprites.add(trophy)
 
         # Set trophy count for this level
-        current_level_trophy_count = len(self.level_config["trophy_locations"])
+        # Check if total_trophies is manually specified in config (for dropped items, etc.)
+        if "total_trophies" in self.level_config:
+            current_level_trophy_count = self.level_config["total_trophies"]
+        else:
+            current_level_trophy_count = len(self.level_config["trophy_locations"])
 
         # Calculate global trophy count (parent + all sub-levels)
         if not self.level_stack:  # We're in the main/parent level
@@ -664,9 +669,13 @@ class GameWorld:
                         f"platformer.levels.{sub_level_name}"
                     )
                     sub_level_config = sub_level_module.level_config
-                    self.global_total_trophies += len(
-                        sub_level_config.get("trophy_locations", [])
-                    )
+                    # Check if sub-level has manual trophy count
+                    if "total_trophies" in sub_level_config:
+                        self.global_total_trophies += sub_level_config["total_trophies"]
+                    else:
+                        self.global_total_trophies += len(
+                            sub_level_config.get("trophy_locations", [])
+                        )
                 except Exception as e:
                     print(
                         f"⚠️ Could not load sub-level {sub_level_name} for trophy count: {e}"

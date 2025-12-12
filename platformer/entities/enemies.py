@@ -46,6 +46,7 @@ class Enemy(pg.sprite.Sprite):
         encounter_message=None,  # Optional message to display when first encountered
         shoot_cooldown=60,  # Cooldown for shooting in frames (default: 60 = 1 second at 60 FPS)
         spawn_on_death=None,  # Optional dict with enemy config to spawn on death
+        drop_on_death=None,  # Optional dict with item to drop on death (e.g., {"type": "trophy", "image": "busticket.png"})
         no_clip=False,  # If True, enemy can pass through blocks
         encounter_message_color=None,  # Optional RGB tuple for message color (e.g., (255, 0, 0) for red)
         explosive_image=None,  # Optional custom image for thrown explosives
@@ -88,6 +89,7 @@ class Enemy(pg.sprite.Sprite):
         self.is_minion = is_minion  # Store minion status
         self.can_summon_minions = can_summon_minions  # Store minion summoning ability
         self.spawn_on_death = spawn_on_death  # Enemy config to spawn on death
+        self.drop_on_death = drop_on_death  # Item to drop on death
         self.no_clip = no_clip  # Can pass through blocks
 
         # Encounter message attributes
@@ -587,6 +589,58 @@ class Enemy(pg.sprite.Sprite):
         # Spawn replacement enemy immediately at death position (before falling off screen)
         if self.spawn_on_death and self.world:
             self.spawn_replacement_enemy()
+            
+        # Drop item on death
+        if self.drop_on_death and self.world:
+            self.drop_item()
+
+    def drop_item(self):
+        """Drop an item at the enemy's death position."""
+        import os
+        from ..config.settings import IMAGEPATH
+        
+        drop_config = self.drop_on_death.copy()
+        item_type = drop_config.get("type")
+        
+        # Calculate drop position (center of enemy)
+        drop_x = self.rect.centerx
+        drop_y = self.rect.centery
+        
+        if item_type == "trophy":
+            from ..collectibles.trophy import Trophy
+            image_path = drop_config.get("image", "trophy.png")
+            trophy = Trophy(drop_x, drop_y, image_path)
+            self.world.trophies.add(trophy)
+            self.world.all_sprites.add(trophy)
+            print(f"🎖️ Dropped trophy at ({drop_x}, {drop_y})")
+            
+        elif item_type == "powerup":
+            from ..collectibles.powerup import PowerUp
+            powerup_type = drop_config.get("powerup_type", 1)
+            powerup = PowerUp(drop_x, drop_y, powerup_type, self.world)
+            self.world.powerups.add(powerup)
+            self.world.all_sprites.add(powerup)
+            print(f"⚡ Dropped powerup at ({drop_x}, {drop_y})")
+            
+        elif item_type == "gem":
+            from ..collectibles.gem import Gem
+            image_path = drop_config.get("image", "gem.png")
+            gem_image = pg.image.load(os.path.join(IMAGEPATH, image_path)).convert_alpha()
+            # Convert to grid position for Gem
+            gem_x = drop_x // GRIDSIZE
+            gem_y = drop_y // GRIDSIZE
+            gem = Gem(gem_x, gem_y, gem_image)
+            self.world.items.add(gem)
+            self.world.all_sprites.add(gem)
+            print(f"💎 Dropped gem at ({gem_x}, {gem_y})")
+            
+        elif item_type == "weapon":
+            from ..collectibles.weapon import Weapon
+            image_path = drop_config.get("image", "weapon.png")
+            weapon = Weapon(drop_x, drop_y, image_path)
+            self.world.weapons_items.add(weapon)
+            self.world.all_sprites.add(weapon)
+            print(f"🔫 Dropped weapon at ({drop_x}, {drop_y})")
 
     def update_death_animation(self):
         """Handle the tumbling death animation"""
