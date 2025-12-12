@@ -4,7 +4,7 @@ level_config = {
     "level_time": 240,  # Time limit in seconds (4 minutes)
     # Player spawn point (optional) - x and y coordinates in grid units
     # If not specified, defaults to PLAYER_START_X, PLAYER_START_Y from settings.py
-    "player_spawn": (60, 8),  # Example: spawn at grid position (5, 1)
+    "player_spawn": (80, 8),  # Example: spawn at grid position (5, 1)
     # Player thought bubble at level start
     "player_start_message": "Nur noch diese Schicht \n und dann endlich zur Fusion...",
     "player_start_message_color": (255, 255, 255),  # White
@@ -46,10 +46,10 @@ level_config = {
     # Poppable blocks (like Mario question blocks)
     "poppable_block_locations": [
         {
-            "x": 63,
-            "y": 8,
+            "x": 50,
+            "y": 5,
             "type": "item",
-            "item": {"type": "powerup", "powerup_type": 6},
+            "item": {"type": "powerup", "powerup_type": 3},
             "image": "medizinschrank.png",  # Eigenes Bild
         },  # Releases a powerup
     ],
@@ -94,7 +94,7 @@ level_config = {
             "encounter_message_color": (255, 0, 0),  # Red
         },
         {
-            "type": "doctor_f_follower",
+            "type": "doctor_f_young_follower",
             "x": 83,
             "y": 6,
             "encounter_message": "Frau Hegselmann, können Sie sich \n bitte kurz in der Notaufnahme melden?",
