@@ -6,13 +6,16 @@ This is an example sub-level accessed via a pipe from the main level.
 level_config = {
     # Extended to the left to give more room for exploration
     # Increase left bound so player can move at least to x = -100 (grid units)
-    "x_bounds": [-2000, 2000],  # Extended left boundary (pixels)
+    # Cut level at x = -100 (grid units). Left side removed.
+    # ground_start is in pixels so convert: -100 * GRIDSIZE (GRIDSIZE=18) = -1800
+    "x_bounds": [-1800, 2000],
     "y_bounds": [-500, 300],
     # Player spawn point - where player appears when entering this sub-level
     "player_spawn": (5, 1),
     # Floor grass locations
     # Expand floor to the left so the player can move farther left
-    "grass_locations": [(i, 14) for i in range(-500, 80)],
+    # Floor grass: start at x = -94 so that x = -100..-95 has no grass
+    "grass_locations": [(i, 14) for i in range(-94, 80)],
     # Use a different grass tile for this sublevel (placed in assets/images)
     "grass_image": "asche.png",
     # Block locations - create a small cave-like structure
@@ -54,6 +57,12 @@ level_config = {
         (-10,2),
         (-11,1),
         (-12,0),
+        (-13,-1),
+        (-14,-2),
+        (-15,-3),
+        (-16,-4),
+        (-17,-5),
+        (-18,-6),
         #lower left tunnel
     *[(i, 11) for i in range(0, -80, -1)],   
     *[(i, 10) for i in range(0, -80, -1)],
