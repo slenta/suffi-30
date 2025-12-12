@@ -26,7 +26,9 @@ level_config = {
     + [(i, 14) for i in range(55, 70)]
     + [(i, 8) for i in range(76, 90)]
     + [(i, 14) for i in range(100, 120)]
-    + [(i, 14) for i in range(115, 400)],
+    + [(i, 14) for i in range(115, 165)]
+    + [(i, 14) for i in range(206, 220)]
+    + [(i, 14) for i in range(250, 350)],
     # Challenging block structures throughout the level
     "block_locations": [
         # Starting obstacle
@@ -49,7 +51,40 @@ level_config = {
         (82,25),
         (79,23),
         (78,21),
-        *[(i, 20) for i in range(40, 75)]
+         #Obstacle near end
+        (167,11),
+        (172,8),
+        (177,5),
+        (182,8),
+        (187,11),
+        (192,8),
+        (197,5),
+        (202,5),
+        # Erste Treppe für Gegner 
+        (206,5),
+        (206,6),
+        (206,7),
+        (206,8),
+        (206,9),
+        (206,10),
+        (206,11),
+        (206,12),
+        (206,13),
+        (206,14),
+        (206,15),
+        # Zweite Treppe für Gegner 
+        (219,15),
+        (219,14),
+        (219,13),
+        (219,12),
+        (219,11),
+        (219,10),
+        (219,9),
+        (219,8),
+        (219,7),
+        (219,6),
+        (219,5),
+        *[(i, 20) for i in range(40, 75)],
     ],
     # Poppable blocks (like Mario question blocks)
     "poppable_block_locations": [
@@ -67,6 +102,7 @@ level_config = {
             "item": {"type": "powerup", "powerup_type": 3},
             "image": "medizinschrank.png",  # Eigenes Bild
         },  # Releases Pulver
+         {"x":218, "y": 9, "type": "invisible"},  # Invisible block
     ],
 
     # Strategic gem placements
@@ -130,34 +166,41 @@ level_config = {
             "encounter_message_color": (0, 255, 0),  # Green
         },
         {
-            "type": "patient_f_young",
+            "type": "patient",
             "x": 150,
             "y": 13,
-            "encounter_message": "This hospital\nis cursed!",
+            "encounter_message": "Ich möchte den Chefarzt sprechen!",
             "encounter_message_color": (0, 255, 0),  # Green
         },
         {
             "type": "patient",
             "x": 160,
             "y": 13,
-            "encounter_message": "Don't leave\nme here!",
+            "encounter_message": "Ich werde mich beschweren!",
+            "encounter_message_color": (0, 255, 0),  # Green
+        },
+        {
+            "type": "patient_f_young",
+            "x": 212,
+            "y": 13,
+            "encounter_message": "Sie gehen erst, wenn ich geheilt bin!",
             "encounter_message_color": (0, 255, 0),  # Green
         },
         {
             "type": "jonas",
-            "x": 180,
+            "x": 260,
             "y": 13,
         },
         {
             "type": "paul",
-            "x": 185,
+            "x": 265,
             "y": 13,
         },
         {
             "type": "house",
-            "x": 200,
+            "x": 290,
             "y": 13,
-            "encounter_message": "Sie wollen doch nicht etwa schon gehen? \n Die Schicht fängt doch gerade erst an!",
+            "encounter_message": "Sie wollen doch nicht etwa schon gehen? \n Ihre Schicht fängt doch gerade erst an!",
             "drop_on_death": {
                 "type": "required_item",
                 "item_id": "busticket",
@@ -230,7 +273,7 @@ level_config = {
     ],
     # Ladder for vertical navigation
     "ladder_locations": [(91, i) for i in range(8, 20)],
-    "exit_location": (330, 11),
+    "exit_location": (330, 10),
     "exit_closed_image": "Bus.png", # Optional
     "exit_open_image": "Bus.png",   # Optional
     "exit_size_multiplier": 16,     # Make the bus 16 times bigger (default is 2)

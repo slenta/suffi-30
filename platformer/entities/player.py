@@ -834,11 +834,29 @@ class Player(pg.sprite.Sprite):
             if player_relative_x < 0:
                 # Player jumped from the left side, push enemy to the right
                 if hasattr(enemy_hit, "rect"):
-                    enemy_hit.rect.x += 100
+                    knockback_distance = 100
+                    old_x = enemy_hit.rect.x
+                    enemy_hit.rect.x += knockback_distance
+                    
+                    # Check for collision with platforms, if enemy can collide
+                    if not getattr(enemy_hit, "no_clip", False):
+                        hits = pg.sprite.spritecollide(enemy_hit, self.world.platforms, False)
+                        if hits:
+                            # Collision detected, revert to old position
+                            enemy_hit.rect.x = old_x
             else:
                 # Player jumped from the right side, push enemy to the left
                 if hasattr(enemy_hit, "rect"):
-                    enemy_hit.rect.x -= 100
+                    knockback_distance = 100
+                    old_x = enemy_hit.rect.x
+                    enemy_hit.rect.x -= knockback_distance
+                    
+                    # Check for collision with platforms, if enemy can collide
+                    if not getattr(enemy_hit, "no_clip", False):
+                        hits = pg.sprite.spritecollide(enemy_hit, self.world.platforms, False)
+                        if hits:
+                            # Collision detected, revert to old position
+                            enemy_hit.rect.x = old_x
 
             sound_manager.play_sound_effect("jump")  # Play bounce sound
             return
