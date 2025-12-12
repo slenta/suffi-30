@@ -1,9 +1,8 @@
 level_config = {
     "x_bounds": [-300, 9000],  # Extended gameworld width (doubled)
     "y_bounds": [-1230, 1170],  # Increased gameworld height for more vertical space
-    "level_time": 300,  # Time limit in seconds (5 minutes)
+    "level_time": 420,  # Time limit in seconds (5 minutes)
     "player_spawn": (0, -35),
-    "player_spawn": (160, -45),
     "player_start_message": "Nach rechts geht zum Trancer Leute \n kommt ihr mit?",
     "player_start_message_color": (255, 255, 255),  # White
     # Extended grass locations - keeping original and adding more sections
