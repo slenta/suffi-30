@@ -186,23 +186,53 @@ level_config = {
 
         },
     ],
-    # Ladder locations
+    # Ladder locations - group ladders as separate lists so each stack gets its own LadderTop
     "ladder_locations": [
-        (2, 13),
-        (2, 12),
-        (2, 11),
-        (2, 10),
-        (2, 9),
-        (2, 8),
-        (2, 7),
-        (2, 6),
-        (2, 5),
-        (2, 4),
-        (2, 3),
+        # Main ladder near the center (bottom -> top)
+        [
+            (2, 13),
+            (2, 12),
+            (2, 11),
+            (2, 10),
+            (2, 9),
+            (2, 8),
+            (2, 7),
+            (2, 6),
+            (2, 5),
+            (2, 4),
+            (2, 3),
+        ],
+        # Left ladder near x = -86 (bottom -> top)
+        [
+            (-86, 13),
+            (-86, 12),
+            (-86, 11),
+            (-86, 10),
+            (-86, 9),
+            (-86, 8),
+            (-86, 7),
+            (-86, 6),
+            (-86, 5),
+            (-86, 4),
+            (-86, 3),
+            (-86, 2),
+        ],
+        # Developer-added ladder at x = -82 from y = -4 down to y = -11 (bottom -> top: -4 ... -11)
+        [
+            (-81, -4),
+            (-81, -5),
+            (-81, -6),
+            (-81, -7),
+            (-81, -8),
+            (-81, -9),
+            (-81, -10),
+            (-81, -11),
+        ],
     ],
     # Trophy locations - collect trophy to open exit
     "trophy_locations": [
         (65, 10),
+        (-82, -50)
     ],
     "trophy_image": "trophy.png",
     # If True, always reset collected/killed tracking when this level is loaded.
@@ -224,7 +254,18 @@ level_config = {
         {"x": 4, "y": 10, "type": "disappear"},
         {"x":7, "y": 4, "type": "invisible"},
         {"x":4, "y": 6, "type": "invisible"},
+        {"x":-82, "y": -49, "type": "invisible"},
+        {"x":-83, "y": -49, "type": "invisible"},
+        {"x":-85, "y": -10, "type": "invisible"},
         {"x":16, "y": 10, "type": "powerup", "powerup_type": 1},
+        # Development: a poppable block that spawns a power-up type 7 (joint)
+        # The block stays solid after being popped.
+        {
+            "x": -85,
+            "y": -16,
+            "type": "item",
+            "item": {"type": "powerup", "powerup_type": 7},
+        },
     ],
     # No pipes in the sub-level (to keep it simple)
     "pipe_locations": [],

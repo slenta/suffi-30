@@ -435,17 +435,49 @@ class GameWorld:
             self.all_sprites.add(g)
 
             # Add ladders with tops
-        if "ladder_locations" in self.level_config:
-            for x, y in self.level_config["ladder_locations"][:-1]:  # All but last
-                ladder = Ladder(x, y)
-                self.all_sprites.add(ladder)
-                self.ladders.add(ladder)
-            # Last location gets a ladder top
-            if self.level_config["ladder_locations"]:
-                x, y = self.level_config["ladder_locations"][-1]
-                ladder_top = LadderTop(x, y)
-                self.all_sprites.add(ladder_top)
-                self.ladder_tops.add(ladder_top)
+            # Support two formats for ladder_locations for backward compatibility:
+            # 1) Flat list of (x,y) pairs (legacy) -> all but last are Ladder, last is LadderTop
+            # 2) Nested list of ladders: [ [(x,y)...,(x,top)], [(x2,y)...,(x2,top)], ... ]
+            if "ladder_locations" in self.level_config:
+                ladders_cfg = self.level_config["ladder_locations"]
+                # Detect nested format (list of lists/tuples)
+                is_nested = (
+                    isinstance(ladders_cfg, (list, tuple))
+                    and len(ladders_cfg) > 0
+                    and isinstance(ladders_cfg[0], (list, tuple))
+                    and isinstance(ladders_cfg[0][0], (list, tuple))
+                )
+
+                if is_nested:
+                    for ladder_list in ladders_cfg:
+                        if not ladder_list:
+                            continue
+                        for x, y in ladder_list[:-1]:
+                            ladder = Ladder(x, y)
+                            self.all_sprites.add(ladder)
+                            self.ladders.add(ladder)
+                        # Last entry is top
+                        x, y = ladder_list[-1]
+                        ladder_top = LadderTop(x, y)
+                        self.all_sprites.add(ladder_top)
+                        self.ladder_tops.add(ladder_top)
+                else:
+                    # Legacy flat format
+                    if len(ladders_cfg) >= 2:
+                        for x, y in ladders_cfg[:-1]:
+                            ladder = Ladder(x, y)
+                            self.all_sprites.add(ladder)
+                            self.ladders.add(ladder)
+                        x, y = ladders_cfg[-1]
+                        ladder_top = LadderTop(x, y)
+                        self.all_sprites.add(ladder_top)
+                        self.ladder_tops.add(ladder_top)
+                    elif len(ladders_cfg) == 1:
+                        # Single ladder top only
+                        x, y = ladders_cfg[0]
+                        ladder_top = LadderTop(x, y)
+                        self.all_sprites.add(ladder_top)
+                        self.ladder_tops.add(ladder_top)
 
         # Add waterfalls
         if "waterfall_locations" in self.level_config:
