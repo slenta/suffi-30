@@ -69,7 +69,7 @@ ENEMY_TYPES = {
         "melee_damage": 4,
         "can_throw_explosives": False,
         "can_summon_minions": False,
-        "encounter_message": "Sweet Baby Jesus dieses Acid war aber keine Microdose",
+        "encounter_message": "Sweet Baby Jesus \n dieses Acid war aber keine Microdose",
         "shoot_cooldown": 60,
     },
     "trance_hippie": {
