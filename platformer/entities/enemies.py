@@ -641,6 +641,15 @@ class Enemy(pg.sprite.Sprite):
             self.world.weapons_items.add(weapon)
             self.world.all_sprites.add(weapon)
             print(f"🔫 Dropped weapon at ({drop_x}, {drop_y})")
+            
+        elif item_type == "required_item":
+            from ..collectibles.required_item import RequiredItem
+            item_id = drop_config.get("item_id", "key")
+            image_path = drop_config.get("image", "key.png")
+            required_item = RequiredItem(drop_x, drop_y, item_id, image_path)
+            self.world.required_items.add(required_item)
+            self.world.all_sprites.add(required_item)
+            print(f"🎫 Dropped required item '{item_id}' at ({drop_x}, {drop_y})")
 
     def update_death_animation(self):
         """Handle the tumbling death animation"""

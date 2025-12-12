@@ -11,7 +11,8 @@ level_config = {
     # Custom player image for this level (placed in assets/images/)
     "player_image": "player/suffi_aerztin.png",  # Change to your custom player image
     # Total trophies including dropped items (overrides automatic counting)
-    "total_trophies": 4,  # 3 in trophy_locations + 1 dropped by enemy
+    "total_trophies": 3,  # 3 in trophy_locations 
+    "required_items_for_exit": ["busticket"],  # List of required item IDs
     # Use a different grass tile for this sublevel (placed in assets/images)
     "grass_image": "krankenhaus_boden.png",
     # Extended grass platforms with challenging gaps
@@ -153,8 +154,9 @@ level_config = {
             "y": 13,
             "encounter_message": "Sie wollen doch nicht etwa schon gehen? \n Die Schicht fängt doch gerade erst an!",
             "drop_on_death": {
-            "type": "trophy",
-            "image": "AU.png"  # Dein Busticket-Bild
+                "type": "required_item",
+                "item_id": "busticket",
+                "image": "Ticket.png"
             }
         },
     ],

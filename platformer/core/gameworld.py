@@ -109,6 +109,7 @@ class GameWorld:
         self.bullets = pg.sprite.Group()
         self.powerups = pg.sprite.Group()
         self.trophies = pg.sprite.Group()
+        self.required_items = pg.sprite.Group()  # Required items for exit (e.g., keys, tickets)
         self.weapon_pickups = pg.sprite.Group()
         self.pipes = pg.sprite.Group()
         self.spikes = pg.sprite.Group()
@@ -141,6 +142,7 @@ class GameWorld:
             self.bullets,
             self.powerups,
             self.trophies,
+            self.required_items,
             self.weapon_pickups,
             self.pipes,
             self.spikes,
@@ -514,6 +516,7 @@ class GameWorld:
                 trophies_collected=preserve_player_state.get("trophies", 0),
                 health=max_health,  # This sets max_health
                 player_image=player_image,  # Apply custom image even when preserving state
+                required_items=preserve_player_state.get("required_items", []),
             )
             # Set the actual current health separately
             self.player.health = current_health
@@ -527,7 +530,7 @@ class GameWorld:
             # Restore damage dealt
             self.player.damage_dealt = preserve_player_state.get("damage_dealt", 0)
         else:
-            self.player = Player(spawn_x, spawn_y, world=self, player_image=player_image)
+            self.player = Player(spawn_x, spawn_y, world=self, player_image=player_image, required_items=[])
 
         self.player_sprite_group = pg.sprite.GroupSingle()
         self.player_sprite_group.add(self.player)
@@ -691,6 +694,9 @@ class GameWorld:
             if self.global_total_trophies > 0
             else current_level_trophy_count
         )
+
+        # Load required items for exit (e.g., ["busticket", "key"])
+        self.required_items_for_exit = self.level_config.get("required_items_for_exit", [])
 
         exit_x, exit_y = self.level_config["exit_location"]
         # Get custom exit images if specified in level config
@@ -1025,6 +1031,7 @@ class GameWorld:
             ),
             "active_weapon": getattr(self.player, "active_weapon", None),
             "damage_dealt": getattr(self.player, "damage_dealt", 0),
+            "required_items": getattr(self.player, "required_items", []).copy() if hasattr(self.player, "required_items") else [],
         }
 
         # Determine return position (use pipe's return position or player's current position)
@@ -1081,6 +1088,7 @@ class GameWorld:
             ),
             "active_weapon": getattr(self.player, "active_weapon", None),
             "damage_dealt": getattr(self.player, "damage_dealt", 0),
+            "required_items": getattr(self.player, "required_items", []).copy() if hasattr(self.player, "required_items") else [],
         }
 
         # Set parent_time_remaining before loading so load_level can use it

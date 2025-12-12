@@ -40,7 +40,7 @@ from ..config.constants import (
 class Player(pg.sprite.Sprite):
     """Player character with movement, combat, and world interaction."""
 
-    def __init__(self, _x, _y, world, start_gems=0, trophies_collected=0, health=80, player_image=None):
+    def __init__(self, _x, _y, world, start_gems=0, trophies_collected=0, health=80, player_image=None, required_items=None):
         super().__init__()
         # Load and scale the player image to fit within one grid cell
         # Use custom image if provided, otherwise default to suffi.png
@@ -67,6 +67,7 @@ class Player(pg.sprite.Sprite):
         self.knockback_step_distance = 0  # Distance per knockback step
         self.active_powerups = {}
         self.trophies_collected = trophies_collected
+        self.required_items = required_items if required_items else []  # List of collected required items (e.g., ["busticket"])
         self.weapons = {}  # {weapon_name: cooldown_timer}
         self.active_weapon = None
         self.weapon_image = None
@@ -316,18 +317,40 @@ class Player(pg.sprite.Sprite):
             )
         self.trophies_collected += len(hits)
 
+    def check_required_items(self):
+        """Check for collisions with required items (e.g., keys, tickets)."""
+        hits = pg.sprite.spritecollide(self, self.world.required_items, True)
+        if len(hits) > 0:
+            sound_manager.play_sound_effect("trophy_collect")  # Play collection sound
+        for item in hits:
+            # Add item to player's collected required items
+            self.required_items.append(item.item_id)
+
     def check_exit(self):
         # If the current level has no exit (e.g., parent level delegates finishing to a sub-level), do nothing
         if not getattr(self.world, "exit", None):
             return
 
-        # Exit is always open - no need to collect all trophies
-        try:
-            self.world.exit.open()
-        except Exception:
-            return
+        # Check if all required items are collected
+        required_items = getattr(self.world, "required_items_for_exit", [])
+        has_all_required_items = all(item in self.required_items for item in required_items)
+        
+        # Open exit if required items are collected, or if no required items are specified (exit always open)
+        if len(required_items) > 0:
+            # If level has required items, only check those
+            should_open = has_all_required_items
+        else:
+            # No required items, exit is always open
+            should_open = True
+            
+        if should_open:
+            try:
+                self.world.exit.open()
+            except Exception:
+                pass
 
-        if pg.sprite.collide_rect(self, self.world.exit):
+        # Only allow entering if exit is open
+        if pg.sprite.collide_rect(self, self.world.exit) and self.world.exit.is_open:
             sound_manager.play_sound_effect("level_complete")
             self.world.level_complete_flag = True
 
@@ -716,6 +739,7 @@ class Player(pg.sprite.Sprite):
             self.check_powerups()
             self.handle_powerup_timers()
             self.check_trophies()
+            self.check_required_items()
             self.check_exit()
             self.check_weapons()
             self.check_pipes()
