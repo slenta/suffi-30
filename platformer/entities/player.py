@@ -33,6 +33,7 @@ from ..config.constants import (
     FALL_SEARCH_RANGE,
     POWERUP_FLY_DURATION,
     POWERUP_FLY_DELAY,
+    POWERUP_JOINT_DURATION,
 )
 
 
@@ -79,6 +80,8 @@ class Player(pg.sprite.Sprite):
         self.radial_blur_active = False  # Track if radial blur effect is active
         # Flight flag (enabled by powerup)
         self.can_fly = False
+        # Slow-fall flag (enabled by certain powerups)
+        self.slow_fall = False
 
         # Ladder mechanics
         self.on_ladder = False
@@ -107,9 +110,19 @@ class Player(pg.sprite.Sprite):
         # Only apply gravity when not gripping a ladder
         # Do not apply gravity while flying
         if not self.ladder_grip and not self.can_fly:
-            self.vy += GRAVITY
-            if self.vy > MAX_VELOCITY:
-                self.vy = MAX_VELOCITY
+            keys = pg.key.get_pressed()
+            jump_key = KEYBINDINGS.get("jump")
+            # If slow_fall is active and the player is NOT holding the jump/up key,
+            # fall slowly similar to being in a waterfall.
+            if getattr(self, "slow_fall", False) and not keys[jump_key]:
+                # Apply reduced gravity and cap the fall speed to waterfall speed
+                self.vy += GRAVITY * 0.2
+                if self.vy > WATERFALL_MOVE_SPEED:
+                    self.vy = WATERFALL_MOVE_SPEED
+            else:
+                self.vy += GRAVITY
+                if self.vy > MAX_VELOCITY:
+                    self.vy = MAX_VELOCITY
 
     def move(self):
         keys = pg.key.get_pressed()
@@ -130,8 +143,15 @@ class Player(pg.sprite.Sprite):
             self.vx = 0
 
         # Handle jumping independently of horizontal movement
-        if keys[KEYBINDINGS.get("jump")]:
-            self.jump()
+        jump_key = KEYBINDINGS.get("jump")
+        if keys[jump_key]:
+            # If slow_fall is active (joint powerup) allow continuous ascent
+            # while the jump key is held — otherwise use normal jump logic.
+            if getattr(self, "slow_fall", False) and not self.on_ladder:
+                # Continuous upward movement: set upward velocity each frame
+                self.vy = -abs(self.jump_power)
+            else:
+                self.jump()
 
         # Check if standing on a moving platform BEFORE movement
         # This needs to happen before any position changes
@@ -162,7 +182,13 @@ class Player(pg.sprite.Sprite):
         # when the player is moving upward (vy < 0). These blocks should react when
         # hit from below even though they are not solid yet.
         if self.vy < 0:
-            inv_hits = [b for b in pg.sprite.spritecollide(self, self.world.poppable_blocks, False) if b not in self.world.platforms]
+            inv_hits = [
+                b
+                for b in pg.sprite.spritecollide(
+                    self, self.world.poppable_blocks, False
+                )
+                if b not in self.world.platforms
+            ]
             for hit in inv_hits:
                 # Treat as a collision from below: stop upward movement and trigger pop
                 self.rect.top = hit.rect.bottom
@@ -251,18 +277,19 @@ class Player(pg.sprite.Sprite):
             self.world.collected_items.add(
                 f"{self.world.current_level_name}_powerup_{powerup_x}_{powerup_y}"
             )
-            powerup.apply_effect(self)
+            # Type 3 powerup returns its own duration based on effect
+            effect_duration = powerup.apply_effect(self)
             # Type 3 powerup lasts 4 seconds (240 frames), type 5 lasts 15 seconds (900 frames), others last 8 seconds (480 frames)
             if powerup.power_type == 3:
-                from ..config.constants import POWERUP_CHAOS_DURATION
-
-                duration = random.randint(
-                    POWERUP_CHAOS_DURATION // 2, POWERUP_CHAOS_DURATION
-                )
+                duration = effect_duration  # Use duration from apply_effect
             elif powerup.power_type == 6:
                 from ..config.constants import POWERUP_FLY_DURATION
 
                 duration = POWERUP_FLY_DURATION
+            elif powerup.power_type == 7:
+                from ..config.constants import POWERUP_JOINT_DURATION
+
+                duration = POWERUP_JOINT_DURATION
             elif powerup.power_type == 5:
                 from ..config.constants import PIXELATION_DURATION
 

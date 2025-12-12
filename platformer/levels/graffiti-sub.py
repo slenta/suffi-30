@@ -5,8 +5,9 @@ This is an example sub-level accessed via a pipe from the main level.
 
 level_config = {
     # Extended to the left to give more room for exploration
-    "x_bounds": [-500, 2000],  # Extended left boundary
-    "y_bounds": [-200, 300],
+    # Increase left bound so player can move at least to x = -100 (grid units)
+    "x_bounds": [-2000, 2000],  # Extended left boundary (pixels)
+    "y_bounds": [-500, 300],
     # Player spawn point - where player appears when entering this sub-level
     "player_spawn": (5, 1),
     # Floor grass locations
@@ -44,11 +45,25 @@ level_config = {
         (-6, 5),
         (-6, 4),
         (-7, 4),
+        (-8, 4),
+        (-6,3),
+        (-7,7),
+        (-8,7),
+        (-9,7),
+        (-10,7),
+        (-11,7),
+        (-12,7),
         # left top stairs 
         (-9,3),
         (-10,2),
         (-11,1),
         (-12,0),
+        #lower left tunnel
+    *[(i, 11) for i in range(0, -80, -1)],   
+    *[(i, 10) for i in range(0, -80, -1)],
+        # leftest wall
+    *[(-87, i) for i in range(13, -100, -1)], 
+    *[(-80, i) for i in range(9, -20, -1)],
         # right to the wall
         # Upper ceiling
         (13, 3),
@@ -78,7 +93,7 @@ level_config = {
         (31, 4),
         (16, 9),
         (26, 7),
-        (51, 11),
+        (51, 11),     
         (33, -3)
     ],
     # Powerup locations
@@ -87,7 +102,7 @@ level_config = {
         {"x": 15, "y": 9, "type": 1},   # Speed power-up above mid platform (reachable)
         {"x": 25, "y": 7, "type": 2},   # Background changer above moving platforms
         {"x": 55, "y": 3, "type": 3},   # Chaos power-up near circular platform (use moving platform to reach)
-        {"x": 31, "y": 3, "type": 5},   # Teil/pixelation power-up placed on a small platform
+        {"x": -84, "y": 13, "type": 7},  # a joint to safe you
     ],
     # Enemy locations - make it challenging
     "enemy_locations": [
@@ -114,6 +129,27 @@ level_config = {
             "health": 15,
             "damage": 1,
             "shoot_range": 0,
+        }, {
+            "x": -32,
+            "y": 13,
+            "type": "robodog",
+            "speed": 3,
+            "patrol_range": 80,
+            "size_multiplier": 3,
+            "health": 15,
+            "damage": 1,
+            "shoot_range": 0,
+        },
+        {
+            "x": -2,
+            "y": 5,
+            "type": "drone",
+            "speed": 4,
+            "patrol_range": 100,
+            "size_multiplier": 3,
+            "health": 10,
+            "damage": 1,
+            "shoot_range": 4,
         },
     ],
     # Weapon locations
@@ -169,8 +205,11 @@ level_config = {
         (65, 10),
     ],
     "trophy_image": "trophy.png",
+    # If True, always reset collected/killed tracking when this level is loaded.
+    # Useful during development so placed enemies/items reappear each load.
+    "reset_killed_on_load": True,
     # Exit location - completing this returns to main level
-    "exit_location": (-7, 5),
+    "exit_location": (-7, 6),
     # If True, when this sub-level's exit is reached the whole level is finished
     # instead of returning to the parent level. Useful when the sub-level contains
     # the final door for the complete stage.

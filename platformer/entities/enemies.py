@@ -94,7 +94,7 @@ class Enemy(pg.sprite.Sprite):
         self.encounter_message = encounter_message  # Message to display
         self.encounter_message_color = encounter_message_color  # Optional custom color
         self.has_been_encountered = False  # Track if player has seen this enemy
-        
+
         # Explosive customization
         self.explosive_image = explosive_image  # Custom image for thrown explosives
         self.explosive_size = explosive_size  # Size of explosive in pixels
@@ -110,6 +110,13 @@ class Enemy(pg.sprite.Sprite):
         self.death_horizontal_velocity = 3  # Horizontal movement when tumbling
         self.death_timer = 0  # Timer to remove enemy after falling off screen
         self.original_image = self.image.copy()  # Store original image for rotation
+
+        # Platform connectivity cache to avoid expensive checks every frame
+        self.connectivity_check_timer = 0
+        self.connectivity_check_interval = (
+            30  # Check every 30 frames (0.5 seconds at 60 FPS)
+        )
+        self.last_connectivity_result = False
 
     def update(self, player):
         # If enemy is dying, only handle death animation
@@ -146,12 +153,20 @@ class Enemy(pg.sprite.Sprite):
         else:
             self.on_ground = False
 
-        # Check if the player is within chasing range
+        # Check if the player is within chasing range AND on connected platforms
         distance_to_player = math.hypot(
             player.rect.centerx - self.rect.centerx,
             player.rect.centery - self.rect.centery,
         )
-        if distance_to_player <= self.chase_range:
+
+        # Only check platform connectivity periodically to avoid performance issues
+        if self.connectivity_check_timer <= 0:
+            self.last_connectivity_result = self.on_connected_platform(player)
+            self.connectivity_check_timer = self.connectivity_check_interval
+        else:
+            self.connectivity_check_timer -= 1
+
+        if distance_to_player <= self.chase_range and self.last_connectivity_result:
             self.chase_player(player)
         else:
             self.patrol()
@@ -412,6 +427,91 @@ class Enemy(pg.sprite.Sprite):
             -margin <= screen_x <= WIDTH + margin
             and -margin <= screen_y <= HEIGHT + margin
         )
+
+    def on_connected_platform(self, player):
+        """
+        Check if the enemy and player are on connected platforms (no chasm between them).
+        Uses a flood-fill approach to find all platforms reachable from the enemy's position.
+        This is cached and only called periodically to avoid performance issues.
+        """
+        if not self.world or not self.on_ground:
+            return False
+
+        # Get the platform the enemy is standing on
+        enemy_platform = self.get_platform_below()
+        if not enemy_platform:
+            return False
+
+        # Get the platform the player is standing on
+        player_platform = self.get_platform_below_entity(player)
+        if not player_platform:
+            return False
+
+        # If they're on the same platform, they're connected
+        if enemy_platform == player_platform:
+            return True
+
+        # Use BFS to check if platforms are connected
+        # Limit the search to prevent excessive computation
+        visited = set()
+        queue = [enemy_platform]
+        visited.add(enemy_platform)
+        max_iterations = 50  # Limit BFS iterations to prevent lag
+
+        iterations = 0
+        while queue and iterations < max_iterations:
+            iterations += 1
+            current_platform = queue.pop(0)
+
+            # Check all other platforms to see if they're adjacent/connected
+            for platform in self.world.platforms:
+                if platform in visited:
+                    continue
+
+                # Check if platforms are horizontally adjacent (within jump distance)
+                # Platforms are considered connected if they're close enough horizontally
+                # and at similar vertical levels (within reasonable jumping height)
+                horizontal_distance = min(
+                    abs(platform.rect.left - current_platform.rect.right),
+                    abs(platform.rect.right - current_platform.rect.left),
+                    abs(platform.rect.centerx - current_platform.rect.centerx),
+                )
+                vertical_distance = abs(platform.rect.top - current_platform.rect.top)
+
+                # Consider platforms connected if they're close enough
+                # Allow for small gaps (up to 3 tiles) and height differences (up to 4 tiles)
+                if (
+                    horizontal_distance <= GRIDSIZE * 3
+                    and vertical_distance <= GRIDSIZE * 4
+                ):
+                    visited.add(platform)
+                    queue.append(platform)
+
+                    # Check if we've reached the player's platform
+                    if platform == player_platform:
+                        return True
+
+        return False
+
+    def get_platform_below(self):
+        """Get the platform directly below the enemy."""
+        # Create a small rect just below the enemy's feet
+        check_rect = pg.Rect(self.rect.centerx - 2, self.rect.bottom + 1, 4, 5)
+
+        for platform in self.world.platforms:
+            if check_rect.colliderect(platform.rect):
+                return platform
+        return None
+
+    def get_platform_below_entity(self, entity):
+        """Get the platform directly below any entity (player or enemy)."""
+        # Create a small rect just below the entity's feet
+        check_rect = pg.Rect(entity.rect.centerx - 2, entity.rect.bottom + 1, 4, 5)
+
+        for platform in self.world.platforms:
+            if check_rect.colliderect(platform.rect):
+                return platform
+        return None
 
     def spawn_replacement_enemy(self):
         """Spawn a new enemy at this enemy's position when it dies."""

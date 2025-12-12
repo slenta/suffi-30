@@ -17,13 +17,16 @@ class PowerUp(pg.sprite.Sprite):
     PowerUp class for different power-up types in the game.
 
     Power-up types:
-    - Type 0: Makes the player bigger (banana.png)
+    - Type 0: Makes the player bigger and restores health to full (banana.png)
     - Type 1: Makes the player faster (pulver.png)
     - Type 2: Changes the level background (spraydose.png)
     - Type 3: Chaos effect - reverses left/right controls, increases speed by 6, and has 50% chance to set FPS to 10 for 8 seconds
     - Type 4: Makes the player bigger (babybrei.png)
     - Type 5: Teil - Creates pixelation/rasterization effect for 15 seconds
-    - Type 6: Monster - Restores health and makes player faster 
+    - Type 6: Monster - Restores health and makes player faster
+            - Type 7: Joint - Halves horizontal movement speed and vertical jump power.
+                While active, holding the up key causes the player to continuously ascend
+                (press-and-hold to climb). Duration: 10 seconds.
 
     To use type 2 (background changer):
     1. Add a power-up in your level config:
@@ -44,6 +47,9 @@ class PowerUp(pg.sprite.Sprite):
         self.power_type = power_type
         self.fps_changed = False  # Track if FPS was changed for type 3
         self.speed_changed = False  # Track if speed was changed for type 3
+        # Track whether this powerup applied a flight speed penalty so we can restore correctly
+        self._applied_fly_penalty = False
+        self._original_speed = None
 
         # Load custom images for each power-up type
         if power_type == 0:
@@ -73,6 +79,11 @@ class PowerUp(pg.sprite.Sprite):
             image = pg.image.load(
                 os.path.join(IMAGEPATH, "powerups/monster.png")
             ).convert_alpha()
+        elif power_type == 7:
+            # Joint powerup - enables short flight but slows player
+            image = pg.image.load(
+                os.path.join(IMAGEPATH, "powerups/joint.png")
+            ).convert_alpha()
         else:
             image = pg.Surface((20, 20))  # Default size for unknown power-ups
             image.fill((255, 255, 0))  # Yellow for unknown power-ups
@@ -83,12 +94,14 @@ class PowerUp(pg.sprite.Sprite):
         self.rect.center = (x, y)
 
     def apply_effect(self, player):
-        """Apply power-up effect to player."""
+        """Apply power-up effect to player. Returns duration if type 3, otherwise None."""
         if self.power_type == 5:
             # Teil powerup - radial blur effect
             player.radial_blur_active = True
         elif self.power_type == 0 or self.power_type == 4:
-            # Make the player bigger
+            # Make the player bigger and restore health to full (type 0)
+            if self.power_type == 0:
+                player.health = player.max_health
             player.image = pg.transform.scale(
                 player.image,
                 (
@@ -105,27 +118,57 @@ class PowerUp(pg.sprite.Sprite):
             self.world.change_background()
         elif self.power_type == 3:
             # Chaos effect - 50% chance for one of two effects
+            from ..config.constants import POWERUP_CHAOS_DURATION
+
             if random.random() < 0.5:
-                # Option A: Reverse controls + slow FPS
+                # Option A: Reverse controls + slow FPS (half duration)
                 player.controls_reversed = True
                 self.world.set_fps(POWERUP_CHAOS_FPS)
                 self.fps_changed = True
                 self.speed_changed = False
+                return POWERUP_CHAOS_DURATION // 2  # 2 seconds
             else:
-                # Option B: Speed increase
+                # Option B: Speed increase (full duration)
                 player.speed += POWERUP_CHAOS_SPEED_INCREASE
                 self.speed_changed = True
                 self.fps_changed = False
+                return POWERUP_CHAOS_DURATION  # 4 seconds
         elif self.power_type == 6:
             # Monster powerup - Restore health and make player faster
             player.health = player.max_health
             player.speed += POWERUP_SPEED_INCREASE
+        elif self.power_type == 7:
+            # Joint powerup - lower movement tempo and enable slow-fall.
+            # Store original movement parameters so we can restore them.
+            self._original_speed = getattr(player, "speed", None)
+            self._original_jump_power = getattr(player, "jump_power", None)
+            try:
+                player.speed = max(0.1, float(player.speed) * 0.5)
+            except Exception:
+                pass
+            try:
+                player.jump_power = float(player.jump_power) * 0.5
+            except Exception:
+                pass
+            # Enable waterfall-like slow fall when the up key is released
+            player.slow_fall = True
+            self._applied_half_penalty = True
+        return None
 
     def power_down(self, player):
         """Remove power-up effect from player."""
         if self.power_type == 5:
             # Remove radial blur effect
             player.radial_blur_active = False
+        elif self.power_type == 7:
+            # End of joint powerup: disable slow-fall and restore movement params
+            player.slow_fall = False
+            if getattr(self, "_applied_half_penalty", False):
+                if hasattr(self, "_original_speed") and self._original_speed is not None:
+                    player.speed = self._original_speed
+                if hasattr(self, "_original_jump_power") and self._original_jump_power is not None:
+                    player.jump_power = self._original_jump_power
+                self._applied_half_penalty = False
         elif self.power_type == 0 or self.power_type == 4:
             # Restore normal size
             player.image = pg.transform.scale(

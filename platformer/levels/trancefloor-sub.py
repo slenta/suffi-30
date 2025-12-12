@@ -5,6 +5,8 @@ level_config = {
     # Player spawn point (optional) - x and y coordinates in grid units
     # If not specified, defaults to PLAYER_START_X, PLAYER_START_Y from settings.py
     "player_spawn": (0, -10),  # Example: spawn at grid position (5, 1)
+    "player_start_message": "Wir haben noch nicht alle Pilze eingesammelt \n vielleicht finden wir im Wald noch ein paar",
+    "player_start_message_color": (255, 255, 255),  # White
     "grass_locations": [(i, 0) for i in range(0, 10)]
     + [(i, -20) for i in range(40, 60)]
     + [(i, -16) for i in range(65, 80)]
@@ -94,6 +96,7 @@ level_config = {
         {"x": 35, "y": -19, "type": 3},  # pulver
         {"x": 85, "y": -2, "type": 5},  # punisher
         {"x": 61, "y": -15, "type": 5},
+        {"x": 78, "y": -20, "type": 0},
     ],
     # Enemy locations (using centralized config with overrides)
     "enemy_locations": [

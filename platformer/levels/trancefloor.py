@@ -1,9 +1,10 @@
 level_config = {
     "x_bounds": [-300, 9000],  # Extended gameworld width (doubled)
     "y_bounds": [-1230, 1170],  # Increased gameworld height for more vertical space
-    "level_time": 300,  # Time limit in seconds (5 minutes)
-    # "player_spawn": (219, -45),
+    "level_time": 420,  # Time limit in seconds (5 minutes)
     "player_spawn": (0, -35),
+    "player_start_message": "Nach rechts geht zum Trancer Leute \n kommt ihr mit?",
+    "player_start_message_color": (255, 255, 255),  # White
     # Extended grass locations - keeping original and adding more sections
     "grass_locations": [(i, -16) for i in range(-20, 16)]
     + [(i, -16) for i in range(25, 30)]
@@ -40,7 +41,7 @@ level_config = {
         # first gem
         *[(i, -20) for i in range(45, 47)],
         *[(i, -23) for i in range(49, 51)],
-        (43, -27),
+        (45, -27),
         (42, -27),
         *[(i, -32) for i in range(47, 50)],
         *[(i, -35) for i in range(54, 56)],
@@ -146,11 +147,11 @@ level_config = {
         {"x": 50, "y": -25, "type": 3},
         {"x": 158, "y": -47, "type": 3},
         {"x": 83, "y": -27, "type": 2},
-        {"x": 80, "y": -18, "type": 0},
         {"x": 408, "y": -42, "type": 3},
         {"x": 260, "y": -12, "type": 3},
         {"x": 295, "y": -30, "type": 5},
         {"x": 350, "y": -45, "type": 3},
+        {"x": 228, "y": -20, "type": 0},
         {"x": 280, "y": -20, "type": 0},
         {"x": 145, "y": -26, "type": 0},
     ],
@@ -158,14 +159,14 @@ level_config = {
     "enemy_locations": [
         {"type": "trance_totem", "x": 130, "y": -24},
         {"type": "trance_jesus", "x": 170, "y": -35},
-        {"type": "trance_hippie", "x": 215, "y": -42},
+        {"type": "trance_hippie", "x": 210, "y": -42},
         {"type": "trance_okf", "x": 255, "y": -10},
         {"type": "dj_booth", "x": 340, "y": -55},
         # Special final enemy (yourself!) - custom config needed
         {
             "x": 390,
             "y": -45,
-            "image": "player/suffi.png",
+            "image": "player/suffi-left.png",
             "speed": 3,
             "patrol_range": 300,
             "size_multiplier": 6,
@@ -175,7 +176,7 @@ level_config = {
             "chase_range": 400,
             "melee_damage": 15,
             "can_throw_explosives": False,
-            "encounter_message": "The final enemy on the trancefloor – it is yourself!",
+            "encounter_message": "BOSS FIGHT: The final enemy on the trancefloor – it is yourself!",
         },
     ],
     # Extended trophy locations - more collectibles
@@ -216,7 +217,7 @@ level_config = {
             "y": -44,
             "platform_type": "block",
             "movement_type": "circular",
-            "speed": 30,
+            "speed": 0.3,
             "distance": 5,  # This acts as radius for circular movement
             "direction": "horizontal",  # Not used for circular
         },
