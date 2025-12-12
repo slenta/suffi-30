@@ -131,7 +131,7 @@ level_config = {
             "type": "robodog",
             "speed": 3,
             "patrol_range": 80,
-            "size_multiplier": 3,
+            "size_multiplier": 2,
             "health": 15,
             "damage": 1,
             "shoot_range": 0,
@@ -255,10 +255,10 @@ level_config = {
         {"x":-85, "y": -10, "type": "invisible"},
         {"x":16, "y": 10, "type": "powerup", "powerup_type": 1},
         # invisible blöcke für zugang zu ziel
-        {"x":-77, "y": 8, "type": "invisible"},
-        {"x":-78, "y": 8, "type": "invisible"},
-        {"x":-79, "y": 8, "type": "invisible"},
-        {"x":-80, "y": 8, "type": "invisible"},
+        {"x":-77, "y": 6, "type": "invisible"},
+        {"x":-78, "y": 6, "type": "invisible"},
+        {"x":-79, "y": 6, "type": "invisible"},
+        {"x":-80, "y": 6, "type": "invisible"},
 
         # Development: a poppable block that spawns a power-up type 7 (joint)
         # The block stays solid after being popped.
