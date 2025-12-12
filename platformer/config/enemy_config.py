@@ -389,7 +389,7 @@ ENEMY_TYPES = {
         "name": "house",
         "image": "enemies/hospital/house.png",
         "speed": 1.5,
-        "patrol_range": 10,
+        "patrol_range": 0,
         "size_multiplier": 5,
         "health": 100,
         "damage": 30,

@@ -1,10 +1,10 @@
 level_config = {
-    "x_bounds": [-1000, 5000],  # Gameworld width
+    "x_bounds": [-1000, 10000],  # Gameworld width
     "y_bounds": [-500, 800],  # Gameworld height
     "level_time": 240,  # Time limit in seconds (4 minutes)
     # Player spawn point (optional) - x and y coordinates in grid units
     # If not specified, defaults to PLAYER_START_X, PLAYER_START_Y from settings.py
-    "player_spawn": (0, 8),  # Example: spawn at grid position (5, 1)
+    "player_spawn": (80, 8),  # Example: spawn at grid position (5, 1)
     # Player thought bubble at level start
     "player_start_message": "Nur noch diese Schicht \n und dann endlich zur Fusion...",
     "player_start_message_color": (255, 255, 255),  # White
@@ -51,7 +51,14 @@ level_config = {
             "type": "item",
             "item": {"type": "powerup", "powerup_type": 3},
             "image": "medizinschrank.png",  # Eigenes Bild
-        },  # Releases a powerup
+        },  # Releases Pulver
+        {
+            "x": 82,
+            "y": 17,
+            "type": "item",
+            "item": {"type": "powerup", "powerup_type": 3},
+            "image": "medizinschrank.png",  # Eigenes Bild
+        },  # Releases Pulver
     ],
 
     # Strategic gem placements
@@ -68,7 +75,7 @@ level_config = {
         {"x": 10, "y": 7, "type": 0},  # Speed boost before gap
         {"x": 10, "y": 9, "type": 2},  # Invincibility in cave
         {"x": 10, "y": 4, "type": 1},  # Jump boost on tower
-        {"x": 120, "y": 8, "type": 6},  # Health near zigzag peak
+        {"x": 128, "y": 4, "type": 6},  # Health in jumping puzzle
     ],
     # Enemy locations (using centralized config with overrides)
     "enemy_locations": [
@@ -211,9 +218,9 @@ level_config = {
     # Ladder for vertical navigation
     "ladder_locations": [(91, i) for i in range(8, 20)],
     "exit_location": (330, 11),
-    "exit_closed_image": "Bus.png",  # Optional
-    "exit_open_image": "Bus.png",      # Optional
-    "exit_size_multiplier": 16,  # Make the bus 16 times bigger (default is 2)
+    "exit_closed_image": "Bus.png", # Optional
+    "exit_open_image": "Bus.png",   # Optional
+    "exit_size_multiplier": 16,     # Make the bus 16 times bigger (default is 2)
     "spike_locations": [
         # Add danger 
         *[

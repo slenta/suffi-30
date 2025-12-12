@@ -285,6 +285,10 @@ class Enemy(pg.sprite.Sprite):
             self.start_death_animation()
 
     def patrol(self):
+        # Don't patrol if patrol_range is 0 (stationary enemy)
+        if self.patrol_range == 0:
+            return
+            
         # Check for holes in the ground
         if self.detect_hole():
             self.direction *= -1  # Reverse direction
