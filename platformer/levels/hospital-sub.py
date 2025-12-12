@@ -6,8 +6,8 @@ level_config = {
     # If not specified, defaults to PLAYER_START_X, PLAYER_START_Y from settings.py
     "player_spawn": (0, 8),  # Example: spawn at grid position (5, 1)
     # Player thought bubble at level start
-    "player_start_message": "Nur noch diese Schicht \n und dann endlich zur Fusion...",
-    "player_start_message_color": (255, 255, 255),  # White
+    # Custom player image for this level (placed in assets/images/)
+    "player_image": "player/suffi_aerztin.png",  # Change to your custom player image
     # Use a different grass tile for this sublevel (placed in assets/images)
     "grass_image": "krankenhaus_boden.png",
     # Extended grass platforms with challenging gaps

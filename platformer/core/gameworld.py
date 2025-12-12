@@ -435,6 +435,9 @@ class GameWorld:
 
         spawn_x, spawn_y = player_spawn
 
+        # Get custom player image if specified in level config
+        player_image = self.level_config.get("player_image", None)
+        
         # Create player with preserved state if provided
         if preserve_player_state:
             # Get the preserved max_health, or use default if not present
@@ -448,6 +451,7 @@ class GameWorld:
                 start_gems=preserve_player_state.get("gems", 0),
                 trophies_collected=preserve_player_state.get("trophies", 0),
                 health=max_health,  # This sets max_health
+                player_image=player_image,  # Apply custom image even when preserving state
             )
             # Set the actual current health separately
             self.player.health = current_health
@@ -461,7 +465,7 @@ class GameWorld:
             # Restore damage dealt
             self.player.damage_dealt = preserve_player_state.get("damage_dealt", 0)
         else:
-            self.player = Player(spawn_x, spawn_y, world=self)
+            self.player = Player(spawn_x, spawn_y, world=self, player_image=player_image)
 
         self.player_sprite_group = pg.sprite.GroupSingle()
         self.player_sprite_group.add(self.player)
