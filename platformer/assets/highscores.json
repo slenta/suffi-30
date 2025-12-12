@@ -175,6 +175,18 @@
       "timestamp": "2025-12-01T21:58:03.791552"
     },
     {
+      "player_name": "jonas",
+      "score": 66437,
+      "breakdown": {
+        "time_score": 18437,
+        "trophy_score": 30000,
+        "damage_score": 8000,
+        "life_score": 10000,
+        "total_score": 66437
+      },
+      "timestamp": "2025-12-12T20:07:05.928373"
+    },
+    {
       "player_name": "J",
       "score": 61042,
       "breakdown": {

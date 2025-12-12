@@ -4,16 +4,16 @@ level_config = {
     "level_time": 180,  # Time limit in seconds (3 minutes)
     # Player spawn point (optional) - x and y coordinates in grid units
     # If not specified, defaults to PLAYER_START_X, PLAYER_START_Y from settings.py
-    "player_spawn": (210, 8),  # Example: spawn at grid position (5, 1)
+    "player_spawn": (200, 8),  # Example: spawn at grid position (5, 1)
     # Player thought bubble at level start
     "player_start_message": "Nur noch diese Schicht \n und dann endlich zur Fusion...",
     "player_start_message_color": (255, 255, 255),  # White
     # Custom player image for this level (placed in assets/images/)
     "player_image": "player/suffi_aerztin.png",  # Change to your custom player image
     # Total trophies including dropped items (overrides automatic counting)
-    "total_trophies": 3,  # 3 in trophy_locations 
+    "total_trophies": 3,  # 3 in trophy_locations
     "required_items_for_exit": ["busticket"],  # List of required item IDs
-    #Timeout Message (customize for this level)
+    # Timeout Message (customize for this level)
     "timeout_message": "",
     # Game over Messaage (customize for this level)
     "game_over_message": "Du hast es nicht zum Bus geschafft!",
@@ -29,7 +29,7 @@ level_config = {
     + [(i, 14) for i in range(115, 165)]
     + [(i, 14) for i in range(206, 220)]  # Gap for jumping puzzle starts at 220
     + [(i, 14) for i in range(268, 350)]
-    +[( i, 25) for i in range(200, 268)],
+    + [(i, 25) for i in range(200, 268)],
     # Challenging block structures throughout the level
     "block_locations": [
         # Starting obstacle
@@ -38,7 +38,7 @@ level_config = {
         (24, 9),
         (30, 13),
         (33, 11),
-        (39, 13),    
+        (39, 13),
         # Jumping puzzle
         (128, 9),
         (134, 5),
@@ -47,56 +47,56 @@ level_config = {
         (128, -7),
         (112, -11),
         # Way back after Trophy
-        (88,29),
-        (85,28),
-        (82,25),
-        (79,23),
-        (78,21),
-         #Obstacle near end
-        (167,11),
-        (172,8),
-        (177,5),
-        (182,8),
-        (187,11),
-        (192,8),
-        (197,5),
-        (202,5),
-        # Erste Treppe für Gegner 
-        (206,5),
-        (206,6),
-        (206,7),
-        (206,8),
-        (206,9),
-        (206,10),
-        (206,11),
-        (206,12),
-        (206,13),
-        (206,14),
-        (206,15),
-        # Zweite Treppe für Gegner 
-        (219,15),
-        (219,14),
-        (219,13),
-        (219,12),
-        (219,11),
-        (219,10),
-        (219,9),
-        (219,8),
-        (219,7),
-        (219,6),
-        (219,5),
-        #Weg zurück nach schwieriger Sprungpassage
-        (190,13),
-        (191,14),
-        (192,15),
-        (193,16),
-        (194,17),
-        (195,18),
-        (196,19),
-        (197,20),
-        (198,21),
-        (199,22),
-        (200,23),
+        (88, 29),
+        (85, 28),
+        (82, 25),
+        (79, 23),
+        (78, 21),
+        # Obstacle near end
+        (167, 11),
+        (172, 8),
+        (177, 5),
+        (182, 8),
+        (187, 11),
+        (192, 8),
+        (197, 5),
+        (202, 5),
+        # Erste Treppe für Gegner
+        (206, 5),
+        (206, 6),
+        (206, 7),
+        (206, 8),
+        (206, 9),
+        (206, 10),
+        (206, 11),
+        (206, 12),
+        (206, 13),
+        (206, 14),
+        (206, 15),
+        # Zweite Treppe für Gegner
+        (219, 15),
+        (219, 14),
+        (219, 13),
+        (219, 12),
+        (219, 11),
+        (219, 10),
+        (219, 9),
+        (219, 8),
+        (219, 7),
+        (219, 6),
+        (219, 5),
+        # Weg zurück nach schwieriger Sprungpassage
+        (190, 13),
+        (191, 14),
+        (192, 15),
+        (193, 16),
+        (194, 17),
+        (195, 18),
+        (196, 19),
+        (197, 20),
+        (198, 21),
+        (199, 22),
+        (200, 23),
         *[(i, 20) for i in range(40, 75)],
     ],
     # Poppable blocks (like Mario question blocks)
@@ -115,9 +115,8 @@ level_config = {
             "item": {"type": "powerup", "powerup_type": 3},
             "image": "medizinschrank.png",  # Eigenes Bild
         },  # Releases Pulver
-         {"x":218, "y": 9, "type": "invisible"},  # Invisible block
+        {"x": 218, "y": 9, "type": "invisible"},  # Invisible block
     ],
-
     # Strategic gem placements
     "gem_locations": [
         (21, 7),  # Top of starting obstacle
@@ -164,7 +163,7 @@ level_config = {
             "encounter_message": "Frau Hegselmann, können Sie sich \n bitte kurz in der Notaufnahme melden?",
             "encounter_message_color": (255, 0, 0),  # Red
         },
-         {
+        {
             "type": "doctor_old",
             "x": 120,
             "y": 13,
@@ -200,8 +199,8 @@ level_config = {
             "encounter_message_color": (0, 255, 0),  # Green
             "drop_on_death": {
                 "type": "powerup",
-               "powerup_type": 6,
-            }
+                "powerup_type": 6,
+            },
         },
         {
             "type": "jonas",
@@ -221,8 +220,8 @@ level_config = {
             "drop_on_death": {
                 "type": "required_item",
                 "item_id": "busticket",
-                "image": "Ticket.png"
-            }
+                "image": "Ticket.png",
+            },
         },
     ],
     "trophy_locations": [
@@ -372,11 +371,11 @@ level_config = {
     # Ladder for vertical navigation
     "ladder_locations": [(91, i) for i in range(8, 20)],
     "exit_location": (330, 10),
-    "exit_closed_image": "Bus.png", # Optional
-    "exit_open_image": "Bus.png",   # Optional
-    "exit_size_multiplier": 16,     # Make the bus 16 times bigger (default is 2)
+    "exit_closed_image": "Bus.png",  # Optional
+    "exit_open_image": "Bus.png",  # Optional
+    "exit_size_multiplier": 16,  # Make the bus 16 times bigger (default is 2)
     "spike_locations": [
-        # Add danger 
+        # Add danger
         *[
             {"x": i, "y": 12, "direction": "up", "damage": 50} for i in range(19, 21)
         ],  # in first obstacle
