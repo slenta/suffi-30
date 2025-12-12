@@ -5,6 +5,11 @@ level_config = {
     "player_spawn": (0, -35),
     "player_start_message": "Nach rechts geht zum Trancer Leute \n kommt ihr mit?",
     "player_start_message_color": (255, 255, 255),  # White
+    # Timeout Message (customize for this level)
+    "timeout_message": "Das wars mitm Closing.. Bis nächstes Jahr!",
+    # Game over Messaage (customize for this level)
+    "game_over_message": "Das wars für dich aufm Trancer.. \n ab ins Zelt mit dir!",
+    "game_over_message_color": (255, 0, 0),  # z.B. Rot
     # Extended grass locations - keeping original and adding more sections
     "grass_locations": [(i, -16) for i in range(-20, 16)]
     + [(i, -16) for i in range(25, 30)]
