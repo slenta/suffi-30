@@ -36,14 +36,12 @@ level_config = {
         (128, -7),
         (112, -11),
         # Way back after Trophy
-        (88,20),
-        (85,19),
-        (82,18),
-        (79,17),
-        (78,17),
-        (75,20),
-        (74,20),
-        (73,20),
+        (88,29),
+        (85,28),
+        (82,25),
+        (79,23),
+        (78,21),
+        *[(i, 20) for i in range(40, 75)]
     ],
     # Strategic gem placements
     "gem_locations": [
@@ -138,7 +136,7 @@ level_config = {
     ],
     "trophy_locations": [
         (43, -3),  # First jumping obstacle
-        (91, 25),  # Bottom of ladder
+        (91, 19),  # Bottom of ladder
         (112, -14),  # Jumping puzzle end
     ],
     "trophy_image": "AU.png",  # Path to trophy image (relative to assets/images)
@@ -200,7 +198,7 @@ level_config = {
         },
     ],
     # Ladder for vertical navigation
-    "ladder_locations": [(91, i) for i in range(8, 25)],
+    "ladder_locations": [(91, i) for i in range(8, 20)],
     "exit_location": (330, 11),
     "exit_closed_image": "Bus.png",  # Optional
     "exit_open_image": "Bus.png",      # Optional
