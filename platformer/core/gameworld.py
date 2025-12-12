@@ -1469,13 +1469,25 @@ class GameWorld:
         title_rect = title_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 60))
         self.screen.blit(title_text, title_rect)
 
-        # Message
-        font_message = pg.font.Font(None, 32)
-        message_text = font_message.render(
-            "Better luck next time! No highscore for you...", True, (255, 255, 255)
+        # Message - use level-specific message if configured
+        game_over_message = self.level_config.get(
+            "game_over_message",
+            "Better luck next time! No highscore for you..."
         )
-        message_rect = message_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 20))
-        self.screen.blit(message_text, message_rect)
+        game_over_message_color = self.level_config.get(
+            "game_over_message_color",
+            (255, 255, 255)  # Default: White
+        )
+        
+        font_message = pg.font.Font(None, 32)
+        # Handle multi-line messages
+        message_lines = game_over_message.split('\n')
+        y_offset = HEIGHT // 2 + 20
+        for line in message_lines:
+            message_text = font_message.render(line, True, game_over_message_color)
+            message_rect = message_text.get_rect(center=(WIDTH // 2, y_offset))
+            self.screen.blit(message_text, message_rect)
+            y_offset += 40  # Space between lines
 
         # Instruction
         instruction_font = pg.font.Font(None, 24)
@@ -1673,8 +1685,23 @@ class GameWorld:
 
     def on_timer_expired(self):
         """Called when the level timer reaches zero."""
-        # TODO: Implement timer expiration logic (e.g., lose life, restart level, etc.)
-        print("⏱️ Timer expired! (placeholder function)")
+        print("⏱️ Timer expired! Game Over")
+        
+        # Get custom game over message from level config
+        timeout_message = self.level_config.get(
+            "timeout_message", 
+            "Time's up!"
+        )
+        timeout_message_color = self.level_config.get(
+            "timeout_message_color",
+            (255, 0, 0)  # Default: Red
+        )
+        
+        # Display the timeout message
+        self.show_encounter_message(timeout_message, timeout_message_color)
+        
+        # Set game over flag
+        self.game_over_flag = True
 
     def start_screen(self):
         """Hook for displaying start screen. Currently unused."""

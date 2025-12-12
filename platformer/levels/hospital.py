@@ -1,7 +1,7 @@
 level_config = {
     "x_bounds": [-1000, 10000],  # Gameworld width
     "y_bounds": [-500, 800],  # Gameworld height
-    "level_time": 240,  # Time limit in seconds (4 minutes)
+    "level_time": 180,  # Time limit in seconds (3 minutes)
     # Player spawn point (optional) - x and y coordinates in grid units
     # If not specified, defaults to PLAYER_START_X, PLAYER_START_Y from settings.py
     "player_spawn": (150, 8),  # Example: spawn at grid position (5, 1)
@@ -13,6 +13,11 @@ level_config = {
     # Total trophies including dropped items (overrides automatic counting)
     "total_trophies": 3,  # 3 in trophy_locations 
     "required_items_for_exit": ["busticket"],  # List of required item IDs
+    #Timeout Message (customize for this level)
+    "timeout_message": "",
+    # Game over Messaage (customize for this level)
+    "game_over_message": "Du hast es nicht rechtzeitig zum Bus geschafft!",
+    "game_over_message_color": (255, 0, 0),  # z.B. Rot
     # Use a different grass tile for this sublevel (placed in assets/images)
     "grass_image": "krankenhaus_boden.png",
     # Extended grass platforms with challenging gaps
