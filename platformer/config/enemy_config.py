@@ -500,8 +500,10 @@ ENEMY_TYPES = {
         "melee_damage": 20,
         "can_throw_explosives": False,
         "can_summon_minions": False,
-        "encounter_message": "Das ist T-t-t-t-t-t-tightill!",
+        "encounter_message": "Ehhh verpiss dich aus meinem Yard!!!",
         "shoot_cooldown": 20,
+            # Spawn a weapon pickup (spraydose) when this enemy dies
+            "spawn_on_death": {"weapon": "spraydose"},
     },
     "robodog": {
         "name": "Robodog",
@@ -516,7 +518,7 @@ ENEMY_TYPES = {
         "melee_damage": 20,
         "can_throw_explosives": False,
         "can_summon_minions": False,
-        "encounter_message": "Bye Bye!",
+        "encounter_message": "wuff kkrrrchht!",
         "shoot_cooldown": 20,
     },
     "drone": {
@@ -531,8 +533,8 @@ ENEMY_TYPES = {
         "chase_range": 200,
         "melee_damage": 0,
         "can_throw_explosives": False,
-        "can_summon_minions": False,
-        "encounter_message": "Bye Bye!",
+        "can_summon_minions": True,
+        "encounter_message": "Eindringling erkannt. Eleminieren!",
         "shoot_cooldown": 30,
     },
     "police": {

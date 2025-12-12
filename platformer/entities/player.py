@@ -459,6 +459,17 @@ class Player(pg.sprite.Sprite):
                 f"{self.world.current_level_name}_weapon_{weapon_x}_{weapon_y}"
             )
             self.pick_up_weapon(weapon.weapon_name)
+            # Show custom message when collecting the spraydose
+            try:
+                if weapon.weapon_name == "spraydose":
+                    msg = (
+                        "Geil, ne Kanne! Drück F und rotz die Wände und deine Enemies voll!"
+                    )
+                    # Use world's encounter message system so it displays in the HUD
+                    if hasattr(self.world, "show_encounter_message"):
+                        self.world.show_encounter_message(msg)
+            except Exception:
+                pass
 
     def pick_up_weapon(self, weapon_name):
         """Add weapon to player's inventory"""

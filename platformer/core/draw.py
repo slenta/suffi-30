@@ -202,25 +202,41 @@ def draw_encounter_message(screen, message, width, height, color=None):
     if not message:
         return
 
-    # Split message by line breaks
-    lines = message.split('\n')
-    
+    # Split message by line breaks and also wrap long lines so the box stays narrower
+    raw_lines = message.split('\n')
+
     # Use custom color or default to yellow
     text_color = color if color else (255, 255, 0)
-    
-    # Render the message
+
+    # Render the message with word-wrapping
     font = pg.font.Font(None, 36)
-    line_surfaces = []
     line_height = font.get_height()
-    max_width = 0
-    
-    for line in lines:
-        line_surface = font.render(line, True, text_color)
-        line_surfaces.append(line_surface)
-        max_width = max(max_width, line_surface.get_width())
+
+    # Target max text width: a bit narrower than the screen (60% of screen width)
+    max_text_width = int(width * 0.6)
+
+    wrapped_lines = []
+    for raw in raw_lines:
+        words = raw.split(' ')
+        if not words:
+            wrapped_lines.append('')
+            continue
+        cur = words[0]
+        for w in words[1:]:
+            test = f"{cur} {w}"
+            if font.size(test)[0] <= max_text_width:
+                cur = test
+            else:
+                wrapped_lines.append(cur)
+                cur = w
+        wrapped_lines.append(cur)
+
+    # Now render wrapped lines
+    line_surfaces = [font.render(l, True, text_color) for l in wrapped_lines]
+    max_width = max((surf.get_width() for surf in line_surfaces), default=0)
     
     # Calculate total height and position
-    total_height = len(lines) * line_height
+    total_height = len(line_surfaces) * line_height
     start_y = (height // 2) - (total_height // 2)
     
     # Draw semi-transparent black background for better readability
@@ -234,12 +250,19 @@ def draw_encounter_message(screen, message, width, height, color=None):
     )
     bg_surface = pg.Surface((bg_rect.width, bg_rect.height), pg.SRCALPHA)
     bg_surface.fill((0, 0, 0, 180))
+    # Clamp background to screen bounds (leave small margin)
+    if bg_rect.width > width - 40:
+        bg_rect.width = width - 40
+        bg_rect.x = 20
+        bg_surface = pg.Surface((bg_rect.width, bg_rect.height), pg.SRCALPHA)
+        bg_surface.fill((0, 0, 0, 180))
     screen.blit(bg_surface, bg_rect.topleft)
 
-    # Draw each line centered
+    # Draw each line centered within the background box
     for i, line_surface in enumerate(line_surfaces):
         line_rect = line_surface.get_rect()
-        line_rect.centerx = width // 2
+        # Center lines within the background rectangle
+        line_rect.centerx = bg_rect.x + bg_rect.width // 2
         line_rect.y = start_y + (i * line_height)
         screen.blit(line_surface, line_rect)
 

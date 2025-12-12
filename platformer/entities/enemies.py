@@ -524,58 +524,92 @@ class Enemy(pg.sprite.Sprite):
     def spawn_replacement_enemy(self):
         """Spawn a new enemy at this enemy's position when it dies."""
         import os
-        from ..config.enemy_config import get_enemy_config
+        from ..config.enemy_config import get_enemy_config, ENEMY_TYPES
         from ..config.settings import IMAGEPATH
+        from ..collectibles.weapon import WeaponPickup
 
         print(
             f"🔍 spawn_replacement_enemy called. spawn_on_death config: {self.spawn_on_death}"
         )
 
-        # Get the enemy type and any overrides from spawn_on_death config
+        if not self.spawn_on_death:
+            print("⚠️ spawn_replacement_enemy called but no spawn_on_death configured")
+            return
+
         spawn_config = self.spawn_on_death.copy()
-        enemy_type = spawn_config.pop("type")
 
-        print(f"🔍 Enemy type to spawn: {enemy_type}")
-        print(f"🔍 Additional config: {spawn_config}")
+        # If spawn_on_death requests a weapon, spawn a WeaponPickup
+        if "weapon" in spawn_config:
+            weapon_name = spawn_config.get("weapon")
+            wx = self.rect.centerx
+            wy = self.rect.centery
+            try:
+                wp = WeaponPickup(wx, wy, weapon_name)
+                if self.world:
+                    try:
+                        self.world.weapon_pickups.add(wp)
+                    except Exception:
+                        pass
+                    try:
+                        self.world.all_sprites.add(wp)
+                    except Exception:
+                        pass
+                print(f"🔄 Spawned weapon '{weapon_name}' at death position ({wx // GRIDSIZE}, {wy // GRIDSIZE})")
+            except Exception as e:
+                print(f"❌ Failed to spawn weapon '{weapon_name}': {e}")
+            return
 
-        # Get base config for the new enemy type
-        new_enemy_config = get_enemy_config(enemy_type, **spawn_config)
+        # Legacy: spawn an enemy type
+        if "type" in spawn_config:
+            enemy_type = spawn_config.pop("type")
+            print(f"🔍 Enemy type to spawn: {enemy_type}")
+            print(f"🔍 Additional config: {spawn_config}")
 
-        print(f"🔍 Full enemy config: {new_enemy_config}")
+            # Get base config for the new enemy type
+            if enemy_type not in ENEMY_TYPES:
+                print(f"⚠️ Unknown enemy type for spawn_on_death: {enemy_type}")
+                return
 
-        # Create the new enemy at the current death position (not original spawn)
-        new_enemy = Enemy(
-            self.rect.x // GRIDSIZE,
-            self.rect.y // GRIDSIZE,
-            _image_path=os.path.join(IMAGEPATH, new_enemy_config["image"]),
-            speed=new_enemy_config["speed"],
-            patrol_range=new_enemy_config["patrol_range"],
-            size_multiplier=new_enemy_config["size_multiplier"],
-            health=new_enemy_config["health"],
-            damage=new_enemy_config["damage"],
-            shoot_range=new_enemy_config["shoot_range"],
-            world=self.world,
-            chase_range=new_enemy_config["chase_range"],
-            melee_damage=new_enemy_config["melee_damage"],
-            can_throw_explosives=new_enemy_config.get("can_throw_explosives", True),
-            can_summon_minions=new_enemy_config.get("can_summon_minions", False),
-            encounter_message=new_enemy_config.get("encounter_message"),
-            shoot_cooldown=new_enemy_config.get("shoot_cooldown", 60),
-            spawn_on_death=new_enemy_config.get("spawn_on_death"),
-        )
+            new_enemy_config = get_enemy_config(enemy_type, **spawn_config)
 
-        print(
-            f"🔍 New enemy created at ({self.rect.x // GRIDSIZE}, {self.rect.y // GRIDSIZE})"
-        )
+            print(f"🔍 Full enemy config: {new_enemy_config}")
 
-        # Add to world sprite groups
-        self.world.enemies.add(new_enemy)
-        self.world.all_sprites.add(new_enemy)
+            # Create the new enemy at the current death position (not original spawn)
+            new_enemy = Enemy(
+                self.rect.x // GRIDSIZE,
+                self.rect.y // GRIDSIZE,
+                _image_path=os.path.join(IMAGEPATH, new_enemy_config["image"]),
+                speed=new_enemy_config["speed"],
+                patrol_range=new_enemy_config["patrol_range"],
+                size_multiplier=new_enemy_config["size_multiplier"],
+                health=new_enemy_config["health"],
+                damage=new_enemy_config["damage"],
+                shoot_range=new_enemy_config["shoot_range"],
+                world=self.world,
+                chase_range=new_enemy_config["chase_range"],
+                melee_damage=new_enemy_config["melee_damage"],
+                can_throw_explosives=new_enemy_config.get("can_throw_explosives", True),
+                can_summon_minions=new_enemy_config.get("can_summon_minions", False),
+                encounter_message=new_enemy_config.get("encounter_message"),
+                shoot_cooldown=new_enemy_config.get("shoot_cooldown", 60),
+                spawn_on_death=new_enemy_config.get("spawn_on_death"),
+            )
 
-        print(
-            f"🔄 Spawned {enemy_type} at death position ({self.rect.x // GRIDSIZE}, {self.rect.y // GRIDSIZE})"
-        )
-        print(f"🔍 Total enemies in world now: {len(self.world.enemies)}")
+            print(
+                f"🔍 New enemy created at ({self.rect.x // GRIDSIZE}, {self.rect.y // GRIDSIZE})"
+            )
+
+            # Add to world sprite groups
+            self.world.enemies.add(new_enemy)
+            self.world.all_sprites.add(new_enemy)
+
+            print(
+                f"🔄 Spawned {enemy_type} at death position ({self.rect.x // GRIDSIZE}, {self.rect.y // GRIDSIZE})"
+            )
+            print(f"🔍 Total enemies in world now: {len(self.world.enemies)}")
+            return
+
+        print("⚠️ spawn_replacement_enemy: spawn_on_death config not recognized")
 
     def start_death_animation(self):
         """Initialize the death animation (Mario-style tumble)."""
