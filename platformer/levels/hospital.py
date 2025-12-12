@@ -4,7 +4,7 @@ level_config = {
     "level_time": 240,  # Time limit in seconds (4 minutes)
     # Player spawn point (optional) - x and y coordinates in grid units
     # If not specified, defaults to PLAYER_START_X, PLAYER_START_Y from settings.py
-    "player_spawn": (80, 8),  # Example: spawn at grid position (5, 1)
+    "player_spawn": (0, 8),  # Example: spawn at grid position (5, 1)
     # Player thought bubble at level start
     "player_start_message": "Nur noch diese Schicht \n und dann endlich zur Fusion...",
     "player_start_message_color": (255, 255, 255),  # White
@@ -94,7 +94,7 @@ level_config = {
             "encounter_message_color": (255, 0, 0),  # Red
         },
         {
-            "type": "doctor_f_young_follower",
+            "type": "doctor_f_young",
             "x": 83,
             "y": 6,
             "encounter_message": "Frau Hegselmann, können Sie sich \n bitte kurz in der Notaufnahme melden?",
