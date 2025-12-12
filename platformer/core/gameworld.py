@@ -925,6 +925,52 @@ class GameWorld:
                     self.player.stop_shoot()
 
     async def level_complete(self):
+        # If a sub-level exit was reached and that sub-level requested the
+        # parent to be finished instead of returning to it, handle that first.
+        if getattr(self, "_finish_parent_on_exit", False) and self.level_stack:
+            # Prepare to finish the parent level (the parent info is the
+            # last element pushed onto level_stack in enter_sub_level()).
+            parent_level = self.level_stack[-1]
+            parent_name = parent_level.get("level_name")
+
+            try:
+                parent_module = importlib.import_module(f"platformer.levels.{parent_name}")
+                parent_config = parent_module.level_config
+
+                if "total_trophies" in parent_config:
+                    total = parent_config["total_trophies"]
+                else:
+                    total = len(parent_config.get("trophy_locations", []))
+
+                for pipe_data in parent_config.get("pipe_locations", []):
+                    sub_name = pipe_data.get("sub_level")
+                    try:
+                        sub_mod = importlib.import_module(f"platformer.levels.{sub_name}")
+                        sub_cfg = sub_mod.level_config
+                        if "total_trophies" in sub_cfg:
+                            total += sub_cfg["total_trophies"]
+                        else:
+                            total += len(sub_cfg.get("trophy_locations", []))
+                    except Exception:
+                        pass
+
+                # Use parent's name and trophy count for scoring and treat
+                # this as a top-level completion (clear the level stack).
+                self.current_level_name = parent_name
+                self.global_total_trophies = total
+                self.total_trophies = total if total > 0 else 0
+                self.level_stack.clear()
+                print(f"🏁 Sub-level exit finishing parent level: {parent_name} (trophies={total})")
+            except Exception as e:
+                print(f"⚠️ Could not prepare parent level completion: {e}")
+                # Fallback to normal behaviour: return to parent
+                self._finish_parent_on_exit = False
+                self.exit_sub_level()
+                return
+
+            # Clear the flag so normal completion proceeds as a parent-level finish
+            self._finish_parent_on_exit = False
+
         # Check if we're in a sub-level
         if self.level_stack:
             # Return to parent level

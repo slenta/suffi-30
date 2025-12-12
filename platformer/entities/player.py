@@ -352,6 +352,22 @@ class Player(pg.sprite.Sprite):
         # Only allow entering if exit is open
         if pg.sprite.collide_rect(self, self.world.exit) and self.world.exit.is_open:
             sound_manager.play_sound_effect("level_complete")
+            # If we're in a sub-level and that sub-level requests the parent
+            # to be finished when its exit is reached, set a flag on the
+            # world so GameWorld.level_complete can finish the parent level
+            # (instead of returning to it).
+            try:
+                finish_parent = bool(self.world.level_config.get("finish_parent_on_exit", False))
+            except Exception:
+                finish_parent = False
+
+            if finish_parent and self.world.level_stack:
+                # Mark that the upcoming level completion should finish the parent
+                self.world._finish_parent_on_exit = True
+            else:
+                # Default behaviour: complete current level (will return to parent if stacked)
+                self.world._finish_parent_on_exit = False
+
             self.world.level_complete_flag = True
 
     def check_pipes(self):

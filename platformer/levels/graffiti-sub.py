@@ -46,8 +46,8 @@ level_config = {
         (-6, 6),
         (-6, 5),
         (-6, 4),
-        (-7, 4),
-        (-8, 4),
+        (-7, 3),
+        (-8, 3),
         (-6,3),
         # obere begrenzung tunnel
     *[(i, 7) for i in range(-7, -76, -1)],
@@ -99,7 +99,7 @@ level_config = {
         (16, 9),
         (26, 7),
         (51, 11),     
-        (33, -3)
+        (33, -3),
     ],
     # Powerup locations
     "powerup_locations": [
@@ -244,7 +244,7 @@ level_config = {
     # Useful during development so placed enemies/items reappear each load.
     "reset_killed_on_load": True,
     # Exit location - completing this returns to main level
-    "exit_location": (-7, 6),
+    "exit_location": (-7, 5),
     # If True, when this sub-level's exit is reached the whole level is finished
     # instead of returning to the parent level. Useful when the sub-level contains
     # the final door for the complete stage.
