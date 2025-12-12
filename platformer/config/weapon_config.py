@@ -48,7 +48,8 @@ WEAPON_CONFIG = {
         "bullet_size": (6, 6),
         "bullet_color": (200, 100, 255),
         "image": "spraydose.png",
-        "size": 2,
+        # Make the pickup sprite a bit bigger so it's easier to spot in the level
+        "size": 3,
         "gravity": True,
     },
 }

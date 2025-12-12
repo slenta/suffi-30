@@ -62,6 +62,9 @@ POWERUP_JOINT_PIXELATION_FACTOR = 24  # Higher = more pixelated
 # Joint powerup duration (5 seconds)
 POWERUP_JOINT_DURATION = 300  # Frames (5 seconds at 60 FPS)
 
+# Amount of health restored when picking up a joint powerup (flat points)
+POWERUP_JOINT_HEAL = 20
+
 # Timer constants
 ENCOUNTER_MESSAGE_DURATION = 180  # Frames (3 seconds at 60 FPS)
 

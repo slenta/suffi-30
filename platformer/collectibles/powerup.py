@@ -9,6 +9,7 @@ from ..config.constants import (
     POWERUP_CHAOS_SPEED_INCREASE,
     POWERUP_CHAOS_FPS,
     POWERUP_SIZE_MULTIPLIER,
+    POWERUP_JOINT_HEAL,
 )
 
 
@@ -139,6 +140,12 @@ class PowerUp(pg.sprite.Sprite):
             player.speed += POWERUP_SPEED_INCREASE
         elif self.power_type == 7:
             # Joint powerup - lower movement tempo and enable slow-fall.
+            # Also restore a small amount of health on pickup.
+            try:
+                heal_amount = int(POWERUP_JOINT_HEAL)
+                player.health = min(player.max_health, player.health + heal_amount)
+            except Exception:
+                pass
             # Store original movement parameters so we can restore them.
             self._original_speed = getattr(player, "speed", None)
             self._original_jump_power = getattr(player, "jump_power", None)

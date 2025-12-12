@@ -67,8 +67,9 @@ level_config = {
     *[(i, 11) for i in range(0, -80, -1)],   
     *[(i, 10) for i in range(0, -80, -1)],
         # leftest wall
-    *[(-87, i) for i in range(13, -100, -1)], 
-    *[(-80, i) for i in range(9, -20, -1)],
+    *[(-87, i) for i in range(13, -150, -1)], 
+    *[(-80, i) for i in range(9, -150, -1)],
+    *[(-80, i) for i in range(-25, -150, -1)],
         # right to the wall
         # Upper ceiling
         (13, 3),
@@ -119,7 +120,8 @@ level_config = {
             "patrol_range": 50,
             "size_multiplier": 3,
             "health": 50,
-            "damage": 2,
+            # Reduced damage slightly to make this encounter less punishing
+            "damage": 1,
             "shoot_range": 30,
             "range": 4,
             "reload_time": 3,
