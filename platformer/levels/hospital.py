@@ -4,10 +4,12 @@ level_config = {
     "level_time": 240,  # Time limit in seconds (4 minutes)
     # Player spawn point (optional) - x and y coordinates in grid units
     # If not specified, defaults to PLAYER_START_X, PLAYER_START_Y from settings.py
-    "player_spawn": (50, 8),  # Example: spawn at grid position (5, 1)
+    "player_spawn": (60, 8),  # Example: spawn at grid position (5, 1)
     # Player thought bubble at level start
     "player_start_message": "Nur noch diese Schicht \n und dann endlich zur Fusion...",
     "player_start_message_color": (255, 255, 255),  # White
+    # Custom player image for this level (placed in assets/images/)
+    "player_image": "player/suffi_aerztin.png",  # Change to your custom player image
     # Use a different grass tile for this sublevel (placed in assets/images)
     "grass_image": "krankenhaus_boden.png",
     # Extended grass platforms with challenging gaps
@@ -93,7 +95,7 @@ level_config = {
             "type": "doctor_old",
             "x": 120,
             "y": 13,
-            "encounter_message": "Sie müssen mich leider vertreten und länger bleiben, \n jemand hat eine Delle in meinen Porsche gefahren.",
+            "encounter_message": "Sie müssen mich vertreten, ich muss \n meinen Porsche in die Werkstatt bringen.",
             "encounter_message_color": (255, 0, 0),  # Red
         },
         {

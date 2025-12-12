@@ -40,11 +40,13 @@ from ..config.constants import (
 class Player(pg.sprite.Sprite):
     """Player character with movement, combat, and world interaction."""
 
-    def __init__(self, _x, _y, world, start_gems=0, trophies_collected=0, health=80):
+    def __init__(self, _x, _y, world, start_gems=0, trophies_collected=0, health=80, player_image=None):
         super().__init__()
         # Load and scale the player image to fit within one grid cell
+        # Use custom image if provided, otherwise default to suffi.png
+        image_path = player_image if player_image else "player/suffi.png"
         original_image = pg.image.load(
-            os.path.join(IMAGEPATH, "player/suffi.png")
+            os.path.join(IMAGEPATH, image_path)
         ).convert_alpha()
         # Scale to GRIDSIZE (18x18 pixels for size of 1)
         self.image = pg.transform.scale(original_image, (2 * GRIDSIZE, 2 * GRIDSIZE))
