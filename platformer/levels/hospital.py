@@ -4,7 +4,7 @@ level_config = {
     "level_time": 180,  # Time limit in seconds (3 minutes)
     # Player spawn point (optional) - x and y coordinates in grid units
     # If not specified, defaults to PLAYER_START_X, PLAYER_START_Y from settings.py
-    "player_spawn": (150, 8),  # Example: spawn at grid position (5, 1)
+    "player_spawn": (210, 8),  # Example: spawn at grid position (5, 1)
     # Player thought bubble at level start
     "player_start_message": "Nur noch diese Schicht \n und dann endlich zur Fusion...",
     "player_start_message_color": (255, 255, 255),  # White
@@ -16,7 +16,7 @@ level_config = {
     #Timeout Message (customize for this level)
     "timeout_message": "",
     # Game over Messaage (customize for this level)
-    "game_over_message": "Du hast es nicht rechtzeitig zum Bus geschafft!",
+    "game_over_message": "Du hast es nicht zum Bus geschafft!",
     "game_over_message_color": (255, 0, 0),  # z.B. Rot
     # Use a different grass tile for this sublevel (placed in assets/images)
     "grass_image": "krankenhaus_boden.png",
@@ -27,8 +27,9 @@ level_config = {
     + [(i, 8) for i in range(76, 90)]
     + [(i, 14) for i in range(100, 120)]
     + [(i, 14) for i in range(115, 165)]
-    + [(i, 14) for i in range(206, 220)]
-    + [(i, 14) for i in range(250, 350)],
+    + [(i, 14) for i in range(206, 220)]  # Gap for jumping puzzle starts at 220
+    + [(i, 14) for i in range(268, 350)]
+    +[( i, 25) for i in range(200, 268)],
     # Challenging block structures throughout the level
     "block_locations": [
         # Starting obstacle
@@ -84,6 +85,18 @@ level_config = {
         (219,7),
         (219,6),
         (219,5),
+        #Weg zurück nach schwieriger Sprungpassage
+        (190,13),
+        (191,14),
+        (192,15),
+        (193,16),
+        (194,17),
+        (195,18),
+        (196,19),
+        (197,20),
+        (198,21),
+        (199,22),
+        (200,23),
         *[(i, 20) for i in range(40, 75)],
     ],
     # Poppable blocks (like Mario question blocks)
@@ -185,20 +198,24 @@ level_config = {
             "y": 13,
             "encounter_message": "Sie gehen erst, wenn ich geheilt bin!",
             "encounter_message_color": (0, 255, 0),  # Green
+            "drop_on_death": {
+                "type": "powerup",
+               "powerup_type": 6,
+            }
         },
         {
             "type": "jonas",
-            "x": 260,
+            "x": 270,
             "y": 13,
         },
         {
             "type": "paul",
-            "x": 265,
+            "x": 275,
             "y": 13,
         },
         {
             "type": "house",
-            "x": 290,
+            "x": 310,
             "y": 13,
             "encounter_message": "Sie wollen doch nicht etwa schon gehen? \n Ihre Schicht fängt doch gerade erst an!",
             "drop_on_death": {
@@ -268,6 +285,87 @@ level_config = {
             "movement_type": "linear",
             "speed": 2,
             "distance": 6,
+            "direction": "horizontal",
+        },
+        # Knifflige Sprungpassage (x: 220-280)
+        # Start: Horizontal beweglicher Block
+        {
+            "x": 222,
+            "y": 10,
+            "platform_type": "block",
+            "movement_type": "linear",
+            "speed": 2,
+            "distance": 6,
+            "direction": "horizontal",
+        },
+        # Vertikal beweglicher Block (muss Timing treffen)
+        {
+            "x": 232,
+            "y": 8,
+            "platform_type": "block",
+            "movement_type": "linear",
+            "speed": 2,
+            "distance": 7,
+            "direction": "vertical",
+        },
+        # Schnell horizontal (schwieriges Timing)
+        {
+            "x": 236,
+            "y": 10,
+            "platform_type": "block",
+            "movement_type": "linear",
+            "speed": 2,
+            "distance": 5,
+            "direction": "horizontal",
+        },
+        # Vertikal beweglicher Block (muss Timing treffen)
+        {
+            "x": 246,
+            "y": 8,
+            "platform_type": "block",
+            "movement_type": "linear",
+            "speed": 2,
+            "distance": 7,
+            "direction": "vertical",
+        },
+        # Langsam vertikal (Ruhepunkt)
+        {
+            "x": 250,
+            "y": 4,
+            "platform_type": "block",
+            "movement_type": "linear",
+            "speed": 1,
+            "distance": 5,
+            "direction": "vertical",
+        },
+        # Kombiniert: Horizontal beweglich hoch oben
+        {
+            "x": 252,
+            "y": 3,
+            "platform_type": "block",
+            "movement_type": "linear",
+            "speed": 2,
+            "distance": 6,
+            "direction": "horizontal",
+        },
+        # Letzter vertikal beweglicher Block zum Ziel
+        {
+            "x": 260,
+            "y": 4,
+            "platform_type": "block",
+            "movement_type": "linear",
+            "speed": 2,
+            "distance": 8,
+            "direction": "vertical",
+        },
+        # Finale Plattform (statisch als Ziel)
+        {
+            "x": 265,
+            "y": 11,
+            "platform_type": "block",
+            "movement_type": "linear",
+            "speed": 0,
+            "distance": 0,
             "direction": "horizontal",
         },
     ],

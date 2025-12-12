@@ -321,6 +321,18 @@
         "total_score": 29806
       },
       "timestamp": "2025-12-12T17:37:05.072641"
+    },
+    {
+      "player_name": "j",
+      "score": 25942,
+      "breakdown": {
+        "time_score": 13942,
+        "trophy_score": 0,
+        "damage_score": 12000,
+        "life_score": 0,
+        "total_score": 25942
+      },
+      "timestamp": "2025-12-12T19:34:56.813642"
     }
   ]
 }
