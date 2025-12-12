@@ -43,6 +43,17 @@ level_config = {
         (78,21),
         *[(i, 20) for i in range(40, 75)]
     ],
+    # Poppable blocks (like Mario question blocks)
+    "poppable_block_locations": [
+        {
+            "x": 63,
+            "y": 8,
+            "type": "item",
+            "item": {"type": "powerup", "powerup_type": 6},
+            "image": "medizinschrank.png",  # Eigenes Bild
+        },  # Releases a powerup
+    ],
+
     # Strategic gem placements
     "gem_locations": [
         (21, 7),  # Top of starting obstacle
