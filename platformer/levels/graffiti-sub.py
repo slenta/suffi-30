@@ -159,8 +159,8 @@ level_config = {
     ],
     # Weapon locations
     "weapon_locations": [
-        # placed at x=17 so it's reachable from the central platforms
-        {"x": 17, "y": 9, "type": "spraydose"},
+        # placed at x=3 so it's reachable from the central platforms
+        {"x": 3, "y": -4, "type": "spraydose"},
     ],
     # Moving platform locations
     "moving_platform_locations": [

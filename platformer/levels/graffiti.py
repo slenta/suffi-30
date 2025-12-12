@@ -54,13 +54,9 @@ level_config = {
     ],
     # A simple enemy
     "enemy_locations": [
-        {"type": "tightill", "x": 121, "y": -24},
+        {"type": "police", "x": 0, "y": 5},
         {"type": "robodog", "x": 70, "y": -24},
-        {"type": "drone", "x": 120, "y": -24},
-    ],
-    # Weapon(s) placed near the pipe for testing — spraydose placed just above the pipe
-    "weapon_locations": [
-        {"x": 30, "y": 11, "type": "spraydose"},
+        {"type": "drone", "x": -10, "y": 14},
     ],
     # No moving platforms
     "moving_platform_locations": [],
