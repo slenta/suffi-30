@@ -24,7 +24,6 @@ level_config = {
         (3,3),
         (3,4),
         (3,5),
-
         (3,7),
         (3,8),
         (3,9),
@@ -47,12 +46,9 @@ level_config = {
         (-7, 4),
         (-8, 4),
         (-6,3),
-        (-7,7),
-        (-8,7),
-        (-9,7),
-        (-10,7),
-        (-11,7),
-        (-12,7),
+        # obere begrenzung tunnel
+    *[(i, 7) for i in range(-7, -76, -1)],
+    *[(i, 6) for i in range(-7, -76, -1)],
         # left top stairs 
         (-9,3),
         (-10,2),
@@ -258,6 +254,12 @@ level_config = {
         {"x":-83, "y": -49, "type": "invisible"},
         {"x":-85, "y": -10, "type": "invisible"},
         {"x":16, "y": 10, "type": "powerup", "powerup_type": 1},
+        # invisible blöcke für zugang zu ziel
+        {"x":-77, "y": 8, "type": "invisible"},
+        {"x":-78, "y": 8, "type": "invisible"},
+        {"x":-79, "y": 8, "type": "invisible"},
+        {"x":-80, "y": 8, "type": "invisible"},
+
         # Development: a poppable block that spawns a power-up type 7 (joint)
         # The block stays solid after being popped.
         {
