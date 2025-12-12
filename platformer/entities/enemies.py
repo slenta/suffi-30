@@ -276,8 +276,10 @@ class Enemy(pg.sprite.Sprite):
         self.health -= damage
 
         # Track damage dealt by player for scoring
+        # Don't count damage for invulnerable enemies (health >= 99999)
         if hasattr(self.world, "player") and hasattr(self.world.player, "damage_dealt"):
-            self.world.player.damage_dealt += damage
+            if self.max_health < 99999:  # Only count damage for killable enemies
+                self.world.player.damage_dealt += damage
 
         if self.health <= 0:
             self.start_death_animation()

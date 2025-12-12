@@ -364,7 +364,7 @@ class GameWorld:
             self.all_sprites.add(mp)
 
         # Load poppable blocks
-        poppable_block_image = pg.image.load(
+        default_poppable_block_image = pg.image.load(
             os.path.join(IMAGEPATH, "block_pop.png")
         ).convert_alpha()
         for block_data in self.level_config.get("poppable_block_locations", []):
@@ -373,11 +373,21 @@ class GameWorld:
                 x, y = block_data
                 block_type = "disappear"  # Default type
                 item_data = None
+                custom_image = None
             else:
                 x = block_data["x"]
                 y = block_data["y"]
                 block_type = block_data.get("type", "disappear")
                 item_data = block_data.get("item", None)
+                custom_image = block_data.get("image", None)
+
+            # Load custom image if specified, otherwise use default
+            if custom_image:
+                poppable_block_image = pg.image.load(
+                    os.path.join(IMAGEPATH, custom_image)
+                ).convert_alpha()
+            else:
+                poppable_block_image = default_poppable_block_image
 
             pb = PoppableBlock(x, y, poppable_block_image, block_type, item_data, self)
             self.poppable_blocks.add(pb)
