@@ -59,7 +59,7 @@ POWERUP_FLY_DELAY = 0  # Frames before flight ability activates (now immediate)
 # Joint-specific pixelation strength (much stronger than default)
 POWERUP_JOINT_PIXELATION_FACTOR = 24  # Higher = more pixelated
 
-# Joint powerup duration (10 seconds)
+# Joint powerup duration (5 seconds)
 POWERUP_JOINT_DURATION = 300  # Frames (5 seconds at 60 FPS)
 
 # Timer constants
