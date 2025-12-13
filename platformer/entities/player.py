@@ -693,7 +693,6 @@ class Player(pg.sprite.Sprite):
             return
 
         weapon_data = WEAPON_CONFIG.get(self.active_weapon)
-        print(self.active_weapon, weapon_data["type"])
         if not weapon_data or weapon_data["type"] != "melee":
             return
 
