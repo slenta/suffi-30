@@ -11,7 +11,8 @@ level_config = {
     # Use a different grass tile for this sublevel (placed in assets/images)
     "grass_image": "krankenhaus_boden.png",
     # Extended grass platforms with challenging gaps
-    "grass_locations": [(i, 14) for i in range(-40, -23)] + [(i, 14) for i in range(-23, 300)],
+    "grass_locations": [(i, 14) for i in range(-40, -23)]
+    + [(i, 14) for i in range(-23, 300)],
     # Block locations - floating platforms and structures
     "block_locations": [],
     "gem_locations": [],
@@ -42,7 +43,7 @@ level_config = {
             "type": "patient_follower",
             "x": 72,
             "y": 13,
-           "encounter_message": "Warum dauert das hier so lange?",
+            "encounter_message": "Warum dauert das hier so lange?",
             "encounter_message_color": (255, 0, 0),  # Red
         },
         {
@@ -70,7 +71,7 @@ level_config = {
             "encounter_message": "Wann komm ich endlich dran?",
             "encounter_message_color": (255, 0, 0),  # Red
         },
-         {
+        {
             "type": "doctor",
             "x": 150,
             "y": 13,
@@ -80,7 +81,7 @@ level_config = {
     ],
     # Exit location - completing this returns to main level
     "exit_location": (160, 5),
-    "background_music": "assets/music/house.mp3",  # Path relative to game root
+    "background_music": "assets/music/house.ogg",  # Path relative to game root
     "background_image": "assets/backgrounds/Notaufnahme.png",
     "background_scroll_speed": 0.6,  # Optional: parallax scrolling speed (0.0 = static, 1.0 = moves with camera)
     "block_image": "block_white_2.png",  # Custom block image for this level

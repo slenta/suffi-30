@@ -116,7 +116,7 @@ level_config = {
             "image": "medizinschrank.png",  # Eigenes Bild
         },  # Releases Pulver
         {"x": 218, "y": 9, "type": "invisible"},  # Invisible block
-          {
+        {
             "x": 288,
             "y": 9,
             "type": "item",
@@ -132,8 +132,8 @@ level_config = {
         (81, 1),  # Top of tallest tower
         (100, 4),  # Peak of zigzag
         (128, -9),  # Jumping puzzle
-        (187,9), # Near end
-        (278,9), # Vor House
+        (187, 9),  # Near end
+        (278, 9),  # Vor House
     ],
     # Powerups at key locations
     "powerup_locations": [
@@ -413,10 +413,10 @@ level_config = {
         },
     ],
     "checkpoint_locations": [
-    {"x": 108, "y": 9},  # Checkpoint nach Notaufnahme
-    {"x": 283, "y": 9},  # Checkpoint nach der Sprungpassage
-],
-    "background_music": "assets/music/greys.mp3",  # Path relative to game root
+        {"x": 108, "y": 9},  # Checkpoint nach Notaufnahme
+        {"x": 283, "y": 9},  # Checkpoint nach der Sprungpassage
+    ],
+    "background_music": "assets/music/greys.ogg",  # Path relative to game root
     "background_image": "assets/backgrounds/hospital_background_seamless.png",
     "background_scroll_speed": 0.3,  # Optional: parallax scrolling speed (0.0 = static, 1.0 = moves with camera)
     "block_image": "block_white_2.png",  # Custom block image for this level

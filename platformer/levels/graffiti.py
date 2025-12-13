@@ -8,7 +8,7 @@ similar to the green pipes in Mario games.
 level_config = {
     "x_bounds": [-600, 3000],
     "y_bounds": [-200, 300],
-    "level_time": 240,  # Time limit in seconds (4 minutes)
+    "level_time": 300,  # Time limit in seconds (4 minutes)
     # Basic floor
     "grass_locations": [(i, 14) for i in range(-20, 100)],
     # Use a different grass tile for this level (placed in assets/images)
@@ -53,7 +53,7 @@ level_config = {
             "item": {"type": "weapon", "weapon_name": "spraydose"},
         },
         {"x": 46, "y": 10, "type": "disappear"},  # Explicitly set to disappear
-         {
+        {
             "x": 45,
             "y": 10,
             "type": "item",
@@ -121,10 +121,8 @@ level_config = {
     "background_image": "assets/backgrounds/graffiti_background.png",
     # Parallax scroll speed (0.0 = static, 1.0 = camera speed)
     "background_scroll_speed": 0.2,
-
     # Pixel offset for the background image (x, y). Negative y moves the image up.
     "background_offset": (0, -450),
-    "background_music": "assets/music/vroom_remix.mp3",
-
+    "background_music": "assets/music/vroom_remix.ogg",
     "exit_location": (330, 11),
 }

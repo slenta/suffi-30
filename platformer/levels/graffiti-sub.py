@@ -21,74 +21,73 @@ level_config = {
     # Block locations - create a small cave-like structure
     "block_locations": [
         # Left Wall
-        (4,-2),
-        (3,-2),
-        
-        (3,3),
-        (3,4),
-        (3,5),
-        (3,7),
-        (3,8),
-        (3,9),
-        (3,10),
-        (3,11),
-        (3,12),
-        (3,13),
-# left to the wall
-        #top stairs
-        (2,-2),
-        (1,-2),
-        (0,-2),
-        (-1,-1),
-        (-2,0),
-        (-3,1),
-        (-4,2),
-        (-5,3),
-        (-6,4),
+        (4, -2),
+        (3, -2),
+        (3, 3),
+        (3, 4),
+        (3, 5),
+        (3, 7),
+        (3, 8),
+        (3, 9),
+        (3, 10),
+        (3, 11),
+        (3, 12),
+        (3, 13),
+        # left to the wall
+        # top stairs
+        (2, -2),
+        (1, -2),
+        (0, -2),
+        (-1, -1),
+        (-2, 0),
+        (-3, 1),
+        (-4, 2),
+        (-5, 3),
+        (-6, 4),
         # Exit blocks
         (-6, 6),
         (-6, 5),
         (-6, 4),
         (-7, 3),
         (-8, 3),
-        (-6,3),
+        (-6, 3),
         # obere begrenzung tunnel
-    *[(i, 7) for i in range(-7, -76, -1)],
-    *[(i, 6) for i in range(-7, -76, -1)],
-        # left top stairs 
-        (-9,3),
-        (-10,2),
-        (-11,1),
-        (-12,0),
-        (-13,-1),
-        (-14,-2),
-        (-15,-3),
-        (-16,-4),
-        (-17,-5),
-        (-18,-6),
-        (-19,-7),
-        (-20,-8),
-        (-21,-9),
-        (-22,-10),
-        (-23,-11),
-        (-24,-12),
-        (-25,-13),
-        (-26,-14),
-        (-27,-15),
-        (-28,-16),
-        (-29,-17),
-        (-30,-18),
+        *[(i, 7) for i in range(-7, -76, -1)],
+        *[(i, 6) for i in range(-7, -76, -1)],
+        # left top stairs
+        (-9, 3),
+        (-10, 2),
+        (-11, 1),
+        (-12, 0),
+        (-13, -1),
+        (-14, -2),
+        (-15, -3),
+        (-16, -4),
+        (-17, -5),
+        (-18, -6),
+        (-19, -7),
+        (-20, -8),
+        (-21, -9),
+        (-22, -10),
+        (-23, -11),
+        (-24, -12),
+        (-25, -13),
+        (-26, -14),
+        (-27, -15),
+        (-28, -16),
+        (-29, -17),
+        (-30, -18),
         # oberer weg
-    *[(i, -18) for i in range(-31, -76, -1)],     
-      # wand zwischending zum ziel 
-    *[( -76, i) for i in range(1, -17, -1)],
-        #lower left tunnel
-    *[(i, 11) for i in range(0, -80, -1)],   
-    *[(i, 10) for i in range(0, -80, -1)],
+        *[(i, -18) for i in range(-31, -76, -1)],
+        # wand zwischending zum ziel
+        *[(-76, i) for i in range(1, -17, -1)],
+        # lower left tunnel
+        *[(i, 11) for i in range(0, -80, -1)],
+        *[(i, 10) for i in range(0, -80, -1)],
         # leftest wall
-    *[(-87, i) for i in range(13, -150, -1)], 
-    *[(-80, i) for i in range(9, -19, -1)],
-    *[(-80, i) for i in range(-25, -150, -1)],
+        *[(-87, i) for i in range(13, -150, -1)],
+        *[(-80, i) for i in range(9, -19, -1)],
+        *[(-80, i) for i in range(-25, -150, -1)],
         # right to the wall
         # Upper ceiling
         (13, 3),
@@ -110,7 +109,6 @@ level_config = {
         (50, 12),
         (51, 12),
         (52, 12),
-    
     ],
     # Gem locations - rewards for exploring the sub-level
     "gem_locations": [
@@ -119,14 +117,18 @@ level_config = {
         (31, 4),
         (16, 9),
         (26, 7),
-        (51, 11),     
+        (51, 11),
         (33, -3),
     ],
     # Powerup locations
     "powerup_locations": [
         {"x": 60, "y": 10, "type": 0},  # Size power-up (existing)
-        {"x": 15, "y": 9, "type": 1},   # Speed power-up above mid platform (reachable)
-        {"x": 55, "y": 3, "type": 3},   # Chaos power-up near circular platform (use moving platform to reach)
+        {"x": 15, "y": 9, "type": 1},  # Speed power-up above mid platform (reachable)
+        {
+            "x": 55,
+            "y": 3,
+            "type": 3,
+        },  # Chaos power-up near circular platform (use moving platform to reach)
         {"x": -84, "y": 13, "type": 7},  # a joint to safe you
     ],
     # Enemy locations - make it challenging
@@ -155,7 +157,8 @@ level_config = {
             "health": 15,
             "damage": 1,
             "shoot_range": 0,
-        }, {
+        },
+        {
             "x": -32,
             "y": 13,
             "type": "robodog",
@@ -209,7 +212,6 @@ level_config = {
             "movement_type": "circular",
             "speed": 1,
             "distance": 4,
-
         },
     ],
     # Ladder locations - group ladders as separate lists so each stack gets its own LadderTop
@@ -256,13 +258,7 @@ level_config = {
         ],
     ],
     # Trophy locations - collect trophy to open exit
-    "trophy_locations": [
-        (65, 10),
-        (-82, -50),
-        (-78, 9),
-        (-70,-22),
-        (-90, 13)
-    ],
+    "trophy_locations": [(65, 10), (-82, -50), (-78, 9), (-70, -22), (-90, 13)],
     "trophy_image": "trophy.png",
     # If True, always reset collected/killed tracking when this level is loaded.
     # Useful during development so placed enemies/items reappear each load.
@@ -276,26 +272,25 @@ level_config = {
     # Optional: Different background for sub-level
     "background_image": "assets/backgrounds/graffiti_sublevel.png",
     "background_scroll_speed": 0.5,
-    "background_music": "assets/music/vroom_remix.mp3",
+    "background_music": "assets/music/vroom_remix.ogg",
     # Level-specific block look: dusty brown/grey tint (R,G,B)
     "block_tint": (120, 110, 100),
     # Invisible poppable block: stays pass-through until hit from below
     "poppable_block_locations": [
         {"x": 4, "y": 10, "type": "disappear"},
-        {"x":7, "y": 4, "type": "invisible"},
-        {"x":4, "y": 6, "type": "invisible"},
-        {"x":-82, "y": -49, "type": "invisible"},
-        {"x":-83, "y": -49, "type": "invisible"},
-        {"x":-84, "y": -10, "type": "invisible"},
-        {"x":-86, "y": -26, "type": "invisible"},
-        {"x":-85, "y": -26, "type": "invisible"},
-        {"x":-84, "y": -26, "type": "invisible"},
+        {"x": 7, "y": 4, "type": "invisible"},
+        {"x": 4, "y": 6, "type": "invisible"},
+        {"x": -82, "y": -49, "type": "invisible"},
+        {"x": -83, "y": -49, "type": "invisible"},
+        {"x": -84, "y": -10, "type": "invisible"},
+        {"x": -86, "y": -26, "type": "invisible"},
+        {"x": -85, "y": -26, "type": "invisible"},
+        {"x": -84, "y": -26, "type": "invisible"},
         # invisible blöcke für zugang zu ziel
-        {"x":-77, "y": 6, "type": "invisible"},
-        {"x":-78, "y": 6, "type": "invisible"},
-        {"x":-79, "y": 6, "type": "invisible"},
-        {"x":-80, "y": 6, "type": "invisible"},
-
+        {"x": -77, "y": 6, "type": "invisible"},
+        {"x": -78, "y": 6, "type": "invisible"},
+        {"x": -79, "y": 6, "type": "invisible"},
+        {"x": -80, "y": 6, "type": "invisible"},
         # Development: a poppable block that spawns a power-up type 7 (joint)
         # The block stays solid after being popped.
         {
