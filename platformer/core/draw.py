@@ -294,6 +294,7 @@ def draw_background(
     camera_offset_x,
     camera_offset_y,
     background_color=(135, 206, 235),
+    background_offset=(0, 0),
 ):
     """
     Draw the background - either an image or solid color.
@@ -307,10 +308,18 @@ def draw_background(
         camera_offset_y: Camera Y offset
         background_color: RGB tuple for solid color fallback
     """
+    # Always clear the screen first to the fallback background color.
+    # This prevents previously-drawn frames (menu, UI overlays) from
+    # showing through if the background image contains transparency.
+    screen.fill(background_color)
+
     if background_image:
         # Calculate parallax scrolling offset for both X and Y
         bg_offset_x = int(camera_offset_x * background_scroll_speed)
         bg_offset_y = int(camera_offset_y * background_scroll_speed)
+        # Apply per-level pixel offset (background_offset is in pixels)
+        bg_offset_x -= int(background_offset[0])
+        bg_offset_y -= int(background_offset[1])
 
         # Get background and screen dimensions
         bg_width = background_image.get_width()

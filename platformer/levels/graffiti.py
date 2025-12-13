@@ -11,6 +11,8 @@ level_config = {
     "level_time": 240,  # Time limit in seconds (4 minutes)
     # Basic floor
     "grass_locations": [(i, 14) for i in range(-20, 100)],
+    # Use a different grass tile for this level (placed in assets/images)
+    "grass_image": "asche.png",
     # Some platforms and blocks
     "block_locations": [
         (20, 10),
@@ -115,5 +117,13 @@ level_config = {
         #     "direction": "down"
         # },
     ],
+    # Level background: use the graffiti background image placed in assets/backgrounds
+    "background_image": "assets/backgrounds/graffiti_background.png",
+    # Parallax scroll speed (0.0 = static, 1.0 = camera speed)
+    "background_scroll_speed": 0.2,
+
+    # Pixel offset for the background image (x, y). Negative y moves the image up.
+    "background_offset": (0, -450),
+
     "exit_location": (330, 11),
 }

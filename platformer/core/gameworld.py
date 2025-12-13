@@ -1301,6 +1301,7 @@ class GameWorld:
             self.camera_offset_x,
             self.camera_offset_y,
             self.level_config.get("background_color", (135, 206, 235)),
+            background_offset=self.background_offset,
         )
 
         # Draw all sprites with the camera offset
@@ -1678,6 +1679,8 @@ class GameWorld:
         self.background_image = None
         self.background_scroll_speed = 1  # Default parallax scroll speed
         self.alternative_backgrounds = []  # Reset alternative backgrounds
+        # Per-level pixel offset for the background (x,y)
+        self.background_offset = (0, 0)
         self.current_background_index = saved_index
 
         # Load background scroll speed from config (applies to all backgrounds)
@@ -1702,7 +1705,14 @@ class GameWorld:
             # Load background image
             if os.path.exists(bg_path):
                 try:
-                    self.background_image = pg.image.load(bg_path).convert()
+                    loaded_bg = pg.image.load(bg_path)
+                    # Prefer convert_alpha to preserve any transparency in the image;
+                    # fall back to convert() if that's not supported in the environment.
+                    try:
+                        self.background_image = loaded_bg.convert_alpha()
+                    except Exception:
+                        self.background_image = loaded_bg.convert()
+
                     print(f"🖼️ Loaded background image: {os.path.basename(bg_path)}")
 
                 except pg.error as e:
@@ -1710,6 +1720,16 @@ class GameWorld:
                     self.background_image = None
             else:
                 print(f"❌ Background image not found: {bg_path}")
+
+        # Load optional background offset (pixels)
+        if "background_offset" in self.level_config:
+            off = self.level_config["background_offset"]
+            try:
+                # accept tuple/list of two numbers
+                self.background_offset = (int(off[0]), int(off[1]))
+                print(f"🎨 Applied background offset: {self.background_offset}")
+            except Exception:
+                print(f"⚠️ Invalid background_offset in level_config: {off}")
 
         # Load alternative backgrounds if specified
         if "alternative_backgrounds" in self.level_config:
