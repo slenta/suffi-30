@@ -111,10 +111,16 @@ class PowerUp(pg.sprite.Sprite):
         if self.power_type == 5:
             # Teil powerup - radial blur effect
             player.radial_blur_active = True
+            # Show encounter message for Teil powerup
+            if self.world:
+                self.world.show_encounter_message("Hui das war aber ein starkes Teil")
         elif self.power_type == 0 or self.power_type == 4:
             # Make the player bigger and restore health to full (type 0)
             if self.power_type == 0:
                 player.health = player.max_health
+                # Show encounter message for banana powerup
+                if self.world:
+                    self.world.show_encounter_message("Lecker Banane")
             player.image = pg.transform.scale(
                 player.image,
                 (
@@ -129,6 +135,9 @@ class PowerUp(pg.sprite.Sprite):
         elif self.power_type == 2:
             # Change the background
             self.world.change_background()
+            # Show encounter message for background change powerup
+            if self.world:
+                self.world.show_encounter_message("Kleine Microdose LSD?")
         elif self.power_type == 3:
             # Chaos effect - 50% chance for one of two effects
             from ..config.constants import POWERUP_CHAOS_DURATION
@@ -139,12 +148,18 @@ class PowerUp(pg.sprite.Sprite):
                 self.world.set_fps(POWERUP_CHAOS_FPS)
                 self.fps_changed = True
                 self.speed_changed = False
+                # Show encounter message for chaos effect Option A
+                if self.world:
+                    self.world.show_encounter_message("Ups das war das Keta")
                 return POWERUP_CHAOS_DURATION // 2  # 2 seconds
             else:
                 # Option B: Speed increase (full duration)
                 player.speed += POWERUP_CHAOS_SPEED_INCREASE
                 self.speed_changed = True
                 self.fps_changed = False
+                # Show encounter message for chaos effect Option B
+                if self.world:
+                    self.world.show_encounter_message("Gleich wieder fit")
                 return POWERUP_CHAOS_DURATION  # 4 seconds
         elif self.power_type == 6:
             # Monster powerup - Restore health and make player faster
@@ -162,14 +177,21 @@ class PowerUp(pg.sprite.Sprite):
             # Reference-counting: store base movement params on the player the
             # first time a joint powerup is applied, and increment a counter
             # so overlapping pickups don't clobber the original values.
-            if not hasattr(player, "joint_power_count") or getattr(player, "joint_power_count", 0) <= 0:
+            if (
+                not hasattr(player, "joint_power_count")
+                or getattr(player, "joint_power_count", 0) <= 0
+            ):
                 # Save the base values so they can be restored later
                 try:
                     setattr(player, "joint_base_speed", getattr(player, "speed", None))
                 except Exception:
                     pass
                 try:
-                    setattr(player, "joint_base_jump_power", getattr(player, "jump_power", None))
+                    setattr(
+                        player,
+                        "joint_base_jump_power",
+                        getattr(player, "jump_power", None),
+                    )
                 except Exception:
                     pass
 
@@ -185,8 +207,12 @@ class PowerUp(pg.sprite.Sprite):
 
             # Apply the slowed movement relative to the stored base values
             try:
-                base_speed = getattr(player, "joint_base_speed", getattr(player, "speed", None))
-                base_jump = getattr(player, "joint_base_jump_power", getattr(player, "jump_power", None))
+                base_speed = getattr(
+                    player, "joint_base_speed", getattr(player, "speed", None)
+                )
+                base_jump = getattr(
+                    player, "joint_base_jump_power", getattr(player, "jump_power", None)
+                )
                 if base_speed is not None:
                     player.speed = max(0.1, float(base_speed) * 0.5)
                 if base_jump is not None:
@@ -223,10 +249,16 @@ class PowerUp(pg.sprite.Sprite):
             # If no more joint powerups active, restore base values
             if getattr(player, "joint_power_count", 0) == 0:
                 player.slow_fall = False
-                if hasattr(player, "joint_base_speed") and player.joint_base_speed is not None:
+                if (
+                    hasattr(player, "joint_base_speed")
+                    and player.joint_base_speed is not None
+                ):
                     player.speed = player.joint_base_speed
                     delattr(player, "joint_base_speed")
-                if hasattr(player, "joint_base_jump_power") and player.joint_base_jump_power is not None:
+                if (
+                    hasattr(player, "joint_base_jump_power")
+                    and player.joint_base_jump_power is not None
+                ):
                     player.jump_power = player.joint_base_jump_power
                     delattr(player, "joint_base_jump_power")
                 # Clean up counter attribute

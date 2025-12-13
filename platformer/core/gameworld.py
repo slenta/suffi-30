@@ -109,7 +109,9 @@ class GameWorld:
         self.bullets = pg.sprite.Group()
         self.powerups = pg.sprite.Group()
         self.trophies = pg.sprite.Group()
-        self.required_items = pg.sprite.Group()  # Required items for exit (e.g., keys, tickets)
+        self.required_items = (
+            pg.sprite.Group()
+        )  # Required items for exit (e.g., keys, tickets)
         self.weapon_pickups = pg.sprite.Group()
         self.pipes = pg.sprite.Group()
         self.spikes = pg.sprite.Group()
@@ -119,7 +121,7 @@ class GameWorld:
         self.waterfall_tops = pg.sprite.Group()
         self.poppable_blocks = pg.sprite.Group()
         self.checkpoints = pg.sprite.Group()
-        
+
         # Checkpoint system
         self.last_checkpoint = None  # Stores the last activated checkpoint
         self.checkpoint_state = None  # Stores player state at checkpoint
@@ -215,10 +217,15 @@ class GameWorld:
         # that when we are doing a fresh load (not when restoring player state
         # after a respawn). This ensures that respawns keep previously collected
         # gems/trophies, while game-over or explicit fresh loads still clear them.
-        if self.level_config.get("reset_killed_on_load", False) and not preserve_player_state:
+        if (
+            self.level_config.get("reset_killed_on_load", False)
+            and not preserve_player_state
+        ):
             self.collected_items.clear()
             self.killed_enemies.clear()
-            print("🧹 reset_killed_on_load is set and no preserved player state: cleared collected items and killed enemies")
+            print(
+                "🧹 reset_killed_on_load is set and no preserved player state: cleared collected items and killed enemies"
+            )
 
         # Set level boundaries
         self.ground_start = self.level_config["x_bounds"][0]
@@ -500,6 +507,7 @@ class GameWorld:
 
         # Add checkpoints
         from ..world.checkpoint import Checkpoint
+
         if "checkpoint_locations" in self.level_config:
             for checkpoint_data in self.level_config["checkpoint_locations"]:
                 if isinstance(checkpoint_data, dict):
@@ -511,7 +519,7 @@ class GameWorld:
                     # Support simple tuple format (x, y)
                     x, y = checkpoint_data
                     checkpoint = Checkpoint(x, y)
-                
+
                 self.all_sprites.add(checkpoint)
                 self.checkpoints.add(checkpoint)
 
@@ -528,7 +536,7 @@ class GameWorld:
 
         # Get custom player image if specified in level config
         player_image = self.level_config.get("player_image", None)
-        
+
         # Create player with preserved state if provided
         if preserve_player_state:
             # Get the preserved max_health, or use default if not present
@@ -557,7 +565,13 @@ class GameWorld:
             # Restore damage dealt
             self.player.damage_dealt = preserve_player_state.get("damage_dealt", 0)
         else:
-            self.player = Player(spawn_x, spawn_y, world=self, player_image=player_image, required_items=[])
+            self.player = Player(
+                spawn_x,
+                spawn_y,
+                world=self,
+                player_image=player_image,
+                required_items=[],
+            )
 
         self.player_sprite_group = pg.sprite.GroupSingle()
         self.player_sprite_group.add(self.player)
@@ -723,7 +737,9 @@ class GameWorld:
         )
 
         # Load required items for exit (e.g., ["busticket", "key"])
-        self.required_items_for_exit = self.level_config.get("required_items_for_exit", [])
+        self.required_items_for_exit = self.level_config.get(
+            "required_items_for_exit", []
+        )
 
         exit_x, exit_y = self.level_config["exit_location"]
         # Get custom exit images if specified in level config
@@ -850,6 +866,19 @@ class GameWorld:
         if not self.current_level_name:
             return
 
+        # Temporarily save checkpoint state if in sub-level (we'll clear it for the reset but restore after)
+        saved_checkpoint = None
+        saved_checkpoint_state = None
+        if self.level_stack:
+            saved_checkpoint = self.last_checkpoint
+            saved_checkpoint_state = self.checkpoint_state
+            # Clear checkpoint temporarily so sub-level respawn is at start
+            self.last_checkpoint = None
+            self.checkpoint_state = None
+            print(
+                "🚫 In sub-level: temporarily clearing checkpoint for respawn at start"
+            )
+
         # Save player gems and trophies before reset
         player_state = {
             "gems": self.player.gems,
@@ -910,6 +939,12 @@ class GameWorld:
                 f"🎵 Restored music after reset: {os.path.basename(saved_music_track)}"
             )
 
+        # Restore checkpoint state if we saved it (for sub-level resets)
+        if saved_checkpoint is not None:
+            self.last_checkpoint = saved_checkpoint
+            self.checkpoint_state = saved_checkpoint_state
+            print("✅ Restored checkpoint state after sub-level reset")
+
     def events(self):
         for event in pg.event.get():
             if event.type == pg.QUIT or (
@@ -961,7 +996,9 @@ class GameWorld:
             parent_name = parent_level.get("level_name")
 
             try:
-                parent_module = importlib.import_module(f"platformer.levels.{parent_name}")
+                parent_module = importlib.import_module(
+                    f"platformer.levels.{parent_name}"
+                )
                 parent_config = parent_module.level_config
 
                 if "total_trophies" in parent_config:
@@ -972,7 +1009,9 @@ class GameWorld:
                 for pipe_data in parent_config.get("pipe_locations", []):
                     sub_name = pipe_data.get("sub_level")
                     try:
-                        sub_mod = importlib.import_module(f"platformer.levels.{sub_name}")
+                        sub_mod = importlib.import_module(
+                            f"platformer.levels.{sub_name}"
+                        )
                         sub_cfg = sub_mod.level_config
                         if "total_trophies" in sub_cfg:
                             total += sub_cfg["total_trophies"]
@@ -987,7 +1026,9 @@ class GameWorld:
                 self.global_total_trophies = total
                 self.total_trophies = total if total > 0 else 0
                 self.level_stack.clear()
-                print(f"🏁 Sub-level exit finishing parent level: {parent_name} (trophies={total})")
+                print(
+                    f"🏁 Sub-level exit finishing parent level: {parent_name} (trophies={total})"
+                )
             except Exception as e:
                 print(f"⚠️ Could not prepare parent level completion: {e}")
                 # Fallback to normal behaviour: return to parent
@@ -1104,7 +1145,11 @@ class GameWorld:
             ),
             "active_weapon": getattr(self.player, "active_weapon", None),
             "damage_dealt": getattr(self.player, "damage_dealt", 0),
-            "required_items": getattr(self.player, "required_items", []).copy() if hasattr(self.player, "required_items") else [],
+            "required_items": (
+                getattr(self.player, "required_items", []).copy()
+                if hasattr(self.player, "required_items")
+                else []
+            ),
         }
 
         # Determine return position (use pipe's return position or player's current position)
@@ -1117,12 +1162,14 @@ class GameWorld:
                 self.player.rect.bottom // GRIDSIZE,
             )
 
-        # Push current level onto stack
+        # Push current level onto stack (including checkpoint state)
         self.level_stack.append(
             {
                 "level_name": self.current_level_name,
                 "player_state": player_state,
                 "return_position": return_position,
+                "checkpoint": self.last_checkpoint,
+                "checkpoint_state": self.checkpoint_state,
             }
         )
 
@@ -1161,7 +1208,11 @@ class GameWorld:
             ),
             "active_weapon": getattr(self.player, "active_weapon", None),
             "damage_dealt": getattr(self.player, "damage_dealt", 0),
-            "required_items": getattr(self.player, "required_items", []).copy() if hasattr(self.player, "required_items") else [],
+            "required_items": (
+                getattr(self.player, "required_items", []).copy()
+                if hasattr(self.player, "required_items")
+                else []
+            ),
         }
 
         # Set parent_time_remaining before loading so load_level can use it
@@ -1176,6 +1227,12 @@ class GameWorld:
             preserve_player_state=current_state,
             is_sub_level_transition=True,
         )
+
+        # Restore parent level's checkpoint state
+        self.last_checkpoint = parent_level.get("checkpoint")
+        self.checkpoint_state = parent_level.get("checkpoint_state")
+        if self.last_checkpoint:
+            print(f"✅ Restored parent level checkpoint")
 
         # Play a sound effect (optional)
         sound_manager.play_sound_effect("jump")
@@ -1544,17 +1601,15 @@ class GameWorld:
 
         # Message - use level-specific message if configured
         game_over_message = self.level_config.get(
-            "game_over_message",
-            "Better luck next time! No highscore for you..."
+            "game_over_message", "Better luck next time! No highscore for you..."
         )
         game_over_message_color = self.level_config.get(
-            "game_over_message_color",
-            (255, 255, 255)  # Default: White
+            "game_over_message_color", (255, 255, 255)  # Default: White
         )
-        
+
         font_message = pg.font.Font(None, 32)
         # Handle multi-line messages
-        message_lines = game_over_message.split('\n')
+        message_lines = game_over_message.split("\n")
         y_offset = HEIGHT // 2 + 20
         for line in message_lines:
             message_text = font_message.render(line, True, game_over_message_color)
@@ -1759,20 +1814,16 @@ class GameWorld:
     def on_timer_expired(self):
         """Called when the level timer reaches zero."""
         print("⏱️ Timer expired! Game Over")
-        
+
         # Get custom game over message from level config
-        timeout_message = self.level_config.get(
-            "timeout_message", 
-            "Time's up!"
-        )
+        timeout_message = self.level_config.get("timeout_message", "Time's up!")
         timeout_message_color = self.level_config.get(
-            "timeout_message_color",
-            (255, 0, 0)  # Default: Red
+            "timeout_message_color", (255, 0, 0)  # Default: Red
         )
-        
+
         # Display the timeout message
         self.show_encounter_message(timeout_message, timeout_message_color)
-        
+
         # Set game over flag
         self.game_over_flag = True
 

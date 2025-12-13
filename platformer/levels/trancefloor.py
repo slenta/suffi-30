@@ -1,7 +1,7 @@
 level_config = {
     "x_bounds": [-300, 9000],  # Extended gameworld width (doubled)
     "y_bounds": [-1230, 1170],  # Increased gameworld height for more vertical space
-    "level_time": 780,  # Time limit in seconds (5 minutes)
+    "level_time": 792,  # Time limit in seconds (5 minutes)
     "player_spawn": (0, -35),
     "player_start_message": "Nach rechts geht zum Trancer Leute \n kommt ihr mit?",
     "player_start_message_color": (255, 255, 255),  # White
@@ -175,8 +175,8 @@ level_config = {
             "image": "player/suffi-left.png",
             "speed": 3,
             "patrol_range": 300,
-            "size_multiplier": 6,
-            "health": 200,
+            "size_multiplier": 4,
+            "health": 100,
             "damage": 10,
             "shoot_range": 100,
             "chase_range": 400,

@@ -259,11 +259,19 @@ class HighscoreManager:
         except Exception as e:
             print(f"⚠️ Error adding highscore to database: {e}")
             if connection:
-                connection.rollback()
+                try:
+                    connection.rollback()
+                except Exception as rollback_error:
+                    print(
+                        f"⚠️ Error during rollback (connection may be closed): {rollback_error}"
+                    )
 
         finally:
             if connection:
-                DatabaseConnection.return_connection(connection)
+                try:
+                    DatabaseConnection.return_connection(connection)
+                except Exception as cleanup_error:
+                    print(f"⚠️ Error returning connection: {cleanup_error}")
 
     def get_top_scores(self, level_name, limit=5):
         """
@@ -339,7 +347,10 @@ class HighscoreManager:
 
         finally:
             if connection:
-                DatabaseConnection.return_connection(connection)
+                try:
+                    DatabaseConnection.return_connection(connection)
+                except Exception as cleanup_error:
+                    print(f"⚠️ Error returning connection: {cleanup_error}")
 
     def is_highscore(self, level_name, score):
         """
@@ -421,4 +432,7 @@ class HighscoreManager:
 
         finally:
             if connection:
-                DatabaseConnection.return_connection(connection)
+                try:
+                    DatabaseConnection.return_connection(connection)
+                except Exception as cleanup_error:
+                    print(f"⚠️ Error returning connection: {cleanup_error}")
