@@ -261,6 +261,7 @@ level_config = {
         (-82, -50),
         (-78, 9),
         (-70,-22),
+        (-90, 13)
     ],
     "trophy_image": "trophy.png",
     # If True, always reset collected/killed tracking when this level is loaded.
@@ -274,7 +275,7 @@ level_config = {
     "finish_parent_on_exit": True,
     # Optional: Different background for sub-level
     "background_image": "assets/backgrounds/graffiti_sublevel.png",
-    "background_scroll_speed": 0.1,
+    "background_scroll_speed": 0.5,
     # Level-specific block look: dusty brown/grey tint (R,G,B)
     "block_tint": (120, 110, 100),
     # Invisible poppable block: stays pass-through until hit from below
