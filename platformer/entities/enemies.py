@@ -162,7 +162,10 @@ class Enemy(pg.sprite.Sprite):
         )
 
         # Only check platform connectivity periodically to avoid performance issues
-        if self.connectivity_check_timer <= 0:
+        # Skip connectivity check for no_clip enemies (they can walk through blocks anyway)
+        if self.no_clip:
+            self.last_connectivity_result = True
+        elif self.connectivity_check_timer <= 0:
             self.last_connectivity_result = self.on_connected_platform(player)
             self.connectivity_check_timer = self.connectivity_check_interval
         else:

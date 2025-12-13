@@ -164,7 +164,7 @@ level_config = {
         },
         {
             "type": "doctor_f_young",
-            "x": 83,
+            "x": 82,
             "y": 6,
             "encounter_message": "Frau Hegselmann, können Sie sich \n bitte kurz in der Notaufnahme melden?",
             "encounter_message_color": (255, 0, 0),  # Red
