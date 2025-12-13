@@ -816,7 +816,20 @@ class GameWorld:
                     music_path,
                 )
             self.original_music_track = music_path
-            sound_manager.play_background_music(music_path)
+            # When entering a sub-level, avoid restarting music if it's the same
+            # as the parent track so playback isn't interrupted.
+            if is_sub_level_transition and hasattr(self, "parent_music_track") and self.parent_music_track:
+                try:
+                    if os.path.abspath(self.parent_music_track) == os.path.abspath(music_path):
+                        print("🎵 Sub-level transition: music matches parent, not restarting playback")
+                        # do not call play_background_music to avoid restart
+                    else:
+                        sound_manager.play_background_music(music_path)
+                except Exception:
+                    # Fallback: if any issue comparing paths, just play the music
+                    sound_manager.play_background_music(music_path)
+            else:
+                sound_manager.play_background_music(music_path)
 
         # Load alternative music tracks if specified
         if "alternative_music_tracks" in self.level_config:
@@ -1301,6 +1314,7 @@ class GameWorld:
             self.camera_offset_x,
             self.camera_offset_y,
             self.level_config.get("background_color", (135, 206, 235)),
+            background_offset=self.background_offset,
         )
 
         # Draw all sprites with the camera offset
@@ -1678,6 +1692,8 @@ class GameWorld:
         self.background_image = None
         self.background_scroll_speed = 1  # Default parallax scroll speed
         self.alternative_backgrounds = []  # Reset alternative backgrounds
+        # Per-level pixel offset for the background (x,y)
+        self.background_offset = (0, 0)
         self.current_background_index = saved_index
 
         # Load background scroll speed from config (applies to all backgrounds)
@@ -1702,7 +1718,14 @@ class GameWorld:
             # Load background image
             if os.path.exists(bg_path):
                 try:
-                    self.background_image = pg.image.load(bg_path).convert()
+                    loaded_bg = pg.image.load(bg_path)
+                    # Prefer convert_alpha to preserve any transparency in the image;
+                    # fall back to convert() if that's not supported in the environment.
+                    try:
+                        self.background_image = loaded_bg.convert_alpha()
+                    except Exception:
+                        self.background_image = loaded_bg.convert()
+
                     print(f"🖼️ Loaded background image: {os.path.basename(bg_path)}")
 
                 except pg.error as e:
@@ -1710,6 +1733,16 @@ class GameWorld:
                     self.background_image = None
             else:
                 print(f"❌ Background image not found: {bg_path}")
+
+        # Load optional background offset (pixels)
+        if "background_offset" in self.level_config:
+            off = self.level_config["background_offset"]
+            try:
+                # accept tuple/list of two numbers
+                self.background_offset = (int(off[0]), int(off[1]))
+                print(f"🎨 Applied background offset: {self.background_offset}")
+            except Exception:
+                print(f"⚠️ Invalid background_offset in level_config: {off}")
 
         # Load alternative backgrounds if specified
         if "alternative_backgrounds" in self.level_config:

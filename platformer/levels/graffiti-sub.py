@@ -276,6 +276,7 @@ level_config = {
     # Optional: Different background for sub-level
     "background_image": "assets/backgrounds/graffiti_sublevel.png",
     "background_scroll_speed": 0.5,
+    "background_music": "assets/music/vroom_remix.mp3",
     # Level-specific block look: dusty brown/grey tint (R,G,B)
     "block_tint": (120, 110, 100),
     # Invisible poppable block: stays pass-through until hit from below
