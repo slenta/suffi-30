@@ -34,7 +34,7 @@ level_config = {
         (3,11),
         (3,12),
         (3,13),
-        # left to the wall
+# left to the wall
         #top stairs
         (2,-2),
         (1,-2),
@@ -81,7 +81,7 @@ level_config = {
         # oberer weg
     *[(i, -18) for i in range(-31, -76, -1)],     
       # wand zwischending zum ziel 
-    *[( -76, i) for i in range(5, -17, -1)],
+    *[( -76, i) for i in range(1, -17, -1)],
         #lower left tunnel
     *[(i, 11) for i in range(0, -80, -1)],   
     *[(i, 10) for i in range(0, -80, -1)],
@@ -98,6 +98,7 @@ level_config = {
         (22, 4),
         # Mid-level platforms
         (15, 10),
+        (16, 10),
         (25, 8),
         (26, 8),
         (27, 8),
@@ -125,7 +126,6 @@ level_config = {
     "powerup_locations": [
         {"x": 60, "y": 10, "type": 0},  # Size power-up (existing)
         {"x": 15, "y": 9, "type": 1},   # Speed power-up above mid platform (reachable)
-        {"x": 25, "y": 7, "type": 2},   # Background changer above moving platforms
         {"x": 55, "y": 3, "type": 3},   # Chaos power-up near circular platform (use moving platform to reach)
         {"x": -84, "y": 13, "type": 7},  # a joint to safe you
     ],
@@ -259,7 +259,8 @@ level_config = {
     "trophy_locations": [
         (65, 10),
         (-82, -50),
-        (-78, 8),
+        (-78, 9),
+        (-70,-22),
     ],
     "trophy_image": "trophy.png",
     # If True, always reset collected/killed tracking when this level is loaded.
@@ -283,8 +284,10 @@ level_config = {
         {"x":4, "y": 6, "type": "invisible"},
         {"x":-82, "y": -49, "type": "invisible"},
         {"x":-83, "y": -49, "type": "invisible"},
-        {"x":-85, "y": -10, "type": "invisible"},
-        {"x":16, "y": 10, "type": "powerup", "powerup_type": 1},
+        {"x":-84, "y": -10, "type": "invisible"},
+        {"x":-86, "y": -26, "type": "invisible"},
+        {"x":-85, "y": -26, "type": "invisible"},
+        {"x":-84, "y": -26, "type": "invisible"},
         # invisible blöcke für zugang zu ziel
         {"x":-77, "y": 6, "type": "invisible"},
         {"x":-78, "y": 6, "type": "invisible"},
@@ -294,7 +297,7 @@ level_config = {
         # Development: a poppable block that spawns a power-up type 7 (joint)
         # The block stays solid after being popped.
         {
-            "x": -85,
+            "x": -84,
             "y": -16,
             "type": "item",
             "item": {"type": "powerup", "powerup_type": 7},
