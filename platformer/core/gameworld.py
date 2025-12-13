@@ -205,10 +205,14 @@ class GameWorld:
         # Optional: allow a level to force-reset collected items / killed enemies
         # Useful for level editing so placed enemies always respawn when the level
         # is loaded even if this is considered the "same" level.
-        if self.level_config.get("reset_killed_on_load", False):
+        # If a level requests resetting placed enemies/items on load, only honor
+        # that when we are doing a fresh load (not when restoring player state
+        # after a respawn). This ensures that respawns keep previously collected
+        # gems/trophies, while game-over or explicit fresh loads still clear them.
+        if self.level_config.get("reset_killed_on_load", False) and not preserve_player_state:
             self.collected_items.clear()
             self.killed_enemies.clear()
-            print("🧹 reset_killed_on_load is set: cleared collected items and killed enemies")
+            print("🧹 reset_killed_on_load is set and no preserved player state: cleared collected items and killed enemies")
 
         # Set level boundaries
         self.ground_start = self.level_config["x_bounds"][0]
