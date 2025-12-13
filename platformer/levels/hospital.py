@@ -1,10 +1,10 @@
 level_config = {
     "x_bounds": [-1000, 10000],  # Gameworld width
     "y_bounds": [-500, 800],  # Gameworld height
-    "level_time": 180,  # Time limit in seconds (3 minutes)
+    "level_time": 480,  # Time limit in seconds (8 minutes)
     # Player spawn point (optional) - x and y coordinates in grid units
     # If not specified, defaults to PLAYER_START_X, PLAYER_START_Y from settings.py
-    "player_spawn": (200, 8),  # Example: spawn at grid position (5, 1)
+    "player_spawn": (0, 8),  # Example: spawn at grid position (5, 1)
     # Player thought bubble at level start
     "player_start_message": "Nur noch diese Schicht \n und dann endlich zur Fusion...",
     "player_start_message_color": (255, 255, 255),  # White
@@ -28,7 +28,7 @@ level_config = {
     + [(i, 14) for i in range(100, 120)]
     + [(i, 14) for i in range(115, 165)]
     + [(i, 14) for i in range(206, 220)]  # Gap for jumping puzzle starts at 220
-    + [(i, 14) for i in range(268, 350)]
+    + [(i, 14) for i in range(268, 420)]
     + [(i, 25) for i in range(200, 268)],
     # Challenging block structures throughout the level
     "block_locations": [
@@ -116,6 +116,13 @@ level_config = {
             "image": "medizinschrank.png",  # Eigenes Bild
         },  # Releases Pulver
         {"x": 218, "y": 9, "type": "invisible"},  # Invisible block
+          {
+            "x": 288,
+            "y": 9,
+            "type": "item",
+            "item": {"type": "powerup", "powerup_type": 3},
+            "image": "medizinschrank.png",  # Eigenes Bild
+        },  # Releases Pulver
     ],
     # Strategic gem placements
     "gem_locations": [
@@ -125,12 +132,11 @@ level_config = {
         (81, 1),  # Top of tallest tower
         (97, 5),  # Peak of zigzag
         (128, -9),  # Jumping puzzle
+        (187,9), # Near end
+        (278,9), # Vor House
     ],
     # Powerups at key locations
     "powerup_locations": [
-        {"x": 10, "y": 7, "type": 0},  # Speed boost before gap
-        {"x": 10, "y": 9, "type": 2},  # Invincibility in cave
-        {"x": 10, "y": 4, "type": 1},  # Jump boost on tower
         {"x": 128, "y": 4, "type": 6},  # Health in jumping puzzle
     ],
     # Enemy locations (using centralized config with overrides)
@@ -370,7 +376,7 @@ level_config = {
     ],
     # Ladder for vertical navigation
     "ladder_locations": [(91, i) for i in range(8, 20)],
-    "exit_location": (330, 10),
+    "exit_location": (380, 12),
     "exit_closed_image": "Bus.png",  # Optional
     "exit_open_image": "Bus.png",  # Optional
     "exit_size_multiplier": 16,  # Make the bus 16 times bigger (default is 2)
@@ -406,6 +412,10 @@ level_config = {
             "direction": "down",  # Direction to press: "down", "up", "left", or "right"
         },
     ],
+    "checkpoint_locations": [
+    {"x": 108, "y": 9},  # Checkpoint nach Notaufnahme
+    {"x": 283, "y": 9},  # Checkpoint nach der Sprungpassage
+],
     "background_music": "assets/music/greys.mp3",  # Path relative to game root
     "background_image": "assets/backgrounds/hospital_background_seamless.png",
     "background_scroll_speed": 0.3,  # Optional: parallax scrolling speed (0.0 = static, 1.0 = moves with camera)

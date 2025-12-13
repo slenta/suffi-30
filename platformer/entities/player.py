@@ -336,6 +336,28 @@ class Player(pg.sprite.Sprite):
             # Add item to player's collected required items
             self.required_items.append(item.item_id)
 
+    def check_checkpoints(self):
+        """Check for collisions with checkpoints."""
+        hits = pg.sprite.spritecollide(self, self.world.checkpoints, False)
+        for checkpoint in hits:
+            if not checkpoint.activated:
+                checkpoint.activate()
+                sound_manager.play_sound_effect("trophy_collect")  # Play checkpoint sound
+                
+                # Save checkpoint position and player state
+                self.world.last_checkpoint = checkpoint
+                self.world.checkpoint_state = {
+                    "gems": self.gems,
+                    "trophies": self.trophies_collected,
+                    "health": self.health,
+                    "max_health": self.max_health,
+                    "weapons": self.weapons.copy() if hasattr(self, "weapons") else {},
+                    "active_weapon": getattr(self, "active_weapon", None),
+                    "damage_dealt": getattr(self, "damage_dealt", 0),
+                    "required_items": getattr(self, "required_items", []).copy() if hasattr(self, "required_items") else [],
+                }
+                print(f"✅ Checkpoint activated at ({checkpoint.spawn_x}, {checkpoint.spawn_y})")
+
     def check_exit(self):
         # If the current level has no exit (e.g., parent level delegates finishing to a sub-level), do nothing
         if not getattr(self.world, "exit", None):
@@ -467,12 +489,50 @@ class Player(pg.sprite.Sprite):
             return
 
         sound_manager.play_sound_effect("player_death")  # Play death/fall sound
-        if self.gems >= 1:
+        
+        # Check if there's a checkpoint to respawn at
+        if self.world.last_checkpoint is not None and self.world.checkpoint_state is not None:
+            # Respawn at checkpoint with saved state
+            self.respawn_at_checkpoint()
+        elif self.gems >= 1:
+            # No checkpoint, use gem to respawn at level start
             self.gems -= 1
             self.world.loose_screen()
             self.world.reset()
         else:
+            # No checkpoint and no gems - game over
             self.world.game_over_flag = True
+
+    def respawn_at_checkpoint(self):
+        """Respawn player at the last activated checkpoint."""
+        checkpoint = self.world.last_checkpoint
+        state = self.world.checkpoint_state
+        
+        # Restore position
+        self.rect.x = checkpoint.spawn_x * GRIDSIZE
+        self.rect.bottom = checkpoint.spawn_y * GRIDSIZE
+        self.vx = 0
+        self.vy = 0
+        
+        # Restore player state
+        self.gems = state["gems"]
+        self.trophies_collected = state["trophies"]
+        self.health = state["health"]
+        self.max_health = state["max_health"]
+        self.weapons = state["weapons"].copy()
+        self.active_weapon = state["active_weapon"]
+        self.damage_dealt = state["damage_dealt"]
+        self.required_items = state["required_items"].copy()
+        
+        # Reload weapon image if active weapon exists
+        if self.active_weapon:
+            self.load_weapon_image()
+        
+        # Reset knockback state
+        self.is_knocked_back = False
+        self.knockback_timer = 0
+        
+        print(f"♻️ Respawned at checkpoint ({checkpoint.spawn_x}, {checkpoint.spawn_y})")
 
     def check_weapons(self):
         """Check for weapon pickup collisions"""
@@ -775,6 +835,7 @@ class Player(pg.sprite.Sprite):
             self.handle_powerup_timers()
             self.check_trophies()
             self.check_required_items()
+            self.check_checkpoints()
             self.check_exit()
             self.check_weapons()
             self.check_pipes()

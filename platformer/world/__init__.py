@@ -7,6 +7,7 @@ from .pipe import Pipe
 from .spike import Spike
 from .waterfall import Waterfall, WaterfallTop
 from .poppable_block import PoppableBlock
+from .checkpoint import Checkpoint
 
 __all__ = [
     "Platform",
@@ -18,4 +19,5 @@ __all__ = [
     "Waterfall",
     "WaterfallTop",
     "PoppableBlock",
+    "Checkpoint",
 ]

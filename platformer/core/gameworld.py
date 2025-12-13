@@ -118,6 +118,11 @@ class GameWorld:
         self.waterfalls = pg.sprite.Group()
         self.waterfall_tops = pg.sprite.Group()
         self.poppable_blocks = pg.sprite.Group()
+        self.checkpoints = pg.sprite.Group()
+        
+        # Checkpoint system
+        self.last_checkpoint = None  # Stores the last activated checkpoint
+        self.checkpoint_state = None  # Stores player state at checkpoint
 
     def _clear_sprite_groups(self):
         """Clear all sprite groups."""
@@ -151,6 +156,7 @@ class GameWorld:
             self.waterfalls,
             self.waterfall_tops,
             self.poppable_blocks,
+            self.checkpoints,
         ]:
             group.empty()
 
@@ -491,6 +497,23 @@ class GameWorld:
                 waterfall = Waterfall(x, y)
                 self.all_sprites.add(waterfall)
                 self.waterfalls.add(waterfall)
+
+        # Add checkpoints
+        from ..world.checkpoint import Checkpoint
+        if "checkpoint_locations" in self.level_config:
+            for checkpoint_data in self.level_config["checkpoint_locations"]:
+                if isinstance(checkpoint_data, dict):
+                    x = checkpoint_data["x"]
+                    y = checkpoint_data["y"]
+                    image = checkpoint_data.get("image", "checkpoint.png")
+                    checkpoint = Checkpoint(x, y, image)
+                else:
+                    # Support simple tuple format (x, y)
+                    x, y = checkpoint_data
+                    checkpoint = Checkpoint(x, y)
+                
+                self.all_sprites.add(checkpoint)
+                self.checkpoints.add(checkpoint)
 
         # Use level-specific player spawn point if defined, otherwise use default
         player_spawn = self.level_config.get(

@@ -392,8 +392,8 @@ ENEMY_TYPES = {
         "patrol_range": 0,
         "size_multiplier": 5,
         "health": 100,
-        "damage": 30,
-        "shoot_range": 0,
+        "damage": 20,
+        "shoot_range": 10,
         "chase_range": 10,
         "melee_damage": 30,
         "can_throw_explosives": True,
@@ -401,7 +401,7 @@ ENEMY_TYPES = {
         "explosive_size": 40,  # Size of stock explosive (default is 15)
         "can_summon_minions": False,
         "encounter_message": None,
-        "shoot_cooldown": 60,
+        "shoot_cooldown": 40,
     },
     "jonas": {
         "name": "jonas",
