@@ -542,13 +542,16 @@ class GameWorld:
             # Get the preserved max_health, or use default if not present
             max_health = preserve_player_state.get("max_health", 100)
             current_health = preserve_player_state.get("health", max_health)
+            trophies_collected = max(
+                self.player.trophies_collected, preserve_player_state.get("trophies", 0)
+            )
 
             self.player = Player(
                 spawn_x,
                 spawn_y,
                 world=self,
                 start_gems=preserve_player_state.get("gems", 0),
-                trophies_collected=preserve_player_state.get("trophies", 0),
+                trophies_collected=trophies_collected,
                 health=max_health,  # This sets max_health
                 player_image=player_image,  # Apply custom image even when preserving state
                 required_items=preserve_player_state.get("required_items", []),
@@ -818,10 +821,18 @@ class GameWorld:
             self.original_music_track = music_path
             # When entering a sub-level, avoid restarting music if it's the same
             # as the parent track so playback isn't interrupted.
-            if is_sub_level_transition and hasattr(self, "parent_music_track") and self.parent_music_track:
+            if (
+                is_sub_level_transition
+                and hasattr(self, "parent_music_track")
+                and self.parent_music_track
+            ):
                 try:
-                    if os.path.abspath(self.parent_music_track) == os.path.abspath(music_path):
-                        print("🎵 Sub-level transition: music matches parent, not restarting playback")
+                    if os.path.abspath(self.parent_music_track) == os.path.abspath(
+                        music_path
+                    ):
+                        print(
+                            "🎵 Sub-level transition: music matches parent, not restarting playback"
+                        )
                         # do not call play_background_music to avoid restart
                     else:
                         sound_manager.play_background_music(music_path)

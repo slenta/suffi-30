@@ -1,5 +1,5 @@
 level_config = {
-    "x_bounds": [-100, 8000],  # Extended for underground tunnel and surface climb
+    "x_bounds": [-100, 9000],  # Extended for underground tunnel and surface climb
     "y_bounds": [-200, 500],
     "level_time": 360,  # 6 minutes for the longer level
     # Player spawn point

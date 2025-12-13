@@ -560,7 +560,7 @@ class Player(pg.sprite.Sprite):
 
         # Restore player state
         self.gems = state["gems"]
-        self.trophies_collected = state["trophies"]
+        self.trophies_collected = max(self.trophies_collected, state["trophies"])
         self.max_health = state["max_health"]
         self.health = self.max_health  # Respawn with full health
         self.weapons = state["weapons"].copy()
