@@ -3,7 +3,7 @@ level_config = {
     "y_bounds": [-200, 500],
     "level_time": 360,  # 6 minutes for the longer level
     # Player spawn point
-    "player_start": (2, 13),
+    "player_start": (205, 13),
     # Ground platforms with gaps to jump over
     "grass_locations": [
         # Starting area - safe zone
@@ -84,77 +84,141 @@ level_config = {
         *[(202, i) for i in range(19, 28)],
         # Underground ceiling blocks (simulate cave roof)
         *[(i, 24) for i in range(205, 295)],
-        *[(i, 28) for i in range(202, 215)],
-        *[(i, 28) for i in range(218, 240)],
-        *[(i, 28) for i in range(243, 255)],
+        *[(i, 28) for i in range(202, 214)],
+        *[(i, 28) for i in range(218, 239)],
+        *[(i, 28) for i in range(243, 254)],
         *[(i, 28) for i in range(258, 300)],
-        *[(i, 31) for i in range(215, 218)],
-        *[(i, 31) for i in range(240, 243)],
-        *[(i, 31) for i in range(255, 258)],
+        *[(i, 31) for i in range(214, 218)],
+        *[(i, 31) for i in range(239, 243)],
+        *[(i, 31) for i in range(254, 258)],
         # After tunnel platforms
         *[(i, 8) for i in range(355, 360)],
-        *[(i, 5) for i in range(365, 370)],
-        *[(i, 6) for i in range(375, 380)],
-        *[(i, 1) for i in range(362, 368)],
-        *[(i, -2) for i in range(353, 358)],
-        *[(i, -6) for i in range(345, 351)],
+        *[(i, 5) for i in range(362, 368)],
+        *[(i, 1) for i in range(365, 368)],
+        *[(i, -2) for i in range(355, 360)],
+        *[(i, -6) for i in range(350, 355)],
         *[(i, -10) for i in range(343, 348)],
         *[(i, -14) for i in range(335, 341)],
         # Final area platforms
-        (430, 12),
-        (431, 12),
-        (432, 12),
-        (440, 10),
-        (441, 10),
+        (423, 12),
+        (422, 12),
+        (450, 12),
+        (451, 12),
     ],
     "moving_platform_locations": [
         {
             "x": 353,
-            "y": 20,
+            "y": 10,
             "platform_type": "block",
             "movement_type": "linear",
-            "speed": 5,
+            "speed": 1,
             "distance": 10,
             "direction": "vertical",
         },
         {
-            "x": 305,
+            "x": 301,
             "y": 30,
             "platform_type": "block",
             "movement_type": "linear",
-            "speed": 5,
-            "distance": 10,
+            "speed": 1,
+            "distance": 12,
             "direction": "horizontal",
         },
         {
-            "x": 315,
+            "x": 302,
+            "y": 30,
+            "platform_type": "block",
+            "movement_type": "linear",
+            "speed": 1,
+            "distance": 12,
+            "direction": "horizontal",
+        },
+        {
+            "x": 311,
             "y": 28,
             "platform_type": "block",
             "movement_type": "linear",
             "speed": 2,
-            "distance": 10,
+            "distance": 15,
             "direction": "horizontal",
         },
         {
-            "x": 325,
+            "x": 312,
+            "y": 28,
+            "platform_type": "block",
+            "movement_type": "linear",
+            "speed": 2,
+            "distance": 15,
+            "direction": "horizontal",
+        },
+        {
+            "x": 322,
             "y": 26,
             "platform_type": "block",
             "movement_type": "linear",
-            "speed": 3,
-            "distance": 10,
+            "speed": 1,
+            "distance": 13,
             "direction": "horizontal",
         },
         {
-            "x": 335,
+            "x": 323,
+            "y": 26,
+            "platform_type": "block",
+            "movement_type": "linear",
+            "speed": 1,
+            "distance": 13,
+            "direction": "horizontal",
+        },
+        {
+            "x": 332,
             "y": 24,
             "platform_type": "block",
             "movement_type": "linear",
-            "speed": 7,
-            "distance": 10,
+            "speed": 2,
+            "distance": 15,
             "direction": "horizontal",
         },
+        {
+            "x": 333,
+            "y": 24,
+            "platform_type": "block",
+            "movement_type": "linear",
+            "speed": 2,
+            "distance": 15,
+            "direction": "horizontal",
+        },
+        {
+            "x": 403,
+            "y": 16,
+            "platform_type": "block",
+            "movement_type": "circular",
+            "speed": 1,
+            "distance": 3,
+        },
+        {
+            "x": 410,
+            "y": 12,
+            "platform_type": "block",
+            "movement_type": "linear",
+            "speed": 1,
+            "distance": 10,
+        },
+        {
+            "x": 411,
+            "y": 12,
+            "platform_type": "block",
+            "movement_type": "linear",
+            "speed": 1,
+            "distance": 10,
+        },
     ],
-    "spike_locations": [(215, 30), (217, 30), (240, 30), (242, 30), (257, 30)],
+    "spike_locations": [
+        {"x": 214, "y": 30, "direction": "up", "damage": 20},
+        {"x": 217, "y": 30, "direction": "up", "damage": 20},
+        {"x": 239, "y": 30, "direction": "up", "damage": 20},
+        {"x": 242, "y": 30, "direction": "up", "damage": 20},
+        {"x": 257, "y": 30, "direction": "up", "damage": 20},
+    ],
     # Gems
     "gem_locations": [
         (17, 8),
@@ -178,15 +242,19 @@ level_config = {
     ],
     # Enemies (using centralized config templates)
     "enemy_locations": [
-        {"type": "baby_erzieherin", "x": 180, "y": 13},  # Boss in arena center
+        {"type": "baby_erzieherin", "x": 174, "y": 11},  # Boss in arena center
         {"type": "teddybear", "x": 140, "y": 20},  # Mini-boss
         {"type": "teddybear", "x": 230, "y": 23},  # Tunnel entrance guard
-        {"type": "teddybear", "x": 250, "y": 23},  # Tunnel entrance guard
-        {"type": "teddybear", "x": 210, "y": 23},  # Tunnel entrance guard
-        {"type": "teddybear", "x": 263, "y": 27},  # Tunnel patrol
+        {"type": "buchstabe", "x": 250, "y": 23},  # Tunnel entrance guard
+        {"type": "buchstabe", "x": 210, "y": 23},  # Tunnel entrance guard
         {"type": "teddybear", "x": 360, "y": 21},  # After gap
-        {"type": "teddybear", "x": 337, "y": -15},  # Top of platforms
-        {"type": "baby_erzieherin", "x": 430, "y": 11},  # Final boss before exit
+        {"type": "buchstabe", "x": 337, "y": -15},  # Top of platforms
+        {
+            "type": "baby_erzieherin",
+            "x": 430,
+            "y": 11,
+            "size_multiplier": 4,
+        },  # Final boss before exit
     ],
     # Trophies (3 total - placed as milestones)
     "trophy_locations": [
@@ -194,7 +262,7 @@ level_config = {
         (90, 13),
         (135, 13),
         (255, 29),  # Tunnel milestone
-        (400, 23),  # Deep tunnel milestone
+        (390, 21),  # Deep tunnel milestone
         (336, -15),  # Deep tunnel milestone
     ],
     "trophy_image": "trophy.png",
@@ -204,8 +272,8 @@ level_config = {
         {"x": 350, "y": 22},  # Checkpoint nach der Sprungpassage
     ],
     # Assets
-    "background_music": "assets/music/kindergarten_bg.ogg",
-    "background_image": "assets/backgrounds/kindergarten_bg.png",
+    "background_music": "assets/music/babyshark.ogg",
+    "background_image": "assets/backgrounds/kindergarten-bg.png",
     "background_scroll_speed": 0.2,
     "player_image": "player/baby-suffi-left.png",
 }
