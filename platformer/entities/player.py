@@ -478,9 +478,7 @@ class Player(pg.sprite.Sprite):
             # Show custom message when collecting the spraydose
             try:
                 if weapon.weapon_name == "spraydose":
-                    msg = (
-                        "Geil, ne Kanne! Drück F und rotz die Wände und deine Enemies voll!"
-                    )
+                    msg = "drücke F wie Fatcap"
                     # Use world's encounter message system so it displays in the HUD
                     if hasattr(self.world, "show_encounter_message"):
                         self.world.show_encounter_message(msg)

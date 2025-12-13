@@ -42,6 +42,9 @@ level_config = {
         (-1,-1),
         (-2,0),
         (-3,1),
+        (-4,2),
+        (-5,3),
+        (-6,4),
         # Exit blocks
         (-6, 6),
         (-6, 5),
@@ -63,12 +66,28 @@ level_config = {
         (-16,-4),
         (-17,-5),
         (-18,-6),
+        (-19,-7),
+        (-20,-8),
+        (-21,-9),
+        (-22,-10),
+        (-23,-11),
+        (-24,-12),
+        (-25,-13),
+        (-26,-14),
+        (-27,-15),
+        (-28,-16),
+        (-29,-17),
+        (-30,-18),
+        # oberer weg
+    *[(i, -18) for i in range(-31, -76, -1)],     
+      # wand zwischending zum ziel 
+    *[( -76, i) for i in range(5, -17, -1)],
         #lower left tunnel
     *[(i, 11) for i in range(0, -80, -1)],   
     *[(i, 10) for i in range(0, -80, -1)],
         # leftest wall
     *[(-87, i) for i in range(13, -150, -1)], 
-    *[(-80, i) for i in range(9, -150, -1)],
+    *[(-80, i) for i in range(9, -19, -1)],
     *[(-80, i) for i in range(-25, -150, -1)],
         # right to the wall
         # Upper ceiling
@@ -119,12 +138,12 @@ level_config = {
             "speed": 2,
             "patrol_range": 50,
             "size_multiplier": 3,
-            "health": 50,
+            "health": 45,
             # Reduced damage slightly to make this encounter less punishing
             "damage": 1,
-            "shoot_range": 30,
+            "shoot_range": 25,
             "range": 4,
-            "reload_time": 3,
+            "reload_time": 5,
         },
         {
             "x": 50,
@@ -239,7 +258,8 @@ level_config = {
     # Trophy locations - collect trophy to open exit
     "trophy_locations": [
         (65, 10),
-        (-82, -50)
+        (-82, -50),
+        (-78, 8),
     ],
     "trophy_image": "trophy.png",
     # If True, always reset collected/killed tracking when this level is loaded.

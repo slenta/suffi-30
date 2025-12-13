@@ -555,6 +555,17 @@ class Enemy(pg.sprite.Sprite):
                     except Exception:
                         pass
                 print(f"🔄 Spawned weapon '{weapon_name}' at death position ({wx // GRIDSIZE}, {wy // GRIDSIZE})")
+                # If Tightill dropped a spraydose, show a custom encounter message
+                try:
+                    if weapon_name == "spraydose" and self.world:
+                        img_name = os.path.basename(getattr(self, "image_path", "")).lower()
+                        if "tightill" in img_name:
+                            try:
+                                self.world.show_encounter_message("Tightill hat was verloren")
+                            except Exception:
+                                pass
+                except Exception:
+                    pass
             except Exception as e:
                 print(f"❌ Failed to spawn weapon '{weapon_name}': {e}")
             return
