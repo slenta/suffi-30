@@ -290,7 +290,7 @@ class Enemy(pg.sprite.Sprite):
         # Don't patrol if patrol_range is 0 (stationary enemy)
         if self.patrol_range == 0:
             return
-            
+
         # Check for holes in the ground
         if self.detect_hole():
             self.direction *= -1  # Reverse direction
@@ -554,14 +554,20 @@ class Enemy(pg.sprite.Sprite):
                         self.world.all_sprites.add(wp)
                     except Exception:
                         pass
-                print(f"🔄 Spawned weapon '{weapon_name}' at death position ({wx // GRIDSIZE}, {wy // GRIDSIZE})")
+                print(
+                    f"🔄 Spawned weapon '{weapon_name}' at death position ({wx // GRIDSIZE}, {wy // GRIDSIZE})"
+                )
                 # If Tightill dropped a spraydose, show a custom encounter message
                 try:
                     if weapon_name == "spraydose" and self.world:
-                        img_name = os.path.basename(getattr(self, "image_path", "")).lower()
+                        img_name = os.path.basename(
+                            getattr(self, "image_path", "")
+                        ).lower()
                         if "tightill" in img_name:
                             try:
-                                self.world.show_encounter_message("Tightill hat was verloren")
+                                self.world.show_encounter_message(
+                                    "Tightill hat was verloren"
+                                )
                             except Exception:
                                 pass
                 except Exception:
@@ -634,7 +640,7 @@ class Enemy(pg.sprite.Sprite):
         # Spawn replacement enemy immediately at death position (before falling off screen)
         if self.spawn_on_death and self.world:
             self.spawn_replacement_enemy()
-            
+
         # Drop item on death
         if self.drop_on_death and self.world:
             self.drop_item()
@@ -643,34 +649,44 @@ class Enemy(pg.sprite.Sprite):
         """Drop an item at the enemy's death position."""
         import os
         from ..config.settings import IMAGEPATH
-        
+
         drop_config = self.drop_on_death.copy()
         item_type = drop_config.get("type")
-        
+
         # Calculate drop position (center of enemy)
         drop_x = self.rect.centerx
         drop_y = self.rect.centery
-        
+
         if item_type == "trophy":
             from ..collectibles.trophy import Trophy
+
             image_path = drop_config.get("image", "trophy.png")
-            trophy = Trophy(drop_x, drop_y, image_path)
+            # Create a unique trophy ID based on enemy ID and drop position
+            # This ensures dropped trophies don't respawn after collection
+            trophy_id = None
+            if hasattr(self, "enemy_id") and self.enemy_id:
+                trophy_id = f"{self.enemy_id}_dropped_trophy"
+            trophy = Trophy(drop_x, drop_y, image_path, trophy_id=trophy_id)
             self.world.trophies.add(trophy)
             self.world.all_sprites.add(trophy)
-            print(f"🎖️ Dropped trophy at ({drop_x}, {drop_y})")
-            
+            print(f"🎖️ Dropped trophy at ({drop_x}, {drop_y}) with ID: {trophy_id}")
+
         elif item_type == "powerup":
             from ..collectibles.powerup import PowerUp
+
             powerup_type = drop_config.get("powerup_type", 1)
             powerup = PowerUp(drop_x, drop_y, powerup_type, self.world)
             self.world.powerups.add(powerup)
             self.world.all_sprites.add(powerup)
             print(f"⚡ Dropped powerup at ({drop_x}, {drop_y})")
-            
+
         elif item_type == "gem":
             from ..collectibles.gem import Gem
+
             image_path = drop_config.get("image", "gem.png")
-            gem_image = pg.image.load(os.path.join(IMAGEPATH, image_path)).convert_alpha()
+            gem_image = pg.image.load(
+                os.path.join(IMAGEPATH, image_path)
+            ).convert_alpha()
             # Convert to grid position for Gem
             gem_x = drop_x // GRIDSIZE
             gem_y = drop_y // GRIDSIZE
@@ -678,17 +694,19 @@ class Enemy(pg.sprite.Sprite):
             self.world.items.add(gem)
             self.world.all_sprites.add(gem)
             print(f"💎 Dropped gem at ({gem_x}, {gem_y})")
-            
+
         elif item_type == "weapon":
             from ..collectibles.weapon import Weapon
+
             image_path = drop_config.get("image", "weapon.png")
             weapon = Weapon(drop_x, drop_y, image_path)
             self.world.weapons_items.add(weapon)
             self.world.all_sprites.add(weapon)
             print(f"🔫 Dropped weapon at ({drop_x}, {drop_y})")
-            
+
         elif item_type == "required_item":
             from ..collectibles.required_item import RequiredItem
+
             item_id = drop_config.get("item_id", "key")
             image_path = drop_config.get("image", "key.png")
             required_item = RequiredItem(drop_x, drop_y, item_id, image_path)

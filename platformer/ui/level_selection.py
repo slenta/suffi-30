@@ -24,7 +24,7 @@ class LevelSelectionScreen:
             "fonts",
             "Ketchum.otf",
         )
-        self.font_medium = pg.font.Font(ketchum_font_path, 24)
+        self.font_medium = pg.font.Font(ketchum_font_path, 30)
         self.font_small = pg.font.Font(ketchum_font_path, 16)
 
         # Get available levels
@@ -36,7 +36,8 @@ class LevelSelectionScreen:
 
         # Colors
         self.bg_color = (128, 0, 128)
-        self.title_color = (1, 255, 245)
+        # self.title_color = (1, 255, 245)
+        self.title_color = (255, 195, 0)
         self.level_color = (200, 200, 200)
         self.selected_color = (255, 195, 0)
         self.cursor_color = self.selected_color

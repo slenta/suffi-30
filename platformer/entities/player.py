@@ -333,13 +333,28 @@ class Player(pg.sprite.Sprite):
                 "trophy_collect"
             )  # Play trophy collection sound
         for trophy in hits:
-            # Track collected trophy to prevent respawning
-            trophy_x = trophy.rect.centerx // GRIDSIZE
-            trophy_y = trophy.rect.centery // GRIDSIZE
-            self.world.collected_items.add(
-                f"{self.world.current_level_name}_trophy_{trophy_x}_{trophy_y}"
-            )
+            # Track collected trophy to prevent respawning using stored ID
+            if hasattr(trophy, "trophy_id") and trophy.trophy_id:
+                self.world.collected_items.add(trophy.trophy_id)
+                print(f"🏆 Collected trophy: {trophy.trophy_id}")
+                print(
+                    f"📋 Total collected items now: {len(self.world.collected_items)}"
+                )
+            else:
+                # Fallback to coordinate-based ID for backward compatibility
+                trophy_x = trophy.rect.centerx // GRIDSIZE
+                trophy_y = trophy.rect.centery // GRIDSIZE
+                trophy_id = (
+                    f"{self.world.current_level_name}_trophy_{trophy_x}_{trophy_y}"
+                )
+                self.world.collected_items.add(trophy_id)
+                print(f"🏆 Collected trophy (fallback): {trophy_id}")
+                print(
+                    f"📋 Total collected items now: {len(self.world.collected_items)}"
+                )
         self.trophies_collected += len(hits)
+        if len(hits) > 0:
+            print(f"🎯 Player trophies_collected is now: {self.trophies_collected}")
 
     def check_required_items(self):
         """Check for collisions with required items (e.g., keys, tickets)."""

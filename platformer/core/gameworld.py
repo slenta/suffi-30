@@ -687,9 +687,13 @@ class GameWorld:
 
             trophy_id = f"{level_name}_trophy_{x}_{y}"
             if trophy_id in self.collected_items:
+                print(f"⏭️  Skipping already collected trophy: {trophy_id}")
                 continue  # Skip already collected trophies
 
-            trophy = Trophy(x * GRIDSIZE, y * GRIDSIZE, trophy_image)
+            print(f"🏆 Loading trophy at ({x}, {y}) - ID: {trophy_id}")
+            trophy = Trophy(
+                x * GRIDSIZE, y * GRIDSIZE, trophy_image, trophy_id=trophy_id
+            )
             self.trophies.add(trophy)
             self.all_sprites.add(trophy)
 
@@ -866,18 +870,12 @@ class GameWorld:
         if not self.current_level_name:
             return
 
-        # Temporarily save checkpoint state if in sub-level (we'll clear it for the reset but restore after)
-        saved_checkpoint = None
-        saved_checkpoint_state = None
+        # Clear checkpoint state if in sub-level so player respawns at sub-level start
         if self.level_stack:
-            saved_checkpoint = self.last_checkpoint
-            saved_checkpoint_state = self.checkpoint_state
-            # Clear checkpoint temporarily so sub-level respawn is at start
+            # In a sub-level: clear checkpoint so player respawns at sub-level spawn
             self.last_checkpoint = None
             self.checkpoint_state = None
-            print(
-                "🚫 In sub-level: temporarily clearing checkpoint for respawn at start"
-            )
+            print("🚫 In sub-level: clearing checkpoint for respawn at sub-level start")
 
         # Save player gems and trophies before reset
         player_state = {
@@ -938,12 +936,6 @@ class GameWorld:
             print(
                 f"🎵 Restored music after reset: {os.path.basename(saved_music_track)}"
             )
-
-        # Restore checkpoint state if we saved it (for sub-level resets)
-        if saved_checkpoint is not None:
-            self.last_checkpoint = saved_checkpoint
-            self.checkpoint_state = saved_checkpoint_state
-            print("✅ Restored checkpoint state after sub-level reset")
 
     def events(self):
         for event in pg.event.get():
