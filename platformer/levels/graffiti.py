@@ -21,6 +21,9 @@ level_config = {
         (60, 8),
         (61, 8),
         (62, 8),
+        (70, -5),
+        (71, -5),
+        (72, -5),
     ],
     # Poppable blocks (like Mario question blocks)
     "poppable_block_locations": [
@@ -40,22 +43,35 @@ level_config = {
             "type": "item",
             "item": {"type": "powerup", "powerup_type": 1},
         },  # Releases a powerup
+        # Poppable block that becomes solid and releases a spraydose weapon
+        {
+            "x": 65,
+            "y": 6,
+            "type": "item",
+            "item": {"type": "weapon", "weapon_name": "spraydose"},
+        },
         {"x": 46, "y": 10, "type": "disappear"},  # Explicitly set to disappear
-        {"x": 65, "y": 6, "type": "fix"},  # Another one that turns solid
+         {
+            "x": 45,
+            "y": 10,
+            "type": "item",
+            "item": {"type": "powerup", "powerup_type": 1},
+        },  # Releases a powerup
     ],
     # A few gems
     "gem_locations": [
         (21, 9),
         (61, 7),
+        (71, -6),
     ],
     # Powerups - place a flight powerup next to the pipe for testing
     "powerup_locations": [
-        {"x": 29, "y": 11, "type": 7},
+        {"x": 35, "y": 11, "type": 7},
     ],
     # A simple enemy
     "enemy_locations": [
         {"type": "police", "x": 0, "y": 5},
-        {"type": "robodog", "x": 70, "y": -24},
+        {"type": "robodog", "x": 50, "y": -24},
         {"type": "drone", "x": -10, "y": 14},
     ],
     # No moving platforms

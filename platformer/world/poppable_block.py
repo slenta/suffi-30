@@ -87,6 +87,24 @@ class PoppableBlock(GridSprite):
             powerup = PowerUp(powerup_x, powerup_y, powerup_type, self.world)
             self.world.powerups.add(powerup)
             self.world.all_sprites.add(powerup)
+        elif item_type == "weapon":
+            # Spawn a weapon pickup (e.g., spraydose) above the block
+            from ..collectibles.weapon import WeaponPickup
+
+            weapon_name = self.item_data.get("weapon_name")
+            if not weapon_name:
+                return
+
+            weapon_x = self.rect.centerx
+            weapon_y = self.rect.top - GRIDSIZE
+
+            wp = WeaponPickup(weapon_x, weapon_y, weapon_name)
+            try:
+                self.world.weapon_pickups.add(wp)
+                self.world.all_sprites.add(wp)
+            except Exception:
+                # Defensive: if world is not available, still keep the sprite alive
+                pass
 
     def update(self):
         """Update the block's pop animation."""
