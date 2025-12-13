@@ -151,7 +151,7 @@ level_config = {
     "powerup_locations": [
         {"x": 50, "y": -25, "type": 3},
         {"x": 158, "y": -47, "type": 3},
-        {"x": 83, "y": -27, "type": 2},
+        {"x": 84, "y": -30, "type": 2},
         {"x": 408, "y": -42, "type": 3},
         {"x": 260, "y": -12, "type": 3},
         {"x": 295, "y": -30, "type": 5},
@@ -159,6 +159,7 @@ level_config = {
         {"x": 228, "y": -20, "type": 0},
         {"x": 280, "y": -20, "type": 0},
         {"x": 145, "y": -26, "type": 0},
+        {"x": 323, "y": -43, "type": 0},
     ],
     # Enemies (using centralized config templates with overrides where needed)
     "enemy_locations": [
@@ -345,7 +346,7 @@ level_config = {
         },
     ],
     "trophy_locations": [
-        (84, -30),
+        (83, -27),
         (133, -32),
         (280, -10),
         (311, -32),

@@ -40,7 +40,17 @@ from ..config.constants import (
 class Player(pg.sprite.Sprite):
     """Player character with movement, combat, and world interaction."""
 
-    def __init__(self, _x, _y, world, start_gems=0, trophies_collected=0, health=80, player_image=None, required_items=None):
+    def __init__(
+        self,
+        _x,
+        _y,
+        world,
+        start_gems=0,
+        trophies_collected=0,
+        health=80,
+        player_image=None,
+        required_items=None,
+    ):
         super().__init__()
         # Load and scale the player image to fit within one grid cell
         # Use custom image if provided, otherwise default to suffi.png
@@ -67,7 +77,9 @@ class Player(pg.sprite.Sprite):
         self.knockback_step_distance = 0  # Distance per knockback step
         self.active_powerups = {}
         self.trophies_collected = trophies_collected
-        self.required_items = required_items if required_items else []  # List of collected required items (e.g., ["busticket"])
+        self.required_items = (
+            required_items if required_items else []
+        )  # List of collected required items (e.g., ["busticket"])
         self.weapons = {}  # {weapon_name: cooldown_timer}
         self.active_weapon = None
         self.weapon_image = None
@@ -284,7 +296,9 @@ class Player(pg.sprite.Sprite):
             if powerup.power_type == 7 and already_active:
                 try:
                     if hasattr(self.world, "show_encounter_message"):
-                        self.world.show_encounter_message("uffff suffi wie high bist du?")
+                        self.world.show_encounter_message(
+                            "uffff suffi wie high bist du?"
+                        )
                 except Exception:
                     pass
 
@@ -342,8 +356,10 @@ class Player(pg.sprite.Sprite):
         for checkpoint in hits:
             if not checkpoint.activated:
                 checkpoint.activate()
-                sound_manager.play_sound_effect("trophy_collect")  # Play checkpoint sound
-                
+                sound_manager.play_sound_effect(
+                    "trophy_collect"
+                )  # Play checkpoint sound
+
                 # Save checkpoint position and player state
                 self.world.last_checkpoint = checkpoint
                 self.world.checkpoint_state = {
@@ -354,9 +370,15 @@ class Player(pg.sprite.Sprite):
                     "weapons": self.weapons.copy() if hasattr(self, "weapons") else {},
                     "active_weapon": getattr(self, "active_weapon", None),
                     "damage_dealt": getattr(self, "damage_dealt", 0),
-                    "required_items": getattr(self, "required_items", []).copy() if hasattr(self, "required_items") else [],
+                    "required_items": (
+                        getattr(self, "required_items", []).copy()
+                        if hasattr(self, "required_items")
+                        else []
+                    ),
                 }
-                print(f"✅ Checkpoint activated at ({checkpoint.spawn_x}, {checkpoint.spawn_y})")
+                print(
+                    f"✅ Checkpoint activated at ({checkpoint.spawn_x}, {checkpoint.spawn_y})"
+                )
 
     def check_exit(self):
         # If the current level has no exit (e.g., parent level delegates finishing to a sub-level), do nothing
@@ -365,8 +387,10 @@ class Player(pg.sprite.Sprite):
 
         # Check if all required items are collected
         required_items = getattr(self.world, "required_items_for_exit", [])
-        has_all_required_items = all(item in self.required_items for item in required_items)
-        
+        has_all_required_items = all(
+            item in self.required_items for item in required_items
+        )
+
         # Open exit if required items are collected, or if no required items are specified (exit always open)
         if len(required_items) > 0:
             # If level has required items, only check those
@@ -374,7 +398,7 @@ class Player(pg.sprite.Sprite):
         else:
             # No required items, exit is always open
             should_open = True
-            
+
         if should_open:
             try:
                 self.world.exit.open()
@@ -389,7 +413,9 @@ class Player(pg.sprite.Sprite):
             # world so GameWorld.level_complete can finish the parent level
             # (instead of returning to it).
             try:
-                finish_parent = bool(self.world.level_config.get("finish_parent_on_exit", False))
+                finish_parent = bool(
+                    self.world.level_config.get("finish_parent_on_exit", False)
+                )
             except Exception:
                 finish_parent = False
 
@@ -489,9 +515,12 @@ class Player(pg.sprite.Sprite):
             return
 
         sound_manager.play_sound_effect("player_death")  # Play death/fall sound
-        
+
         # Check if there's a checkpoint to respawn at
-        if self.world.last_checkpoint is not None and self.world.checkpoint_state is not None:
+        if (
+            self.world.last_checkpoint is not None
+            and self.world.checkpoint_state is not None
+        ):
             # Respawn at checkpoint with saved state
             self.respawn_at_checkpoint()
         elif self.gems >= 1:
@@ -507,28 +536,31 @@ class Player(pg.sprite.Sprite):
         """Respawn player at the last activated checkpoint."""
         checkpoint = self.world.last_checkpoint
         state = self.world.checkpoint_state
-        
+
         # Restore position
         self.rect.x = checkpoint.spawn_x * GRIDSIZE
         self.rect.bottom = checkpoint.spawn_y * GRIDSIZE
         self.vx = 0
         self.vy = 0
-        
+
         # Restore player state
         self.gems = state["gems"]
         self.trophies_collected = state["trophies"]
-    self.max_health = state["max_health"]
-    self.health = self.max_health  # Respawn with full health
+        self.max_health = state["max_health"]
+        self.health = self.max_health  # Respawn with full health
+        self.weapons = state["weapons"].copy()
+        self.active_weapon = state["active_weapon"]
+        self.damage_dealt = state["damage_dealt"]
         self.required_items = state["required_items"].copy()
-        
+
         # Reload weapon image if active weapon exists
         if self.active_weapon:
             self.load_weapon_image()
-        
+
         # Reset knockback state
         self.is_knocked_back = False
         self.knockback_timer = 0
-        
+
         print(f"♻️ Respawned at checkpoint ({checkpoint.spawn_x}, {checkpoint.spawn_y})")
 
     def check_weapons(self):
@@ -930,10 +962,12 @@ class Player(pg.sprite.Sprite):
                     knockback_distance = 100
                     old_x = enemy_hit.rect.x
                     enemy_hit.rect.x += knockback_distance
-                    
+
                     # Check for collision with platforms, if enemy can collide
                     if not getattr(enemy_hit, "no_clip", False):
-                        hits = pg.sprite.spritecollide(enemy_hit, self.world.platforms, False)
+                        hits = pg.sprite.spritecollide(
+                            enemy_hit, self.world.platforms, False
+                        )
                         if hits:
                             # Collision detected, revert to old position
                             enemy_hit.rect.x = old_x
@@ -943,10 +977,12 @@ class Player(pg.sprite.Sprite):
                     knockback_distance = 100
                     old_x = enemy_hit.rect.x
                     enemy_hit.rect.x -= knockback_distance
-                    
+
                     # Check for collision with platforms, if enemy can collide
                     if not getattr(enemy_hit, "no_clip", False):
-                        hits = pg.sprite.spritecollide(enemy_hit, self.world.platforms, False)
+                        hits = pg.sprite.spritecollide(
+                            enemy_hit, self.world.platforms, False
+                        )
                         if hits:
                             # Collision detected, revert to old position
                             enemy_hit.rect.x = old_x
