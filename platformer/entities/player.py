@@ -517,11 +517,8 @@ class Player(pg.sprite.Sprite):
         # Restore player state
         self.gems = state["gems"]
         self.trophies_collected = state["trophies"]
-        self.health = state["health"]
-        self.max_health = state["max_health"]
-        self.weapons = state["weapons"].copy()
-        self.active_weapon = state["active_weapon"]
-        self.damage_dealt = state["damage_dealt"]
+    self.max_health = state["max_health"]
+    self.health = self.max_health  # Respawn with full health
         self.required_items = state["required_items"].copy()
         
         # Reload weapon image if active weapon exists

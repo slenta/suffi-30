@@ -1,7 +1,7 @@
 level_config = {
     "x_bounds": [-300, 9000],  # Extended gameworld width (doubled)
     "y_bounds": [-1230, 1170],  # Increased gameworld height for more vertical space
-    "level_time": 420,  # Time limit in seconds (5 minutes)
+    "level_time": 780,  # Time limit in seconds (5 minutes)
     "player_spawn": (0, -35),
     "player_start_message": "Nach rechts geht zum Trancer Leute \n kommt ihr mit?",
     "player_start_message_color": (255, 255, 255),  # White
@@ -362,6 +362,10 @@ level_config = {
             "return_y": -38,  # Y position when returning (grid units)
             "direction": "down",  # Direction to press: "down", "up", "left", or "right"
         },
+    ],
+    "checkpoint_locations": [
+        {"x": 183, "y": -37},  # Checkpoint vor Röhre
+        {"x": 285, "y": -22},  # Checkpoint nach Okf macker
     ],
     "background_music": "assets/music/default.ogg",
     # "background_image": "assets/backgrounds/trancefloor.png",
