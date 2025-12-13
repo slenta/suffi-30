@@ -816,7 +816,20 @@ class GameWorld:
                     music_path,
                 )
             self.original_music_track = music_path
-            sound_manager.play_background_music(music_path)
+            # When entering a sub-level, avoid restarting music if it's the same
+            # as the parent track so playback isn't interrupted.
+            if is_sub_level_transition and hasattr(self, "parent_music_track") and self.parent_music_track:
+                try:
+                    if os.path.abspath(self.parent_music_track) == os.path.abspath(music_path):
+                        print("🎵 Sub-level transition: music matches parent, not restarting playback")
+                        # do not call play_background_music to avoid restart
+                    else:
+                        sound_manager.play_background_music(music_path)
+                except Exception:
+                    # Fallback: if any issue comparing paths, just play the music
+                    sound_manager.play_background_music(music_path)
+            else:
+                sound_manager.play_background_music(music_path)
 
         # Load alternative music tracks if specified
         if "alternative_music_tracks" in self.level_config:

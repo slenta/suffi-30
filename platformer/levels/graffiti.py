@@ -124,6 +124,7 @@ level_config = {
 
     # Pixel offset for the background image (x, y). Negative y moves the image up.
     "background_offset": (0, -450),
+    "background_music": "assets/music/vroom_remix.mp3",
 
     "exit_location": (330, 11),
 }
