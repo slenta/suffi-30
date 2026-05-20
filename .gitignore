@@ -13,8 +13,17 @@ venv/
 ENV/
 
 # Environment variables
-# .env
+.env
 .env.local
+
+# Devcontainer config (per-user, not shared)
+.devcontainer/
+
+# Playwright screenshots / console dumps from local debugging
+.playwright-mcp/
+suffi-loaded.png
+suffi-after-wait.png
+console-full.log
 
 # Pygbag build files
 public/

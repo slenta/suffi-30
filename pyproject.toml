@@ -1,0 +1,22 @@
+[project]
+name = "suffi-30"
+version = "0.1.0"
+description = "Suffi platformer game (pygame + pygbag for web)"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "pygame==2.5.2",
+    "pygbag==0.9.2",
+    "psycopg2-binary==2.9.9",
+    "python-dotenv==1.0.0",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.6.0",
+]
+
+[tool.uv]
+package = false
+# Pin resolver to package versions published on or before this date.
+# Bump weekly (current: 7 days ago) so new releases don't silently break the build.
+exclude-newer = "2026-05-13"
