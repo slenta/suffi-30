@@ -532,7 +532,10 @@ class Player(pg.sprite.Sprite):
         sound_manager.play_sound_effect("player_death")  # Play death/fall sound
 
         # Check if there's a checkpoint to respawn at
-        if (
+        if self.gems < 1:
+            # no gems - game over
+            self.world.game_over_flag = True
+        elif (
             self.world.last_checkpoint is not None
             and self.world.checkpoint_state is not None
         ):
@@ -543,9 +546,6 @@ class Player(pg.sprite.Sprite):
             self.gems -= 1
             self.world.loose_screen()
             self.world.reset()
-        else:
-            # No checkpoint and no gems - game over
-            self.world.game_over_flag = True
 
     def respawn_at_checkpoint(self):
         """Respawn player at the last activated checkpoint."""
@@ -559,7 +559,7 @@ class Player(pg.sprite.Sprite):
         self.vy = 0
 
         # Restore player state
-        self.gems = state["gems"]
+        self.gems = self.gems - 1
         self.trophies_collected = max(self.trophies_collected, state["trophies"])
         self.max_health = state["max_health"]
         self.health = self.max_health  # Respawn with full health

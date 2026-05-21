@@ -1,410 +1,217 @@
 {
-  "test-level": [
-    {
-      "player_name": "TestPlayer",
-      "score": 44550,
-      "breakdown": {
-        "time_score": 4550,
-        "trophy_score": 20000,
-        "damage_score": 5000,
-        "life_score": 15000,
-        "total_score": 44550
-      },
-      "timestamp": "2025-11-05T11:06:30.139643"
-    }
-  ],
-  "krankenhaus": [
-    {
-      "player_name": "highscorer",
-      "score": 53213,
-      "breakdown": {
-        "time_score": 17213,
-        "trophy_score": 20000,
-        "damage_score": 1000,
-        "life_score": 15000,
-        "total_score": 53213
-      },
-      "timestamp": "2025-11-05T11:30:59.173674"
-    },
-    {
-      "player_name": "dave",
-      "score": 38400,
-      "breakdown": {
-        "time_score": 17400,
-        "trophy_score": 10000,
-        "damage_score": 1000,
-        "life_score": 10000,
-        "total_score": 38400
-      },
-      "timestamp": "2025-11-05T11:25:51.825790"
-    },
-    {
-      "player_name": "asdf ",
-      "score": 38399,
-      "breakdown": {
-        "time_score": 17399,
-        "trophy_score": 10000,
-        "damage_score": 1000,
-        "life_score": 10000,
-        "total_score": 38399
-      },
-      "timestamp": "2025-11-05T12:00:41.137650"
-    },
-    {
-      "player_name": "hallo",
-      "score": 38252,
-      "breakdown": {
-        "time_score": 17252,
-        "trophy_score": 10000,
-        "damage_score": 1000,
-        "life_score": 10000,
-        "total_score": 38252
-      },
-      "timestamp": "2025-11-05T11:56:42.880633"
-    },
-    {
-      "player_name": "asfd",
-      "score": 37954,
-      "breakdown": {
-        "time_score": 16954,
-        "trophy_score": 10000,
-        "damage_score": 1000,
-        "life_score": 10000,
-        "total_score": 37954
-      },
-      "timestamp": "2025-11-05T11:59:35.420077"
-    },
-    {
-      "player_name": "dave",
-      "score": 37437,
-      "breakdown": {
-        "time_score": 17437,
-        "trophy_score": 10000,
-        "damage_score": 0,
-        "life_score": 10000,
-        "total_score": 37437
-      },
-      "timestamp": "2025-11-05T11:12:32.901346"
-    },
-    {
-      "player_name": "test",
-      "score": 37400,
-      "breakdown": {
-        "time_score": 17400,
-        "trophy_score": 10000,
-        "damage_score": 0,
-        "life_score": 10000,
-        "total_score": 37400
-      },
-      "timestamp": "2025-11-05T12:01:26.731565"
-    },
-    {
-      "player_name": "dave",
-      "score": 36920,
-      "breakdown": {
-        "time_score": 16920,
-        "trophy_score": 10000,
-        "damage_score": 0,
-        "life_score": 10000,
-        "total_score": 36920
-      },
-      "timestamp": "2025-11-05T11:15:16.724575"
-    },
-    {
-      "player_name": "haha",
-      "score": 33405,
-      "breakdown": {
-        "time_score": 17405,
-        "trophy_score": 10000,
-        "damage_score": 1000,
-        "life_score": 5000,
-        "total_score": 33405
-      },
-      "timestamp": "2025-11-05T11:49:07.904226"
-    }
-  ],
-  "_test me": [
-    {
-      "player_name": "dave",
-      "score": 38359,
-      "breakdown": {
-        "time_score": 17359,
-        "trophy_score": 10000,
-        "damage_score": 1000,
-        "life_score": 10000,
-        "total_score": 38359
-      },
-      "timestamp": "2025-11-05T16:26:35.123083"
-    },
-    {
-      "player_name": "Anonymous",
-      "score": 37333,
-      "breakdown": {
-        "time_score": 17333,
-        "trophy_score": 10000,
-        "damage_score": 0,
-        "life_score": 10000,
-        "total_score": 37333
-      },
-      "timestamp": "2025-12-13T02:40:08.854146"
-    },
-    {
-      "player_name": "Anonymous",
-      "score": 37203,
-      "breakdown": {
-        "time_score": 17203,
-        "trophy_score": 10000,
-        "damage_score": 0,
-        "life_score": 10000,
-        "total_score": 37203
-      },
-      "timestamp": "2025-12-10T12:07:47.785843"
-    },
-    {
-      "player_name": "Anonymous",
-      "score": 27732,
-      "breakdown": {
-        "time_score": 17732,
-        "trophy_score": 10000,
-        "damage_score": 0,
-        "life_score": 0,
-        "total_score": 27732
-      },
-      "timestamp": "2025-12-12T17:37:12.359412"
-    }
-  ],
+  "test-level": [],
+  "krankenhaus": [],
+  "_test me": [],
   "baby-level": [
     {
-      "player_name": "asdf ",
-      "score": 67003,
+      "player_name": "jogi",
+      "score": 123083,
       "breakdown": {
-        "time_score": 19003,
-        "trophy_score": 30000,
-        "damage_score": 8000,
-        "life_score": 10000,
-        "total_score": 67003
-      },
-      "timestamp": "2025-12-01T21:58:03.791552"
-    },
-    {
-      "player_name": "jonas",
-      "score": 66437,
-      "breakdown": {
-        "time_score": 18437,
-        "trophy_score": 30000,
-        "damage_score": 8000,
-        "life_score": 10000,
-        "total_score": 66437
-      },
-      "timestamp": "2025-12-12T20:07:05.928373"
-    },
-    {
-      "player_name": "J",
-      "score": 61042,
-      "breakdown": {
-        "time_score": 18042,
-        "trophy_score": 30000,
-        "damage_score": 8000,
+        "time_score": 19583,
+        "trophy_score": 60000,
+        "damage_score": 38500,
         "life_score": 5000,
-        "total_score": 61042
+        "total_score": 123083
       },
-      "timestamp": "2025-12-10T12:10:02.328923"
+      "timestamp": "2025-12-14T02:52:28.720985"
     },
     {
-      "player_name": " dsafad",
-      "score": 49769,
+      "player_name": "Steffi",
+      "score": 116274,
       "breakdown": {
-        "time_score": 16769,
-        "trophy_score": 20000,
-        "damage_score": 8000,
-        "life_score": 5000,
-        "total_score": 49769
+        "time_score": 17274,
+        "trophy_score": 50000,
+        "damage_score": 39000,
+        "life_score": 10000,
+        "total_score": 116274
       },
-      "timestamp": "2025-12-06T14:35:35.850318"
+      "timestamp": "2025-12-13T21:10:54.886584"
+    },
+    {
+      "player_name": "Chrissi",
+      "score": 107493,
+      "breakdown": {
+        "time_score": 17493,
+        "trophy_score": 50000,
+        "damage_score": 25000,
+        "life_score": 15000,
+        "total_score": 107493
+      },
+      "timestamp": "2025-12-13T21:14:25.740654"
     }
   ],
   "graffiti": [
     {
-      "player_name": "f",
-      "score": 111453,
+      "player_name": "mysterious hero",
+      "score": 126853,
       "breakdown": {
-        "time_score": 5453,
-        "trophy_score": 50000,
-        "damage_score": 16000,
-        "life_score": 40000,
-        "total_score": 111453
-      },
-      "timestamp": "2025-12-13T02:24:40.369787"
-    },
-    {
-      "player_name": "f",
-      "score": 102791,
-      "breakdown": {
-        "time_score": 7391,
-        "trophy_score": 40000,
-        "damage_score": 10400,
+        "time_score": 8853,
+        "trophy_score": 60000,
+        "damage_score": 13000,
         "life_score": 45000,
-        "total_score": 102791
+        "total_score": 126853
       },
-      "timestamp": "2025-12-13T01:47:25.365559"
+      "timestamp": "2025-12-14T02:02:45.968651"
     },
     {
       "player_name": "Anonymous",
-      "score": 68823,
+      "score": 104723,
       "breakdown": {
-        "time_score": 18823,
-        "trophy_score": 20000,
-        "damage_score": 10000,
-        "life_score": 20000,
-        "total_score": 68823
+        "time_score": 11023,
+        "trophy_score": 50000,
+        "damage_score": 13700,
+        "life_score": 30000,
+        "total_score": 104723
       },
-      "timestamp": "2025-12-06T14:42:55.629377"
+      "timestamp": "2025-12-14T03:14:34.878706"
     },
     {
-      "player_name": "Anonymous",
-      "score": 36268,
+      "player_name": "davidave",
+      "score": 104245,
       "breakdown": {
-        "time_score": 10268,
-        "trophy_score": 20000,
-        "damage_score": 1000,
-        "life_score": 5000,
-        "total_score": 36268
+        "time_score": 9645,
+        "trophy_score": 50000,
+        "damage_score": 4600,
+        "life_score": 40000,
+        "total_score": 104245
       },
-      "timestamp": "2025-12-06T14:51:59.541308"
+      "timestamp": "2025-12-13T22:10:17.837720"
     },
     {
-      "player_name": "Anonymous",
-      "score": 33872,
+      "player_name": "kiwi schumann",
+      "score": 92585,
       "breakdown": {
-        "time_score": 22872,
-        "trophy_score": 0,
-        "damage_score": 6000,
-        "life_score": 5000,
-        "total_score": 33872
+        "time_score": 12985,
+        "trophy_score": 40000,
+        "damage_score": 9600,
+        "life_score": 30000,
+        "total_score": 92585
       },
-      "timestamp": "2025-12-06T14:49:25.371504"
+      "timestamp": "2025-12-14T02:18:35.605573"
+    },
+    {
+      "player_name": "Steffi",
+      "score": 81200,
+      "breakdown": {
+        "time_score": 7600,
+        "trophy_score": 30000,
+        "damage_score": 13600,
+        "life_score": 30000,
+        "total_score": 81200
+      },
+      "timestamp": "2025-12-13T23:16:01.152239"
+    },
+    {
+      "player_name": "sfkagouifsdrgdsd",
+      "score": 75227,
+      "breakdown": {
+        "time_score": 6827,
+        "trophy_score": 40000,
+        "damage_score": 3400,
+        "life_score": 25000,
+        "total_score": 75227
+      },
+      "timestamp": "2025-12-14T02:06:57.936415"
+    },
+    {
+      "player_name": "corona extra ",
+      "score": 67403,
+      "breakdown": {
+        "time_score": 2403,
+        "trophy_score": 40000,
+        "damage_score": 0,
+        "life_score": 25000,
+        "total_score": 67403
+      },
+      "timestamp": "2025-12-13T21:49:37.516677"
     }
   ],
   "hospital": [
     {
-      "player_name": "zz",
-      "score": 92525,
+      "player_name": "jonas",
+      "score": 76108,
       "breakdown": {
-        "time_score": 20525,
-        "trophy_score": 30000,
-        "damage_score": 17000,
+        "time_score": 26108,
+        "trophy_score": 10000,
+        "damage_score": 15000,
         "life_score": 25000,
-        "total_score": 92525
+        "total_score": 76108
       },
-      "timestamp": "2025-12-10T10:40:34.029211"
+      "timestamp": "2025-12-13T22:18:44.415283"
     },
     {
-      "player_name": "jonas",
-      "score": 89131,
+      "player_name": "STeff",
+      "score": 39001,
       "breakdown": {
-        "time_score": 18131,
-        "trophy_score": 20000,
-        "damage_score": 21000,
-        "life_score": 30000,
-        "total_score": 89131
-      },
-      "timestamp": "2025-12-13T12:47:59.759979"
-    },
-    {
-      "player_name": "Anonymous",
-      "score": 83502,
-      "breakdown": {
-        "time_score": 21502,
-        "trophy_score": 30000,
-        "damage_score": 2000,
-        "life_score": 30000,
-        "total_score": 83502
-      },
-      "timestamp": "2025-12-09T15:05:44.280597"
-    },
-    {
-      "player_name": "j",
-      "score": 81863,
-      "breakdown": {
-        "time_score": 18863,
-        "trophy_score": 30000,
-        "damage_score": 3000,
-        "life_score": 30000,
-        "total_score": 81863
-      },
-      "timestamp": "2025-12-09T16:42:36.064947"
-    },
-    {
-      "player_name": "Anonymous",
-      "score": 58149,
-      "breakdown": {
-        "time_score": 20149,
+        "time_score": 10001,
         "trophy_score": 10000,
-        "damage_score": 18000,
-        "life_score": 10000,
-        "total_score": 58149
-      },
-      "timestamp": "2025-12-10T16:30:19.454866"
-    },
-    {
-      "player_name": "jonas",
-      "score": 47209,
-      "breakdown": {
-        "time_score": 9209,
-        "trophy_score": 10000,
-        "damage_score": 13000,
+        "damage_score": 4000,
         "life_score": 15000,
-        "total_score": 47209
+        "total_score": 39001
       },
-      "timestamp": "2025-12-13T09:53:17.496935"
+      "timestamp": "2025-12-13T23:23:05.052241"
+    }
+  ],
+  "trancefloor": [
+    {
+      "player_name": "davidave",
+      "score": 142293,
+      "breakdown": {
+        "time_score": 52593,
+        "trophy_score": 60000,
+        "damage_score": 19700,
+        "life_score": 10000,
+        "total_score": 142293
+      },
+      "timestamp": "2025-12-14T02:45:37.596680"
     },
     {
-      "player_name": "j",
-      "score": 39956,
+      "player_name": "jogi",
+      "score": 133096,
       "breakdown": {
-        "time_score": 21956,
-        "trophy_score": 10000,
-        "damage_score": 3000,
-        "life_score": 5000,
-        "total_score": 39956
+        "time_score": 44096,
+        "trophy_score": 50000,
+        "damage_score": 29000,
+        "life_score": 10000,
+        "total_score": 133096
       },
-      "timestamp": "2025-12-10T16:50:39.597063"
+      "timestamp": "2025-12-14T01:03:53.831274"
     },
     {
-      "player_name": "Anonymous",
-      "score": 39499,
+      "player_name": "kiwi schumann",
+      "score": 133096,
       "breakdown": {
-        "time_score": 23499,
-        "trophy_score": 10000,
-        "damage_score": 1000,
-        "life_score": 5000,
-        "total_score": 39499
+        "time_score": 44096,
+        "trophy_score": 50000,
+        "damage_score": 29000,
+        "life_score": 10000,
+        "total_score": 999999
       },
-      "timestamp": "2025-12-11T10:22:11.303621"
+      "timestamp": "2025-12-14T01:03:53.831274"
     },
     {
-      "player_name": "j",
-      "score": 29806,
+      "player_name": "Johannes",
+      "score": 116470,
       "breakdown": {
-        "time_score": 17806,
-        "trophy_score": 0,
-        "damage_score": 12000,
+        "time_score": 65870,
+        "trophy_score": 20000,
+        "damage_score": 20600,
+        "life_score": 10000,
+        "total_score": 116470
+      },
+      "timestamp": "2025-12-14T01:44:41.426159"
+    },
+    {
+      "player_name": "Steffi",
+      "score": 94604,
+      "breakdown": {
+        "time_score": 52704,
+        "trophy_score": 30000,
+        "damage_score": 11900,
         "life_score": 0,
-        "total_score": 29806
+        "total_score": 94604
       },
-      "timestamp": "2025-12-12T17:37:05.072641"
-    },
-    {
-      "player_name": "j",
-      "score": 25942,
-      "breakdown": {
-        "time_score": 13942,
-        "trophy_score": 0,
-        "damage_score": 12000,
-        "life_score": 0,
-        "total_score": 25942
-      },
-      "timestamp": "2025-12-12T19:34:56.813642"
+      "timestamp": "2025-12-13T23:50:40.287957"
     }
   ]
 }

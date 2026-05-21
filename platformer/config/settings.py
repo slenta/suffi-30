@@ -8,7 +8,7 @@ import pygame as pg
 
 # === Display Settings ===
 GRIDSIZE = 18
-GRID_WIDTH = 40
+GRID_WIDTH = 50
 GRID_HEIGHT = 15
 WIDTH, HEIGHT = GRID_WIDTH * GRIDSIZE, GRID_HEIGHT * GRIDSIZE
 TITLE = "suffisuffzich 3000"
