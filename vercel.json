@@ -5,6 +5,10 @@
     {
       "source": "/api/(.*)",
       "destination": "/api/$1"
+    },
+    {
+      "source": "/archives/(.*)",
+      "destination": "https://pygame-web.github.io/archives/$1"
     }
   ]
 }
