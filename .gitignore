@@ -21,6 +21,7 @@ ENV/
 
 # Claude Code per-user settings + local secrets
 .claude/
+.mcp.json
 
 # Playwright screenshots / console dumps from local debugging
 .playwright-mcp/
