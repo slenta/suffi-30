@@ -19,6 +19,9 @@ ENV/
 # Devcontainer config (per-user, not shared)
 .devcontainer/
 
+# Claude Code per-user settings + local secrets
+.claude/
+
 # Playwright screenshots / console dumps from local debugging
 .playwright-mcp/
 suffi-loaded.png

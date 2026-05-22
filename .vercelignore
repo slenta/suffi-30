@@ -19,6 +19,16 @@ ENV/
 .vscode/
 .idea/
 
+# Secrets / per-user config — never upload to Vercel
+.env
+.env.local
+.devcontainer/
+
+# Local debug artifacts
+.playwright-mcp/
+console-full.log
+suffi-*.png
+
 # Build artifacts (Vercel will build this)
 
 # Assets - design files not needed for build
