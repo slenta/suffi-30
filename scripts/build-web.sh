@@ -2,7 +2,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-# --ume_block 0 skips pygbag's "Ready to start !" click prompt.
-# Browser autoplay policy still requires a real user gesture before audio
-# plays — pygbag handles that with retry semantics on first interaction.
-exec uv run pygbag --ume_block 0 --build .
+# UME prompt ("Ready to start !") is kept enabled because browser autoplay
+# policy needs a real user gesture before audio can play. Without it the
+# console fires a play() error on load until the player first clicks.
+exec uv run pygbag --ume_block 1 --build .
