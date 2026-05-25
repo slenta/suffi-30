@@ -13,7 +13,7 @@ GAMEPLAY_BINDINGS = [
     ("UP", "Jump"),
     ("F", "Shoot"),
     ("G", "Melee (with melee weapon)"),
-    ("ESC", "Quit to menu"),
+    ("ESC", "Pause / resume"),
 ]
 
 MENU_BINDINGS = [
@@ -60,13 +60,13 @@ class InstructionsScreen:
             desc_text = self.font_row.render(desc, True, self.desc_color)
             self.screen.blit(desc_text, desc_text.get_rect(midleft=(desc_x, y)))
 
-    def _draw(self):
+    def _draw(self, title="INSTRUCTIONS", hint="Press any key to return"):
         self.screen.fill(self.bg_color)
         w = self.screen.get_width()
         h = self.screen.get_height()
 
-        title = self.font_title.render("INSTRUCTIONS", True, self.title_color)
-        self.screen.blit(title, title.get_rect(center=(w // 2, 28)))
+        title_surf = self.font_title.render(title, True, self.title_color)
+        self.screen.blit(title_surf, title_surf.get_rect(center=(w // 2, 28)))
 
         y_header = 70
         y_first = 104
@@ -97,10 +97,8 @@ class InstructionsScreen:
             row_h,
         )
 
-        hint = self.font_hint.render(
-            "Press any key to return", True, self.hint_color
-        )
-        self.screen.blit(hint, hint.get_rect(center=(w // 2, h - 18)))
+        hint_surf = self.font_hint.render(hint, True, self.hint_color)
+        self.screen.blit(hint_surf, hint_surf.get_rect(center=(w // 2, h - 18)))
 
         pg.display.flip()
 

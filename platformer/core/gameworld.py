@@ -49,6 +49,10 @@ class GameWorld:
         self.current_fps = FPS
         self.return_to_level_selection = False
 
+        # Pause state (ESC pauses; any key resumes; instructions shown as overlay)
+        self.paused = False
+        self._pause_overlay = None
+
         # Cheat code tracking
         self.cheat_buffer = ""
         self.marvin_mode = False
@@ -962,10 +966,19 @@ class GameWorld:
 
     def events(self):
         for event in pg.event.get():
-            if event.type == pg.QUIT or (
-                event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE
-            ):
+            if event.type == pg.QUIT:
                 self.keep_going = False
+            elif self.paused:
+                if event.type == pg.KEYDOWN:
+                    self.paused = False
+                    sound_manager.resume_music()
+                    sound_manager.play_sound_effect("menu_select")
+                continue
+            elif event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
+                # ESC pauses; any key resumes (handled above).
+                self.paused = True
+                sound_manager.pause_music()
+                sound_manager.play_sound_effect("menu_select")
             elif event.type == pg.KEYDOWN:
                 # Track typed characters for cheat code detection
                 # Check if the key press has a unicode character that is alphabetic
@@ -1275,6 +1288,8 @@ class GameWorld:
             self.camera_offset_y += player_center_y - free_range_bottom
 
     def update(self):
+        if self.paused:
+            return
         # Update timer
         if self.time_remaining is not None and self.timer_start_ticks is not None:
             elapsed_seconds = (pg.time.get_ticks() - self.timer_start_ticks) / 1000.0
@@ -1314,6 +1329,12 @@ class GameWorld:
         self.update_camera()
 
     def draw(self):
+        if self.paused:
+            if self._pause_overlay is None:
+                from ..ui.instructions_screen import InstructionsScreen
+                self._pause_overlay = InstructionsScreen(self.screen)
+            self._pause_overlay._draw(title="PAUSED", hint="Press any key to resume")
+            return
         # Draw background
         draw_background(
             self.screen,
