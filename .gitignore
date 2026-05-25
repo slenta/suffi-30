@@ -30,6 +30,10 @@ console-full.log
 public/
 build/
 
+# Linux core dumps (from process crashes, e.g. playwright/chromium)
+/core
+core.[0-9]*
+
 # macOS
 .DS_Store
 .AppleDouble
