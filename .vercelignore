@@ -24,6 +24,12 @@ ENV/
 .env.local
 .devcontainer/
 
+# Local dev tooling — Vercel uses api/requirements.txt for serverless deps.
+# pyproject.toml's tool.uv.exclude-newer breaks Vercel's `uv pip install vercel-runtime`.
+pyproject.toml
+uv.lock
+.python-version
+
 # Local debug artifacts
 .playwright-mcp/
 console-full.log
