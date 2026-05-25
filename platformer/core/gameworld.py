@@ -37,10 +37,10 @@ class GameWorld:
         # Only init pygame if not already initialized (Pygbag handles this)
         if not pg.get_init():
             pg.init()
-        # Get existing display surface if available (Pygbag creates it)
-        self.screen = pg.display.get_surface()
-        if self.screen is None:
-            self.screen = pg.display.set_mode((WIDTH, HEIGHT))
+        # Force our fixed virtual resolution. Pygbag's bootloader creates a
+        # 1024x600 surface, and if the game just reuses it the player sees
+        # far more of the level on web than on native.
+        self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
         self.keep_going = True

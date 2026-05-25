@@ -32,17 +32,10 @@ async def get_level_to_load():
     if not pg.get_init():
         pg.init()
 
-    # Wait for display to be ready (important for pygbag)
-    screen = pg.display.get_surface()
-    retry_count = 0
-    while screen is None and retry_count < 10:
-        await asyncio.sleep(0.1)  # Wait for pygbag to initialize display
-        screen = pg.display.get_surface()
-        retry_count += 1
-
-    if screen is None:
-        print("⚠️ Display not ready from pygbag, creating new surface")
-        screen = pg.display.set_mode((WIDTH, HEIGHT))
+    # Force our fixed virtual resolution. Pygbag's bootloader creates a
+    # 1024x600 surface; if we keep it, the level-selection screen and the
+    # game both render onto a larger canvas than the native build assumes.
+    screen = pg.display.set_mode((WIDTH, HEIGHT))
 
     pg.display.set_caption("Level Selection - Suffi Platformer")
 
