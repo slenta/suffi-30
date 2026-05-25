@@ -8,7 +8,16 @@ import asyncio
 import pygame as pg
 import os
 from ..config.settings import *
+from ..config.api_config import API_BASE_URL
+from ..core.highscore_manager import HighscoreManager
 from ..core.sound_manager import sound_manager
+from .highscore_screen import HighscoreScreen
+from .instructions_screen import InstructionsScreen
+
+
+HIGHSCORES_ENTRY = "__highscores__"
+INSTRUCTIONS_ENTRY = "__instructions__"
+SPECIAL_ENTRIES = (HIGHSCORES_ENTRY, INSTRUCTIONS_ENTRY)
 
 
 class LevelSelectionScreen:
@@ -16,7 +25,7 @@ class LevelSelectionScreen:
 
     def __init__(self, screen):
         self.screen = screen
-        self.font_large = pg.font.Font(TITLE_FONT, 40)
+        self.font_large = pg.font.Font(TITLE_FONT, 28)
         # Load Ketchum font for level names
         ketchum_font_path = os.path.join(
             os.path.dirname(os.path.dirname(__file__)),
@@ -24,15 +33,15 @@ class LevelSelectionScreen:
             "fonts",
             "Ketchum.otf",
         )
-        self.font_medium = pg.font.Font(ketchum_font_path, 30)
+        self.font_medium = pg.font.Font(ketchum_font_path, 22)
         self.font_small = pg.font.Font(ketchum_font_path, 16)
 
-        # Get available levels
+        # Get available levels and append the special menu entries (below a divider)
         self.available_levels = self.get_available_levels()
+        self.menu_items = self.available_levels + [HIGHSCORES_ENTRY, INSTRUCTIONS_ENTRY]
         self.selected_level_index = 0
-        self.selected_level = (
-            self.available_levels[0] if self.available_levels else "level1"
-        )
+        self.selected_level = self.menu_items[0]
+        self.highscore_manager = HighscoreManager(api_base_url=API_BASE_URL)
 
         # Colors
         self.bg_color = (128, 0, 128)
@@ -40,6 +49,7 @@ class LevelSelectionScreen:
         self.title_color = (255, 195, 0)
         self.level_color = (200, 200, 200)
         self.selected_color = (255, 195, 0)
+        self.highscore_color = (100, 220, 200)
         self.cursor_color = self.selected_color
 
         # Animation
@@ -56,8 +66,8 @@ class LevelSelectionScreen:
         )
         try:
             self.cursor_sprite = pg.image.load(player_sprite_path).convert_alpha()
-            # Scale sprite to appropriate size for cursor (e.g., 32x32 or similar)
-            self.cursor_sprite = pg.transform.scale(self.cursor_sprite, (32, 32))
+            # Scale sprite to match the smaller menu font
+            self.cursor_sprite = pg.transform.scale(self.cursor_sprite, (24, 24))
         except FileNotFoundError:
             print(f"❌ Player sprite not found at {player_sprite_path}")
             self.cursor_sprite = None
@@ -107,6 +117,10 @@ class LevelSelectionScreen:
 
     def get_level_display_name(self, level_name):
         """Convert level filename to display name."""
+        if level_name == HIGHSCORES_ENTRY:
+            return "HIGHSCORES"
+        if level_name == INSTRUCTIONS_ENTRY:
+            return "INSTRUCTIONS"
         # Convert level1-advanced to "Level 1 - Advanced"
         display_name = level_name.replace("level", "Level ").replace("-", " - ")
         return display_name.title().upper()
@@ -117,18 +131,18 @@ class LevelSelectionScreen:
             if event.key == KEYBINDINGS.get("left") or event.key == pg.K_UP:
                 # Move selection up
                 self.selected_level_index = (self.selected_level_index - 1) % len(
-                    self.available_levels
+                    self.menu_items
                 )
-                self.selected_level = self.available_levels[self.selected_level_index]
+                self.selected_level = self.menu_items[self.selected_level_index]
                 sound_manager.play_sound_effect("menu_move")
                 return None
 
             elif event.key == KEYBINDINGS.get("right") or event.key == pg.K_DOWN:
                 # Move selection down
                 self.selected_level_index = (self.selected_level_index + 1) % len(
-                    self.available_levels
+                    self.menu_items
                 )
-                self.selected_level = self.available_levels[self.selected_level_index]
+                self.selected_level = self.menu_items[self.selected_level_index]
                 sound_manager.play_sound_effect("menu_move")
                 return None
 
@@ -167,33 +181,38 @@ class LevelSelectionScreen:
         screen_width = self.screen.get_width()
         screen_height = self.screen.get_height()
 
-        # Draw title
+        # Draw title (smaller now to free vertical space)
         title_text = self.font_large.render("SUFFI ON THE RUN", True, self.title_color)
-        title_rect = title_text.get_rect(center=(screen_width // 2, 50))
+        title_rect = title_text.get_rect(center=(screen_width // 2, 28))
         self.screen.blit(title_text, title_rect)
 
-        # Draw level list
-        start_y = 100
-        level_spacing = 30
+        # Draw menu: levels first, then a divider, then the special entries
+        start_y = 64
+        level_spacing = 26
+        special_offset = 18  # extra gap before the special-entries block
 
-        for i, level_name in enumerate(self.available_levels):
+        for i, level_name in enumerate(self.menu_items):
+            is_special = level_name in SPECIAL_ENTRIES
+            is_selected = i == self.selected_level_index
+
             y_pos = start_y + (i * level_spacing)
+            if is_special:
+                y_pos += special_offset
 
-            # Determine colors for this level
-            if i == self.selected_level_index:
+            if is_selected:
                 text_color = self.selected_color
+            elif is_special:
+                text_color = self.highscore_color
             else:
                 text_color = self.level_color
 
-            # Draw level name (same font size for all levels)
             display_name = self.get_level_display_name(level_name)
             level_text = self.font_medium.render(display_name, True, text_color)
             level_rect = level_text.get_rect(center=(screen_width // 2, y_pos))
             self.screen.blit(level_text, level_rect)
 
-            # Draw selection cursor (player sprite)
-            if i == self.selected_level_index and self.cursor_visible:
-                cursor_x = level_rect.left - 50
+            if is_selected and self.cursor_visible:
+                cursor_x = level_rect.left - 36
                 cursor_y = y_pos
                 if self.cursor_sprite:
                     cursor_rect = self.cursor_sprite.get_rect(
@@ -201,7 +220,6 @@ class LevelSelectionScreen:
                     )
                     self.screen.blit(self.cursor_sprite, cursor_rect)
                 else:
-                    # Fallback to arrow if sprite not loaded
                     cursor_text = self.font_medium.render("►", True, self.cursor_color)
                     cursor_rect = cursor_text.get_rect(center=(cursor_x, cursor_y))
                     self.screen.blit(cursor_text, cursor_rect)
@@ -233,6 +251,20 @@ class LevelSelectionScreen:
                     return "QUIT"
 
                 result = self.handle_input(event)
+                if result in SPECIAL_ENTRIES:
+                    # Show overlay screen; stay in selection loop afterwards
+                    if result == HIGHSCORES_ENTRY:
+                        overlay = HighscoreScreen(
+                            self.screen, self.highscore_manager
+                        )
+                    else:
+                        overlay = InstructionsScreen(self.screen)
+                    overlay_result = await overlay.run()
+                    if overlay_result == "QUIT":
+                        sound_manager.stop_music()
+                        return "QUIT"
+                    pg.event.clear()
+                    continue
                 if result is not None:
                     # Stop menu music before returning
                     sound_manager.stop_music()

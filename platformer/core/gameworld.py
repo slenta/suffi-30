@@ -994,8 +994,6 @@ class GameWorld:
                     self.player.start_shoot()
                 elif event.key == pg.K_g:  # Melee attack
                     self.player.melee_attack()
-                elif event.key == pg.K_e:
-                    self.player.throw_exploding_object()
             elif event.type == pg.KEYUP:
                 # Stop continuous spray when F key is released
                 if event.key == pg.K_f:
