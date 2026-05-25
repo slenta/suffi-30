@@ -126,7 +126,7 @@ class HighscoreScreen:
                     if event.type == pg.QUIT:
                         return "QUIT"
                     if event.type == pg.KEYDOWN:
-                        sound_manager.play_sound_effect("menu_select")
+                        sound_manager.play_sound_effect("menu_move")
                         return "BACK"
                 self._draw()
                 await asyncio.sleep(0)

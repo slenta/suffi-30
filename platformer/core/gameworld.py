@@ -970,15 +970,20 @@ class GameWorld:
                 self.keep_going = False
             elif self.paused:
                 if event.type == pg.KEYDOWN:
-                    self.paused = False
-                    sound_manager.resume_music()
-                    sound_manager.play_sound_effect("menu_select")
+                    if event.key == pg.K_ESCAPE:
+                        self.keep_going = False
+                        self.return_to_level_selection = True
+                        sound_manager.play_sound_effect("player_death")
+                    else:
+                        self.paused = False
+                        sound_manager.resume_music()
+                        sound_manager.play_sound_effect("menu_move")
                 continue
             elif event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
                 # ESC pauses; any key resumes (handled above).
                 self.paused = True
                 sound_manager.pause_music()
-                sound_manager.play_sound_effect("menu_select")
+                sound_manager.play_sound_effect("menu_move")
             elif event.type == pg.KEYDOWN:
                 # Track typed characters for cheat code detection
                 # Check if the key press has a unicode character that is alphabetic
@@ -1333,7 +1338,10 @@ class GameWorld:
             if self._pause_overlay is None:
                 from ..ui.instructions_screen import InstructionsScreen
                 self._pause_overlay = InstructionsScreen(self.screen)
-            self._pause_overlay._draw(title="PAUSED", hint="Press any key to resume")
+            self._pause_overlay._draw(
+                    title="PAUSED",
+                    hint="Press any key to resume — ESC to quit to level select",
+                )
             return
         # Draw background
         draw_background(

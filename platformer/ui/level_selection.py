@@ -147,8 +147,12 @@ class LevelSelectionScreen:
                 return None
 
             elif event.key == pg.K_RETURN or event.key == pg.K_SPACE:
-                # Select current level
-                sound_manager.play_sound_effect("menu_select")
+                # Select current level. Lighter blip for info overlays;
+                # committing to a real level keeps the heavier confirm sound.
+                if self.selected_level in SPECIAL_ENTRIES:
+                    sound_manager.play_sound_effect("menu_move")
+                else:
+                    sound_manager.play_sound_effect("menu_select")
                 print(f"🎯 Selected level: {self.selected_level}")
                 return self.selected_level
 
