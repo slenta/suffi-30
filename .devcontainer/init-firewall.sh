@@ -20,11 +20,10 @@ EXTRA_DOMAINS=(
     # Pygbag pulls additional Python wheels from PyPI at runtime
     # (the base allowlist already covers pypi.org + files.pythonhosted.org)
 
-    # Vercel Postgres endpoint — pin the specific project host, NOT a wildcard.
-    # Wildcards (*.vercel-storage.com) are silently dropped by dig at init.
-    # Get the host from `vercel env pull` → POSTGRES_URL → strip credentials.
-    # TODO: replace with the project's actual ep-<hash>.<region>.postgres.vercel-storage.com
-    "ep-REPLACE-WITH-PROJECT-HOST.us-east-1.postgres.vercel-storage.com"
+    # Neon Postgres endpoint (pooler). Pin the specific host, NOT a wildcard —
+    # *.aws.neon.tech is silently dropped by dig at init. Get the host from
+    # the Neon console → Connect → Pooled connection string.
+    "ep-muddy-snow-ag4i5uf0-pooler.c-2.eu-central-1.aws.neon.tech"
 )
 
 EXTRA_IPS=(
