@@ -15,19 +15,7 @@
     {
       "source": "/suffi-30.apk",
       "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=300, s-maxage=300, stale-while-revalidate=86400"
-        }
-      ]
-    },
-    {
-      "source": "/(.*)\\.(png|ogg|jpg|jpeg|webp|otf|ttf)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=86400, stale-while-revalidate=604800"
-        }
+        {"key": "Cache-Control", "value": "no-cache, must-revalidate"}
       ]
     }
   ]

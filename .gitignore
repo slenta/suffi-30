@@ -9,6 +9,7 @@ __pycache__/
 *.egg-info/
 dist/
 .venv/
+.venv-host/
 venv/
 ENV/
 
@@ -29,6 +30,10 @@ console-full.log
 # Pygbag build files
 public/
 build/
+
+# Pygbag asset-conversion byproducts (regenerated each build)
+*-pygbag.ogg
+*-pygbag.py
 
 # Linux core dumps (from process crashes, e.g. playwright/chromium)
 /core
