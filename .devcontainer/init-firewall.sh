@@ -7,6 +7,12 @@ EXTRA_DOMAINS=(
     "vercel.com"
     "api.vercel.com"
 
+    # This project's own Vercel deployment (e.g. /api/highscores endpoint).
+    # Resolves to anycast pools outside 76.76.21.0/24 (observed: 64.29.17.x,
+    # 216.198.79.x). If those IPs rotate and connections start failing,
+    # rebuild the container to re-resolve.
+    "suffi-30.vercel.app"
+
     # Pygbag CDN (pythons.js, cpython312/main.js, archives/repo)
     "pygame-web.github.io"
     "raw.githubusercontent.com"
