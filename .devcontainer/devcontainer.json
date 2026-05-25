@@ -1,0 +1,72 @@
+{
+  "name": "suffi-30",
+  "build": { "dockerfile": "Dockerfile", "context": ".." },
+  "initializeCommand": "bash ~/code/devcontainer-base/scripts/setup-ssh-agent.sh",
+  "runArgs": [
+    "--cap-add=NET_ADMIN",
+    "--cap-add=NET_RAW"
+  ],
+  "appPort": [
+    "8000:8000",
+    "3000:3000"
+  ],
+  "forwardPorts": [8000, 3000],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "anthropic.claude-code",
+        "ms-python.python",
+        "charliermarsh.ruff",
+        "eamodio.gitlens"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "[python]": {
+          "editor.defaultFormatter": "charliermarsh.ruff",
+          "editor.codeActionsOnSave": {
+            "source.fixAll.ruff": "explicit",
+            "source.organizeImports.ruff": "explicit"
+          }
+        },
+        "telemetry.telemetryLevel": "off",
+        "redhat.telemetry.enabled": false,
+        "extensions.ignoreRecommendations": true,
+        "terminal.integrated.enableBell": true,
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "terminal.integrated.profiles.linux": {
+          "bash": { "path": "bash", "icon": "terminal-bash" },
+          "zsh": { "path": "zsh" }
+        }
+      }
+    }
+  },
+  "remoteUser": "node",
+  "mounts": [
+    "source=claude-code-bashhistory-${devcontainerId},target=/commandhistory,type=volume",
+    "source=claude-code-config-${devcontainerId},target=/home/node/.claude,type=volume",
+    "source=${localEnv:HOME}/.claude/projects,target=/home/node/.claude/projects,type=bind",
+    "source=${localEnv:HOME}/.claude/skills,target=/home/node/.claude/skills,type=bind,readonly",
+    "source=${localEnv:HOME}/.claude/CLAUDE.md,target=/home/node/.claude/CLAUDE.md,type=bind,readonly",
+    "source=${localEnv:HOME}/.claude/RTK.md,target=/home/node/.claude/RTK.md,type=bind,readonly",
+    "source=${localEnv:HOME}/.claude/settings.json,target=/home/node/.claude/settings.json,type=bind,readonly",
+    "source=vscode-extensions-${devcontainerId},target=/home/node/.vscode-server/extensions,type=volume",
+    "source=suffi-30-uv-cache-${devcontainerId},target=/home/node/.cache/uv,type=volume",
+    "source=/run/host-services/ssh-auth.sock,target=/tmp/ssh-agent.sock,type=bind",
+    "source=${localEnv:HOME}/code/devcontainer-base/scripts/gitconfig-container,target=/home/node/.gitconfig,type=bind,readonly"
+  ],
+  "containerEnv": {
+    "SSH_AUTH_SOCK": "/tmp/ssh-agent.sock",
+    "TERM": "xterm-256color",
+    "NODE_OPTIONS": "--max-old-space-size=4096",
+    "CLAUDE_CONFIG_DIR": "/home/node/.claude",
+    "POWERLEVEL9K_DISABLE_GITSTATUS": "true",
+    "GHE_TOKEN": "${localEnv:GHE_TOKEN}",
+    "UV_LINK_MODE": "copy"
+  },
+  "workspaceMount": "source=${localWorkspaceFolder},target=${localWorkspaceFolder},type=bind,consistency=delegated",
+  "workspaceFolder": "${localWorkspaceFolder}",
+  "postCreateCommand": "uv sync",
+  "postStartCommand": "sudo /usr/local/bin/init-memory-guard.sh",
+  "waitFor": "postStartCommand"
+}

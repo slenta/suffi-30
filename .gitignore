@@ -16,9 +16,6 @@ ENV/
 .env
 .env.local
 
-# Devcontainer config (per-user, not shared)
-.devcontainer/
-
 # Claude Code per-user settings + local secrets
 .claude/
 .mcp.json
