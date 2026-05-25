@@ -4,6 +4,8 @@ USER root
 
 # System libs pygame/SDL2 need to build/run on Linux (pygame wheel usually exists,
 # but SDL2 runtime libs are required for `python play.py` inside the container).
+# ffmpeg + ImageMagick are used by scripts/optimize_images.py and
+# platformer/assets/convert/convert_audio.py to shrink the deployed asset bundle.
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libsdl2-2.0-0 \
     libsdl2-image-2.0-0 \
@@ -12,6 +14,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libfreetype6 \
     libportmidi0 \
     libjpeg62-turbo \
+    ffmpeg \
+    imagemagick \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Vercel CLI for deploys + local `vercel dev`
