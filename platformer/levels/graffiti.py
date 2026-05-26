@@ -122,7 +122,7 @@ level_config = {
     # Parallax scroll speed (0.0 = static, 1.0 = camera speed)
     "background_scroll_speed": 0.2,
     # Pixel offset for the background image (x, y). Negative y moves the image up.
-    "background_offset": (0, -237),
+    "background_offset": (0, -450),
     "background_music": "assets/music/vroom_remix.ogg",
     "exit_location": (330, 11),
 }

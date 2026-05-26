@@ -23,6 +23,10 @@ MAX_BG = (4500, 540)        # backgrounds tile at native size; viewport is 900x2
 MAX_SPRITE_SIDE = 512        # rendered sprites top out around 60px on a 900x270 surface
 MIN_TARGET_BYTES = 200 * 1024  # 200 KB — below this, savings are marginal
 
+# Files to leave untouched. graffiti_background has a large transparent border;
+# shrinking it makes the content smaller than the 270px viewport.
+SKIP = {"backgrounds/graffiti_background.png"}
+
 
 def identify(path: Path) -> tuple[int, int]:
     out = subprocess.check_output(
@@ -70,6 +74,9 @@ def main():
     for path in sorted(ASSETS.rglob("*.png")):
         size_before = path.stat().st_size
         if size_before < MIN_TARGET_BYTES:
+            continue
+        if str(path.relative_to(ASSETS)) in SKIP:
+            print(f"skip (in SKIP): {path.relative_to(ASSETS)}")
             continue
 
         try:
