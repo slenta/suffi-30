@@ -514,7 +514,7 @@ ENEMY_TYPES = {
         "damage": 5,
         "shoot_range": 5,
         "chase_range": 200,
-        "melee_damage": 15,
+        "melee_damage": 20,
         "can_throw_explosives": False,
         "can_summon_minions": False,
         "encounter_message": "RAUS AUS MEINEM YARD!!!",
