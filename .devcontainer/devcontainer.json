@@ -67,6 +67,6 @@
   "workspaceMount": "source=${localWorkspaceFolder},target=${localWorkspaceFolder},type=bind,consistency=delegated",
   "workspaceFolder": "${localWorkspaceFolder}",
   "postCreateCommand": "uv sync",
-  "postStartCommand": "sudo /usr/local/bin/init-memory-guard.sh",
+  "postStartCommand": "sudo /usr/local/bin/init-memory-guard.sh && (~/.local/bin/claude update || true)",
   "waitFor": "postStartCommand"
 }
