@@ -1,7 +1,7 @@
 {
   "name": "suffi-30",
   "build": { "dockerfile": "Dockerfile", "context": ".." },
-  "initializeCommand": "bash ~/code/devcontainer-base/scripts/setup-ssh-agent.sh",
+  "initializeCommand": "bash ~/code/devcontainer-base/scripts/setup-ssh-agent.sh && bash ~/code/devcontainer-base/scripts/seed-claude-config.sh",
   "runArgs": [
     "--cap-add=NET_ADMIN",
     "--cap-add=NET_RAW"
@@ -47,8 +47,12 @@
     "source=claude-code-config-${devcontainerId},target=/home/node/.claude,type=volume",
     "source=${localEnv:HOME}/.claude/projects,target=/home/node/.claude/projects,type=bind",
     "source=${localEnv:HOME}/.claude/skills,target=/home/node/.claude/skills,type=bind,readonly",
-    "source=${localEnv:HOME}/.claude/CLAUDE.md,target=/home/node/.claude/CLAUDE.md,type=bind,readonly",
-    "source=${localEnv:HOME}/.claude/settings.json,target=/home/node/.claude/settings.json,type=bind,readonly",
+    // settings.json/CLAUDE.md must NOT be single-file binds: host-side atomic
+    // saves (temp + rename = new inode) dangle them permanently. Instead the
+    // seed *directory* (staged by seed-claude-config.sh in initializeCommand)
+    // is bound, and init-memory-guard.sh copies the files into ~/.claude at
+    // postStart. Requires a base tag >= 2026-07-29.
+    "source=${localEnv:HOME}/.config/devcontainer/claude-seed,target=/home/node/.host-claude-seed,type=bind,readonly",
     "source=vscode-extensions-${devcontainerId},target=/home/node/.vscode-server/extensions,type=volume",
     "source=suffi-30-uv-cache-${devcontainerId},target=/home/node/.cache/uv,type=volume",
     "source=/run/host-services/ssh-auth.sock,target=/tmp/ssh-agent.sock,type=bind",
