@@ -1,5 +1,8 @@
 # suffi-30
 
+Canonical repository instructions for Claude Code and Codex. Codex loads this
+file through the shared devcontainer fallback; do not duplicate it in AGENTS.md.
+
 Pygame platformer compiled to WASM via pygbag, deployed to Vercel with a Neon Postgres-backed highscore API.
 
 ## Run the game locally on :8000

@@ -1,4 +1,4 @@
-FROM base-devcontainer:local
+FROM containers.handelgruen.ghe.com/handelgruen/base-devcontainer:2026-07-29
 
 USER root
 
