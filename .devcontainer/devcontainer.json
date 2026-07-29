@@ -48,7 +48,6 @@
     "source=${localEnv:HOME}/.claude/projects,target=/home/node/.claude/projects,type=bind",
     "source=${localEnv:HOME}/.claude/skills,target=/home/node/.claude/skills,type=bind,readonly",
     "source=${localEnv:HOME}/.claude/CLAUDE.md,target=/home/node/.claude/CLAUDE.md,type=bind,readonly",
-    "source=${localEnv:HOME}/.claude/RTK.md,target=/home/node/.claude/RTK.md,type=bind,readonly",
     "source=${localEnv:HOME}/.claude/settings.json,target=/home/node/.claude/settings.json,type=bind,readonly",
     "source=vscode-extensions-${devcontainerId},target=/home/node/.vscode-server/extensions,type=volume",
     "source=suffi-30-uv-cache-${devcontainerId},target=/home/node/.cache/uv,type=volume",
