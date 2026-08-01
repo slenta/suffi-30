@@ -1,4 +1,4 @@
-FROM containers.handelgruen.ghe.com/handelgruen/base-devcontainer:2026-07-29
+FROM containers.handelgruen.ghe.com/handelgruen/base-devcontainer:latest
 
 USER root
 

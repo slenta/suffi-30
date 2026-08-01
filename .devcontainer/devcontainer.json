@@ -1,6 +1,12 @@
 {
   "name": "suffi-30",
-  "build": { "dockerfile": "Dockerfile", "context": ".." },
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "..",
+    // Re-check the registry on every build. Without this, docker reuses a
+    // locally cached :latest and the base silently never updates.
+    "options": ["--pull"]
+  },
   "initializeCommand": "bash ~/code/devcontainer-base/scripts/initialize-host.sh",
   "runArgs": [
     "--cap-add=NET_ADMIN",
