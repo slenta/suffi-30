@@ -9,12 +9,15 @@ python play.py trancefloor        # Play level trancefloor directly
 python play.py --list-levels      # List all available levels
 ```
 
-## Play local in browser on `http://localhost:8000`
+## Play local in browser on `http://localhost:18000`
+
+Pygbag serves on port 8000 inside the devcontainer, which maps to 18000 on the
+host (see `appPort` in `.devcontainer/devcontainer.json`).
 
 ```bash
-# This builds and serves the game on http://localhost:8000
+# This builds and serves the game
 python -m pygbag --PYBUILD 3.12 .
-# This builds and serves the game with a custom template on http://localhost:8000
+# This builds and serves the game with a custom template
 python -m pygbag --PYBUILD 3.12 --template custom.tmpl .
 python -m pygbag --PYBUILD 3.12 --build --template custom.tmpl .
 ```

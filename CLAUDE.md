@@ -13,7 +13,9 @@ If a build already exists in `build/web/`, run:
 python3 scripts/serve-local.py
 ```
 
-Open http://localhost:8000/. The devcontainer's `appPort: 8000:8000` forwards it to the host.
+Open http://localhost:18000/. The server binds 8000 inside the container; the
+devcontainer's `appPort: 18000:8000` forwards it to that host port. Plain 8000 is
+published by the `security` container, and two containers cannot share one host port.
 
 **Do not use `python -m http.server` here.** Pygbag's runtime fetches Python wheels from same-origin paths like `/archives/repo/cp312/*.whl`, and `vercel.json` rewrites those to `https://pygame-web.github.io/archives/...` in prod. A plain http.server has no rewrite → 404 on the wheels → black screen. `scripts/serve-local.py` replicates that rewrite with a 302 redirect.
 

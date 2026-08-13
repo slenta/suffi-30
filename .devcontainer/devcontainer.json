@@ -12,9 +12,13 @@
     "--cap-add=NET_ADMIN",
     "--cap-add=NET_RAW"
   ],
+  // Host side shifted by 10000: plain 8000 and 3000 are taken by the security
+  // and pricing containers, and a clash means this container cannot be created
+  // at all while those run. Container ports are unchanged, so the app config
+  // stays as-is — reach it on the host at localhost:18000 / localhost:13000.
   "appPort": [
-    "8000:8000",
-    "3000:3000"
+    "18000:8000",
+    "13000:3000"
   ],
   "forwardPorts": [8000, 3000],
   "customizations": {
