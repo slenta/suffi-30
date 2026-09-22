@@ -1,4 +1,4 @@
-FROM containers.handelgruen.ghe.com/handelgruen/base-devcontainer:latest
+FROM ghcr.io/handelgruen-energy/base-devcontainer:latest
 
 USER root
 
