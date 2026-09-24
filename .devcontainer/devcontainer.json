@@ -10,7 +10,15 @@
   "initializeCommand": "bash ~/.local/share/devcontainer-base/initialize-host.sh",
   "runArgs": [
     "--cap-add=NET_ADMIN",
-    "--cap-add=NET_RAW"
+    "--cap-add=NET_RAW",
+    // Resource limits, same numbers as devcontainer-base's
+    // template/devcontainer.json, whose comment explains each one. Needs a
+    // base from 2026-09-24 or later.
+    "--memory=24g",
+    "--memory-swap=24g",
+    "--cpu-period=100000",
+    "--cpu-quota=1200000",
+    "--pids-limit=8192"
   ],
   // Host side shifted by 10000: plain 8000 and 3000 are taken by the security
   // and pricing containers, and a clash means this container cannot be created
